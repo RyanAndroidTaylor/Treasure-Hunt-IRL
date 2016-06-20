@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.view_holder_clue.view.*
 /**
  * Created by ryantaylor on 6/16/16.
  */
-class CreateClueAdapter(context: Context, clues: List<String>) : ListRecyclerViewSectionAdapter<RecyclerView.ViewHolder, String>(context, clues) {
+class ClueAdapter(context: Context, clues: List<String>) : ListRecyclerViewSectionAdapter<RecyclerView.ViewHolder, String>(context, clues) {
 
     override fun needsSectionBefore(item: String?): Boolean {
         return false
@@ -37,21 +37,6 @@ class CreateClueAdapter(context: Context, clues: List<String>) : ListRecyclerVie
         return null
     }
 
-    override fun onBindFooter(viewHolder: RecyclerView.ViewHolder?) {
-        if (viewHolder is CreateClueFooterViewHolder)
-            viewHolder.bind()
-    }
-
-    override fun onCreateFooter(parent: ViewGroup?): CreateClueFooterViewHolder? {
-        parent?.let {
-            val view = LayoutInflater.from(it.context).inflate(R.layout.view_holder_create_clue_footer, it, false)
-
-            return CreateClueFooterViewHolder(view)
-        }
-
-        return null
-    }
-
     open class ClueViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         val clueText: TextView
@@ -62,13 +47,6 @@ class CreateClueAdapter(context: Context, clues: List<String>) : ListRecyclerVie
 
         fun bind(clue: String) {
             clueText.text = clue
-        }
-    }
-
-    class CreateClueFooterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        fun bind() {
-            Log.i("CreateClueAdapter", "Binding CreateClueFooterViewHolder")
         }
     }
 }
