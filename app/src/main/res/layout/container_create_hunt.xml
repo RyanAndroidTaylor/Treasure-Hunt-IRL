@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activities.TreasureTabActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/create_hunt_container_clue_list"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginTop="@dimen/margin_normal"/>
+
+        <TextView
+            android:id="@+id/create_hunt_add_clue"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@color/card_view_background"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:gravity="center"
+            android:text="@string/add_clue"
+            android:textColor="@color/colorAccent"/>
+</LinearLayout>

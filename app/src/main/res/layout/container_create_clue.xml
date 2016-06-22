@@ -6,7 +6,18 @@
               android:orientation="vertical">
 
     <EditText
-        android:id="@+id/create_clue_text"
+        android:id="@+id/create_clue__container_clue_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/create_clue_container_answer_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/create_clue_container_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save"/>
 </LinearLayout>

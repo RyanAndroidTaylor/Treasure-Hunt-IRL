@@ -3,24 +3,37 @@ package com.dtprogramming.treasurehuntirl.ui.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.ui.fragments.CreateClueFragment
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueAdapter
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
+import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
+import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
+import com.dtprogramming.treasurehuntirl.ui.container.Container
+import com.dtprogramming.treasurehuntirl.ui.container.CreateClueContainer
+import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
+import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import kotlinx.android.synthetic.main.activity_create_hunt.*
 import java.util.*
 
 /**
  * Created by ryantaylor on 6/15/16.
  */
-class CreateHuntActivity : BaseActivity() {
+class CreateHuntActivity : BaseActivity(), CreateHuntView {
+
+    private lateinit var createHuntPresenter: CreateHuntPresenter
+    private lateinit var container: Container
 
     companion object {
+        val HUNT_UUID = "HuntUuid"
+
         fun getIntent(context: Context): Intent {
-            return Intent(context, CreateHuntActivity::class.java)
+            return getIntent(context, UUID.randomUUID().toString().replace("-", ""))
+        }
+
+        fun getIntent(context: Context, treasureHuntId: String): Intent {
+            val intent = Intent(context, CreateHuntActivity::class.java)
+
+            intent.putExtra(HUNT_UUID, treasureHuntId)
+
+            return intent
         }
     }
 
@@ -30,60 +43,44 @@ class CreateHuntActivity : BaseActivity() {
 
         toolbar?.title = resources.getString(R.string.create_hunt_activity_title)
 
-        create_hunt_clue_list.layoutManager = CustomLinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        createHuntPresenter = if (PresenterManager.hasPresenter(CreateHuntPresenter.TAG))
+            PresenterManager.getPresenter(CreateHuntPresenter.TAG) as CreateHuntPresenter
+        else
+            PresenterManager.addPresenter(CreateHuntPresenter.TAG, CreateHuntPresenter()) as CreateHuntPresenter
 
-        val clues = ArrayList<String>()
-
-        for (i in 0..100)
-            clues.add("This is a clue to a sweet treasure hunt that only a few people will ever figure out. That is how good it is. We need a lot more text in here so it looks good to the eye when we are playing with in on the screen")
-
-        val adapter = ClueAdapter(this, clues)
-
-        create_hunt_clue_list.adapter = adapter
-
-        create_hunt_add_clue.setOnClickListener {
-            val createClueFragment = CreateClueFragment()
-
-            val transaction = supportFragmentManager.beginTransaction()
-            transaction.replace(android.R.id.content, createClueFragment)
-            transaction.commit()
+        if (savedInstanceState != null) {
+            createHuntPresenter.load(this)
+        } else {
+            createHuntPresenter.load(intent.getStringExtra(HUNT_UUID), this)
         }
-
-        create_hunt_clue_list.addOnScrollListener(SmoothScrollListener())
     }
 
-    class SmoothScrollListener : RecyclerView.OnScrollListener() {
-        var smoothScrolling = false
+    override fun onDestroy() {
+        super.onDestroy()
 
-        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-            super.onScrollStateChanged(recyclerView, newState)
+        if (isFinishing)
+            createHuntPresenter.finish()
+    }
 
-            if (newState == RecyclerView.SCROLL_STATE_IDLE)
-                smoothScrolling = false
-        }
+    override fun loadCreateClueContainer() {
+        container = CreateClueContainer(createHuntPresenter)
 
-        override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
+        container.inflate(activity_create_hunt_container)
+    }
 
-            if (!smoothScrolling && recyclerView != null && recyclerView.scrollState == RecyclerView.SCROLL_STATE_SETTLING && dx < 60 && dx > -60) {
-                smoothScrolling = true
+    override fun loadCreateHuntContainer(clues: List<String>) {
+        container = CreateHuntContainer(createHuntPresenter, clues)
 
-                if (dx > 0) {
-                    val layoutManager = recyclerView.layoutManager as CustomLinearLayoutManager
+        container.inflate(activity_create_hunt_container)
+    }
 
-                    val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
+    override fun updateClueList(clues: List<String>) {
+        if (container is CreateHuntContainer)
+            (container as CreateHuntContainer).updateClueList(clues)
+    }
 
-                    layoutManager.scrollSpeed = dx.toFloat()
-                    recyclerView.smoothScrollToPosition(lastVisiblePosition)
-                } else {
-                    val layoutManager = recyclerView.layoutManager as CustomLinearLayoutManager
-
-                    val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
-
-                    layoutManager.scrollSpeed = dx.toFloat()
-                    recyclerView.smoothScrollToPosition(firstVisiblePosition)
-                }
-            }
-        }
+    override fun onBackPressed() {
+        if (!container.onBackPressed())
+            super.onBackPressed()
     }
 }

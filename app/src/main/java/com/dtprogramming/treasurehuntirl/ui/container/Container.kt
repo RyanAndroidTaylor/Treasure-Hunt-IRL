@@ -8,5 +8,5 @@ import android.view.ViewGroup
 interface Container {
 
     fun inflate(parent: ViewGroup): Container
-    fun replaceAndInflate(parent: ViewGroup): Container
+    fun onBackPressed(): Boolean
 }

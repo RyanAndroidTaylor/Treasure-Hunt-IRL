@@ -22,44 +22,9 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/activity_create_hunt_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:gravity="center"
-                android:text="@string/clue_title"
-                android:background="@color/card_view_background"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/create_hunt_clue_list"
-                android:layout_width="match_parent"
-                android:layout_height="140dp"
-                android:layout_marginTop="51dp"/>
-
-            <TextView
-                android:id="@+id/create_hunt_add_clue"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:layout_marginTop="207dp"
-                android:gravity="center"
-                android:text="@string/add"
-                android:textColor="@color/colorAccent"
-                android:background="@color/card_view_background"/>
-        </FrameLayout>
-    </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/create_hunt_fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 </android.support.design.widget.CoordinatorLayout>
