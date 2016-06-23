@@ -44,7 +44,7 @@ class CreateHuntActivityTest {
 
     @Test
     fun moveToCreateClueScreenWhenAddIsPressed() {
-        onView(withId(R.id.create_hunt_add_clue)).perform(click())
+        onView(withId(R.id.create_hunt_container_add_clue)).perform(click())
 
         onView(withId(R.id.create_clue__container_clue_text)).check(matches(isDisplayed()))
         onView(withId(R.id.create_clue_container_answer_text)).check(matches(isDisplayed()))
@@ -52,7 +52,7 @@ class CreateHuntActivityTest {
 
     @Test
     fun showSavedClues() {
-        onView(withId(R.id.create_hunt_add_clue)).perform(click())
+        onView(withId(R.id.create_hunt_container_add_clue)).perform(click())
 
         onView(withId(R.id.create_clue__container_clue_text)).perform(replaceText("This is a good clue"))
 
@@ -60,7 +60,7 @@ class CreateHuntActivityTest {
 
         onView(withId(R.id.create_hunt_container_clue_list)).perform(scrollToHolder(Matchers.withClueText("This is a good clue")))
 
-        onView(withId(R.id.create_hunt_add_clue)).perform(click())
+        onView(withId(R.id.create_hunt_container_add_clue)).perform(click())
 
         onView(withId(R.id.create_clue__container_clue_text)).perform(replaceText("The next best clue"))
 

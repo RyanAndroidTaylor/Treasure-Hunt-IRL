@@ -18,13 +18,13 @@ interface Container {
 
     fun animateIn(context: Context, animationId: Int) {
         val animation = AnimationUtils.loadAnimation(context, animationId)
-        animation.duration = 500
+        animation.duration = 300
         layout.startAnimation(animation)
     }
 
     fun animateOut(context: Context, animationId: Int) {
         val animation = AnimationUtils.loadAnimation(context, animationId)
-        animation.duration = 500
+        animation.duration = 300
 
         animation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationEnd(animation: Animation?) {

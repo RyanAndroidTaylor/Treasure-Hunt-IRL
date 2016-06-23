@@ -42,6 +42,6 @@ class CreateHuntTabFragmentTest {
 
         onView(withId(R.id.create_hunt_fragment_fab)).perform(click())
 
-        onView(withId(R.id.create_hunt_add_clue)).check(matches(isDisplayed()))
+        onView(withId(R.id.create_hunt_container_add_clue)).check(matches(isDisplayed()))
     }
 }
