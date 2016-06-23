@@ -9,8 +9,10 @@ import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.container.Container
 import com.dtprogramming.treasurehuntirl.ui.container.CreateClueContainer
 import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
+import com.dtprogramming.treasurehuntirl.ui.container.CreateWayPointContainer
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import kotlinx.android.synthetic.main.activity_create_hunt.*
+import java.lang.ref.WeakReference
 import java.util.*
 
 /**
@@ -48,10 +50,10 @@ class CreateHuntActivity : BaseActivity(), CreateHuntView {
         else
             PresenterManager.addPresenter(CreateHuntPresenter.TAG, CreateHuntPresenter()) as CreateHuntPresenter
 
-        if (savedInstanceState != null) {
-            createHuntPresenter.load(this)
-        } else {
+        if (savedInstanceState == null) {
             createHuntPresenter.load(intent.getStringExtra(HUNT_UUID), this)
+        } else {
+            createHuntPresenter.reload(this)
         }
     }
 
@@ -62,16 +64,40 @@ class CreateHuntActivity : BaseActivity(), CreateHuntView {
             createHuntPresenter.finish()
     }
 
-    override fun loadCreateClueContainer() {
-        container = CreateClueContainer(createHuntPresenter)
+    override fun initLoad(clues: List<String>) {
+        container = CreateHuntContainer(createHuntPresenter, clues)
 
         container.inflate(activity_create_hunt_container)
     }
 
+    override fun loadCreateClueContainer() {
+        val oldContainer = container
+
+        container = CreateClueContainer(createHuntPresenter)
+
+        container.inflate(activity_create_hunt_container)
+
+        forwardAnimation(oldContainer, container)
+    }
+
     override fun loadCreateHuntContainer(clues: List<String>) {
+        val oldContainer = container
+
         container = CreateHuntContainer(createHuntPresenter, clues)
 
         container.inflate(activity_create_hunt_container)
+
+        backwardsAnimation(oldContainer, container)
+    }
+
+    override fun loadCreateWayPointContainer() {
+        val oldContainer = container
+
+        container = CreateWayPointContainer(WeakReference(this), createHuntPresenter)
+
+        container.inflate(activity_create_hunt_container)
+
+        forwardAnimation(oldContainer, container)
     }
 
     override fun updateClueList(clues: List<String>) {
@@ -82,5 +108,15 @@ class CreateHuntActivity : BaseActivity(), CreateHuntView {
     override fun onBackPressed() {
         if (!container.onBackPressed())
             super.onBackPressed()
+    }
+
+    private fun forwardAnimation(animateOut: Container, animateIn: Container) {
+        animateIn.animateIn(this, R.anim.in_right)
+        animateOut.animateOut(this, R.anim.out_left)
+    }
+
+    private fun backwardsAnimation(animateOut: Container, animateIn: Container) {
+        animateIn.animateIn(this, R.anim.in_left)
+        animateOut.animateOut(this, R.anim.out_right)
     }
 }

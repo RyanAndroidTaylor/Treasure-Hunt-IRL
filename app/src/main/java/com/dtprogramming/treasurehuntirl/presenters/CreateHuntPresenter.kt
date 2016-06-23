@@ -27,15 +27,19 @@ class CreateHuntPresenter() : Presenter {
 
         val CREATE_HUNT = 0
         val CREATE_CLUE = 1
+        val CREATE_WAY_POINT = 2
     }
 
     fun load(treasureHuntId: String, createHuntView: CreateHuntView) {
+        this.createHuntView = createHuntView
         this.treasureHuntId = treasureHuntId
 
-        this.load(createHuntView)
+        createHuntView.initLoad(clues)
+
+        subscribeToClues()
     }
 
-    fun load(createHuntView: CreateHuntView) {
+    fun reload(createHuntView: CreateHuntView) {
         this.createHuntView = createHuntView
 
         loadContainer()
@@ -66,6 +70,11 @@ class CreateHuntPresenter() : Presenter {
                 unsubscribeToClues()
 
                 createHuntView.loadCreateClueContainer()
+            }
+            CREATE_WAY_POINT -> {
+                unsubscribeToClues()
+
+                createHuntView.loadCreateWayPointContainer()
             }
         }
     }

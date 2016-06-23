@@ -1,7 +1,9 @@
 package com.dtprogramming.treasurehuntirl.ui.container
 
+import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
@@ -18,6 +20,8 @@ class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter, val clue
     private lateinit var adapter: ClueAdapter
 
     private lateinit var clueList: RecyclerView
+
+    override lateinit var layout: View
 
     override fun inflate(parent: ViewGroup): Container {
         return super.inflate(parent, R.layout.container_create_hunt)
@@ -36,7 +40,9 @@ class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter, val clue
             createHuntPresenter.switchState(CreateHuntPresenter.CREATE_CLUE)
         }
 
-        parent.create_hunt_container_add_waypoint.setOnClickListener {  }
+        parent.create_hunt_container_add_waypoint.setOnClickListener {
+            createHuntPresenter.switchState(CreateHuntPresenter.CREATE_WAY_POINT)
+        }
 
         parent.create_hunt_container_save.setOnClickListener {  }
 
