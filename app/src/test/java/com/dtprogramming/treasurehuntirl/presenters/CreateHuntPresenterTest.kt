@@ -44,7 +44,7 @@ class CreateHuntPresenterTest {
     fun testLoadWithoutUuid() {
         createHuntPresenter.load("fake uuid", createHuntView)
 
-        createHuntPresenter.load(createHuntView)
+        createHuntPresenter.reload(createHuntView)
 
         Mockito.verify(createHuntView, Mockito.times(2)).loadCreateHuntContainer(Mockito.anyListOf(String::class.java))
 
@@ -52,7 +52,7 @@ class CreateHuntPresenterTest {
 
         Mockito.verify(createHuntView, Mockito.times(1)).loadCreateClueContainer()
 
-        createHuntPresenter.load(createHuntView)
+        createHuntPresenter.reload(createHuntView)
 
         Mockito.verify(createHuntView, Mockito.times(2)).loadCreateClueContainer()
     }

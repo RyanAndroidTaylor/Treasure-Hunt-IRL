@@ -5,8 +5,10 @@ package com.dtprogramming.treasurehuntirl.ui.views
  */
 interface CreateHuntView {
 
+    fun initLoad(clues: List<String>)
     fun loadCreateHuntContainer(clues: List<String>)
     fun loadCreateClueContainer()
+    fun loadCreateWayPointContainer()
 
     fun updateClueList(clues: List<String>)
 }
