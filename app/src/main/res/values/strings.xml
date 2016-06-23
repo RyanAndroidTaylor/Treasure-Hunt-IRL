@@ -10,4 +10,6 @@
     <string name="add_clue">Add Clue</string>
     <string name="clue_title">Clue</string>
     <string name="save">SAVE</string>
+    <string name="cancel">CANCEL</string>
+    <string name="add_waypoint">Add Waypoint</string>
 </resources>
