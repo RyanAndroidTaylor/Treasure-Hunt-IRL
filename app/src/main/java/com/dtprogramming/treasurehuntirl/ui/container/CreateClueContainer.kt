@@ -10,7 +10,6 @@ import kotlinx.android.synthetic.main.container_create_clue.view.*
  * Created by ryantaylor on 6/20/16.
  */
 class CreateClueContainer(val createHuntPresenter: CreateHuntPresenter) : BasicContainer() {
-    override lateinit var layout: View
 
     override fun inflate(parent: ViewGroup): Container {
         return super.inflate(parent, R.layout.container_create_clue)

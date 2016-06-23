@@ -1,8 +1,12 @@
 package com.dtprogramming.treasurehuntirl.ui.activities
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
@@ -68,36 +72,28 @@ class CreateHuntActivity : BaseActivity(), CreateHuntView {
         container = CreateHuntContainer(createHuntPresenter, clues)
 
         container.inflate(activity_create_hunt_container)
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+        }
     }
 
     override fun loadCreateClueContainer() {
-        val oldContainer = container
-
         container = CreateClueContainer(createHuntPresenter)
 
         container.inflate(activity_create_hunt_container)
-
-        forwardAnimation(oldContainer, container)
     }
 
     override fun loadCreateHuntContainer(clues: List<String>) {
-        val oldContainer = container
-
         container = CreateHuntContainer(createHuntPresenter, clues)
 
         container.inflate(activity_create_hunt_container)
-
-        backwardsAnimation(oldContainer, container)
     }
 
     override fun loadCreateWayPointContainer() {
-        val oldContainer = container
-
         container = CreateWayPointContainer(WeakReference(this), createHuntPresenter)
 
         container.inflate(activity_create_hunt_container)
-
-        forwardAnimation(oldContainer, container)
     }
 
     override fun updateClueList(clues: List<String>) {
@@ -108,15 +104,5 @@ class CreateHuntActivity : BaseActivity(), CreateHuntView {
     override fun onBackPressed() {
         if (!container.onBackPressed())
             super.onBackPressed()
-    }
-
-    private fun forwardAnimation(animateOut: Container, animateIn: Container) {
-        animateIn.animateIn(this, R.anim.in_right)
-        animateOut.animateOut(this, R.anim.out_left)
-    }
-
-    private fun backwardsAnimation(animateOut: Container, animateIn: Container) {
-        animateIn.animateIn(this, R.anim.in_left)
-        animateOut.animateOut(this, R.anim.out_right)
     }
 }

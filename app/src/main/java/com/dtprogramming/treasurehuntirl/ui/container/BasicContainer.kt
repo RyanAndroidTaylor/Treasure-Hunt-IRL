@@ -9,12 +9,10 @@ import android.view.ViewGroup
 abstract class BasicContainer : Container {
 
     fun inflate(parent: ViewGroup, layoutId: Int): Container {
-//        if (parent.childCount > 0)
-//            parent.removeViewAt(0)
+        if (parent.childCount > 0)
+            parent.removeViewAt(0)
 
-        layout = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
-
-        parent.addView(layout, 0)
+        LayoutInflater.from(parent.context).inflate(layoutId, parent, true)
 
         loadViews(parent)
 

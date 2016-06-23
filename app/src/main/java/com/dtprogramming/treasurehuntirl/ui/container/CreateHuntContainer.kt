@@ -21,8 +21,6 @@ class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter, val clue
 
     private lateinit var clueList: RecyclerView
 
-    override lateinit var layout: View
-
     override fun inflate(parent: ViewGroup): Container {
         return super.inflate(parent, R.layout.container_create_hunt)
     }
