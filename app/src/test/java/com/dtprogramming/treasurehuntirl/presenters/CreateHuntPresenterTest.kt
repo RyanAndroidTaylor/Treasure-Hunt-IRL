@@ -1,14 +1,11 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
 import com.dtprogramming.treasurehuntirl.BuildConfig
-import com.dtprogramming.treasurehuntirl.ui.container.Container
-import com.dtprogramming.treasurehuntirl.ui.container.CreateClueContainer
-import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
+import com.dtprogramming.treasurehuntirl.MockitoMatchers
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import org.junit.After
 import org.junit.Before
 
-import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
@@ -51,7 +48,7 @@ class CreateHuntPresenterTest {
 
         createHuntPresenter.reload(createHuntView)
 
-        Mockito.verify(createHuntView, Mockito.atLeastOnce()).moveToContainer(Mockito.any(CreateHuntContainer::class.java))
+        Mockito.verify(createHuntView, Mockito.atLeastOnce()).moveToContainer(MockitoMatchers.anyObject())
     }
 
     @Test
@@ -62,11 +59,11 @@ class CreateHuntPresenterTest {
 
         createHuntPresenter.switchState(CreateHuntPresenter.CREATE_CLUE)
 
-        Mockito.verify(createHuntView, Mockito.atLeastOnce()).moveToContainer(Mockito.any(CreateClueContainer::class.java))
+        Mockito.verify(createHuntView, Mockito.atLeastOnce()).moveToContainer(MockitoMatchers.anyObject())
 
         createHuntPresenter.switchState(CreateHuntPresenter.CREATE_HUNT)
 
-        Mockito.verify(createHuntView, Mockito.atLeastOnce()).moveToContainer(Mockito.any(CreateHuntContainer::class.java))
+        Mockito.verify(createHuntView, Mockito.atLeastOnce()).moveToContainer(MockitoMatchers.anyObject())
     }
 
     @Test
