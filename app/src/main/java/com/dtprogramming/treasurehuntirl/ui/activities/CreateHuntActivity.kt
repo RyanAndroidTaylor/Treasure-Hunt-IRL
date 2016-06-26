@@ -8,15 +8,13 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.container.Container
-import com.dtprogramming.treasurehuntirl.ui.container.CreateClueContainer
 import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
-import com.dtprogramming.treasurehuntirl.ui.container.CreateWayPointContainer
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import kotlinx.android.synthetic.main.activity_create_hunt.*
-import java.lang.ref.WeakReference
 import java.util.*
 
 /**
@@ -71,34 +69,27 @@ class CreateHuntActivity : BaseActivity(), CreateHuntView {
     override fun initLoad(clues: List<String>) {
         container = CreateHuntContainer(createHuntPresenter, clues)
 
-        container.inflate(activity_create_hunt_container)
+        container.inflate(this, activity_create_hunt_container)
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
         }
     }
 
-    override fun loadCreateClueContainer() {
-        container = CreateClueContainer(createHuntPresenter)
+    override fun moveToContainer(container: Container) {
+        this.container = container
 
-        container.inflate(activity_create_hunt_container)
-    }
-
-    override fun loadCreateHuntContainer(clues: List<String>) {
-        container = CreateHuntContainer(createHuntPresenter, clues)
-
-        container.inflate(activity_create_hunt_container)
-    }
-
-    override fun loadCreateWayPointContainer() {
-        container = CreateWayPointContainer(WeakReference(this), createHuntPresenter)
-
-        container.inflate(activity_create_hunt_container)
+        this.container.inflate(this, activity_create_hunt_container)
     }
 
     override fun updateClueList(clues: List<String>) {
         if (container is CreateHuntContainer)
             (container as CreateHuntContainer).updateClueList(clues)
+    }
+
+    override fun updateWaypoints(waypoints: List<Waypoint>) {
+        if (container is CreateHuntContainer)
+            (container as CreateHuntContainer).updateWaypointList(waypoints)
     }
 
     override fun onBackPressed() {

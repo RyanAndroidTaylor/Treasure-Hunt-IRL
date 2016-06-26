@@ -1,6 +1,9 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
 import com.dtprogramming.treasurehuntirl.BuildConfig
+import com.dtprogramming.treasurehuntirl.ui.container.Container
+import com.dtprogramming.treasurehuntirl.ui.container.CreateClueContainer
+import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import org.junit.After
 import org.junit.Before
@@ -34,29 +37,21 @@ class CreateHuntPresenterTest {
     }
 
     @Test
-    fun testLoadWithUuid() {
+    fun testLoad() {
         createHuntPresenter.load("fake uuid", createHuntView)
 
         Mockito.verify(createHuntView).initLoad(Mockito.anyListOf(String::class.java))
     }
 
     @Test
-    fun testLoadWithoutUuid() {
+    fun testReload() {
         createHuntPresenter.load("fake uuid", createHuntView)
 
         Mockito.verify(createHuntView).initLoad(Mockito.anyListOf(String::class.java))
 
         createHuntPresenter.reload(createHuntView)
 
-        Mockito.verify(createHuntView).loadCreateHuntContainer(Mockito.anyListOf(String::class.java))
-
-        createHuntPresenter.switchState(CreateHuntPresenter.CREATE_CLUE)
-
-        Mockito.verify(createHuntView, Mockito.times(1)).loadCreateClueContainer()
-
-        createHuntPresenter.reload(createHuntView)
-
-        Mockito.verify(createHuntView, Mockito.times(2)).loadCreateClueContainer()
+        Mockito.verify(createHuntView, Mockito.atLeastOnce()).moveToContainer(Mockito.any(CreateHuntContainer::class.java))
     }
 
     @Test
@@ -67,11 +62,11 @@ class CreateHuntPresenterTest {
 
         createHuntPresenter.switchState(CreateHuntPresenter.CREATE_CLUE)
 
-        Mockito.verify(createHuntView).loadCreateClueContainer()
+        Mockito.verify(createHuntView, Mockito.atLeastOnce()).moveToContainer(Mockito.any(CreateClueContainer::class.java))
 
         createHuntPresenter.switchState(CreateHuntPresenter.CREATE_HUNT)
 
-        Mockito.verify(createHuntView, Mockito.times(1)).loadCreateHuntContainer(Mockito.anyListOf(String::class.java))
+        Mockito.verify(createHuntView, Mockito.atLeastOnce()).moveToContainer(Mockito.any(CreateHuntContainer::class.java))
     }
 
     @Test

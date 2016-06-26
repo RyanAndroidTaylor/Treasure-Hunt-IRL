@@ -1,11 +1,11 @@
 package com.dtprogramming.treasurehuntirl.ui.container
 
-import android.content.Context
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
@@ -21,7 +21,7 @@ class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter, val clue
 
     private lateinit var clueList: RecyclerView
 
-    override fun inflate(parent: ViewGroup): Container {
+    override fun inflate(activity: AppCompatActivity, parent: ViewGroup): Container {
         return super.inflate(parent, R.layout.container_create_hunt)
     }
 
@@ -51,5 +51,9 @@ class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter, val clue
 
     fun updateClueList(clues: List<String>) {
         adapter.updateList(clues)
+    }
+
+    fun updateWaypointList(waypoints: List<Waypoint>) {
+        //TODO Load waypoints onto map once it is set up.
     }
 }

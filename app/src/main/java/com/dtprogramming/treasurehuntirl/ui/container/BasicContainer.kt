@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.ui.container
 
+import android.support.v4.app.ActivityCompat
 import android.view.LayoutInflater
 import android.view.ViewGroup
 

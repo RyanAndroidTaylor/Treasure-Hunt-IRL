@@ -3,6 +3,10 @@ package com.dtprogramming.treasurehuntirl.presenters
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.DatabaseObservables
 import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.Waypoint
+import com.dtprogramming.treasurehuntirl.ui.container.CreateClueContainer
+import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
+import com.dtprogramming.treasurehuntirl.ui.container.CreateWayPointContainer
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import rx.Subscription
 import java.util.*
@@ -14,13 +18,16 @@ class CreateHuntPresenter() : Presenter {
 
     private var state = CREATE_HUNT
 
-    private lateinit var treasureHuntId: String
+    lateinit var treasureHuntId: String
+        private set
     private lateinit var createHuntView: CreateHuntView
 
     private var clueSubscription: Subscription? = null
+    private var waypointSubscription: Subscription? = null
 
     var clues = ArrayList<String>()
         private set
+    var waypoints = ArrayList<Waypoint>()
 
     companion object {
         val TAG = CreateHuntPresenter::class.java.simpleName
@@ -62,19 +69,33 @@ class CreateHuntPresenter() : Presenter {
     private fun loadContainer() {
         when (state) {
             CREATE_HUNT -> {
-                subscribeToClues()
+                unsubscribeToWaypoints()
 
-                createHuntView.loadCreateHuntContainer(clues)
+                createHuntView.moveToContainer(CreateHuntContainer(this, clues))
+
+                subscribeToClues()
             }
             CREATE_CLUE -> {
                 unsubscribeToClues()
+                unsubscribeToWaypoints()
 
-                createHuntView.loadCreateClueContainer()
+                createHuntView.moveToContainer(CreateClueContainer(this))
             }
             CREATE_WAY_POINT -> {
                 unsubscribeToClues()
 
-                createHuntView.loadCreateWayPointContainer()
+                val createWaypointPresenter = if (PresenterManager.hasPresenter(CreateWaypointPresenter.TAG))
+                    PresenterManager.getPresenter(CreateWaypointPresenter.TAG) as CreateWaypointPresenter
+                else
+                    PresenterManager.addPresenter(CreateWaypointPresenter.TAG, CreateWaypointPresenter()) as CreateWaypointPresenter
+
+                val createWaypointContainer = CreateWayPointContainer(createWaypointPresenter, waypoints)
+
+                createWaypointPresenter.load(createWaypointContainer, this)
+
+                createHuntView.moveToContainer(createWaypointContainer)
+
+                subscribeToWaypoints()
             }
         }
     }
@@ -101,6 +122,28 @@ class CreateHuntPresenter() : Presenter {
         }
     }
 
+    private fun subscribeToWaypoints() {
+        waypointSubscription = DatabaseObservables.getWaypointObservable(treasureHuntId)
+        .subscribe({
+            val waypointList = ArrayList<Waypoint>()
+
+            for (waypoint in it) {
+                waypointList.add(waypoint)
+            }
+
+            waypoints = waypointList
+
+            createHuntView.updateWaypoints(waypoints)
+        })
+    }
+
+    private fun unsubscribeToWaypoints() {
+        waypointSubscription?.let {
+            if (!it.isUnsubscribed)
+                it.unsubscribe()
+        }
+    }
+
     fun switchState(newState: Int) {
         state = newState
 
@@ -111,5 +154,9 @@ class CreateHuntPresenter() : Presenter {
         val clue = Clue(UUID.randomUUID().toString().replace("-", ""), treasureHuntId, clueText)
 
         THApp.briteDatabase.insert(Clue.TABLE.NAME, clue.getContentValues())
+    }
+
+    fun saveWaypoint(waypoint: Waypoint) {
+        THApp.briteDatabase.insert(Waypoint.TABLE.NAME, waypoint.getContentValues())
     }
 }
