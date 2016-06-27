@@ -44,6 +44,7 @@ class CreateHuntPresenter() : Presenter {
         createHuntView.initLoad(clues)
 
         subscribeToClues()
+        subscribeToWaypoints()
     }
 
     fun reload(createHuntView: CreateHuntView) {
@@ -69,11 +70,10 @@ class CreateHuntPresenter() : Presenter {
     private fun loadContainer() {
         when (state) {
             CREATE_HUNT -> {
-                unsubscribeToWaypoints()
-
                 createHuntView.moveToContainer(CreateHuntContainer(this, clues))
 
                 subscribeToClues()
+                subscribeToWaypoints()
             }
             CREATE_CLUE -> {
                 unsubscribeToClues()
