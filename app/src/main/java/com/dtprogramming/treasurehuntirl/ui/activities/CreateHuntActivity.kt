@@ -66,8 +66,8 @@ class CreateHuntActivity : BaseActivity(), CreateHuntView {
             createHuntPresenter.finish()
     }
 
-    override fun initLoad(clues: List<String>) {
-        container = CreateHuntContainer(createHuntPresenter, clues)
+    override fun initLoad() {
+        container = CreateHuntContainer(createHuntPresenter)
 
         container.inflate(this, activity_create_hunt_container)
 

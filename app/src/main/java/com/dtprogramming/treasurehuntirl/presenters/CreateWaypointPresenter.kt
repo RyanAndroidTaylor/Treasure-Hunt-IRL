@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
+import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
 import com.google.android.gms.maps.model.LatLng
@@ -74,7 +75,9 @@ class CreateWaypointPresenter() : Presenter {
     }
 
     fun save() {
-        createHuntPresenter.saveWaypoint(Waypoint(UUID.randomUUID().toString().replace("-", ""), marker.title, createHuntPresenter.treasureHuntId, marker.position.latitude, marker.position.longitude))
+        val waypoint = Waypoint(UUID.randomUUID().toString().replace("-", ""), marker.title, createHuntPresenter.treasureHuntId, marker.position.latitude, marker.position.longitude)
+
+        THApp.briteDatabase.insert(Waypoint.TABLE.NAME, waypoint.getContentValues())
 
         PresenterManager.removePresenter(TAG)
 

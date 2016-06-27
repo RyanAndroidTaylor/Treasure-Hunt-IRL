@@ -25,7 +25,7 @@ import java.lang.ref.WeakReference
 /**
  * Created by ryantaylor on 6/22/16.
  */
-class CreateWayPointContainer(val createWaypointPresenter: CreateWaypointPresenter, val waypoints: List<Waypoint>) : BasicContainer(), CreateWaypointView, OnMapReadyCallback {
+class CreateWayPointContainer(val createWaypointPresenter: CreateWaypointPresenter) : BasicContainer(), CreateWaypointView, OnMapReadyCallback {
 
     private lateinit var activity: WeakReference<AppCompatActivity>
 

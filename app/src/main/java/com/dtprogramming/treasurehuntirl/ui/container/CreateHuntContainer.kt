@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.container_create_hunt.view.*
 /**
  * Created by ryantaylor on 6/20/16.
  */
-class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter, val clues: List<String>) : BasicContainer(), OnMapReadyCallback {
+class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter) : BasicContainer(), OnMapReadyCallback {
 
     private lateinit var adapter: ClueAdapter
 
@@ -49,7 +49,7 @@ class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter, val clue
 
         clueList.layoutManager = CustomLinearLayoutManager(parent.context, LinearLayoutManager.HORIZONTAL, false)
 
-        adapter = ClueAdapter(parent.context, clues)
+        adapter = ClueAdapter(parent.context, emptyList())
 
         clueList.adapter = adapter
 
@@ -81,8 +81,6 @@ class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter, val clue
     override fun onMapReady(googleMap: GoogleMap?) {
         this.googleMap = googleMap
 
-        updateWaypointList(createHuntPresenter.waypoints)
-
-        googleMap
+        createHuntPresenter.mapLoaded()
     }
 }

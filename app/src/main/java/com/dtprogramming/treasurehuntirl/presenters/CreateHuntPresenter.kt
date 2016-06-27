@@ -41,10 +41,9 @@ class CreateHuntPresenter() : Presenter {
         this.createHuntView = createHuntView
         this.treasureHuntId = treasureHuntId
 
-        createHuntView.initLoad(clues)
+        createHuntView.initLoad()
 
         subscribeToClues()
-        subscribeToWaypoints()
     }
 
     fun reload(createHuntView: CreateHuntView) {
@@ -55,6 +54,10 @@ class CreateHuntPresenter() : Presenter {
         subscribeToClues()
     }
 
+    fun mapLoaded() {
+        subscribeToWaypoints()
+    }
+
     fun saveAndFinish() {
         //TODO Save treasure hunt once it is setup
 
@@ -63,6 +66,7 @@ class CreateHuntPresenter() : Presenter {
 
     fun finish() {
         unsubscribeToClues()
+        unsubscribeToWaypoints()
 
         PresenterManager.removePresenter(TAG)
     }
@@ -70,10 +74,9 @@ class CreateHuntPresenter() : Presenter {
     private fun loadContainer() {
         when (state) {
             CREATE_HUNT -> {
-                createHuntView.moveToContainer(CreateHuntContainer(this, clues))
+                createHuntView.moveToContainer(CreateHuntContainer(this))
 
                 subscribeToClues()
-                subscribeToWaypoints()
             }
             CREATE_CLUE -> {
                 unsubscribeToClues()
@@ -89,13 +92,11 @@ class CreateHuntPresenter() : Presenter {
                 else
                     PresenterManager.addPresenter(CreateWaypointPresenter.TAG, CreateWaypointPresenter()) as CreateWaypointPresenter
 
-                val createWaypointContainer = CreateWayPointContainer(createWaypointPresenter, waypoints)
+                val createWaypointContainer = CreateWayPointContainer(createWaypointPresenter)
 
                 createWaypointPresenter.load(createWaypointContainer, this)
 
                 createHuntView.moveToContainer(createWaypointContainer)
-
-                subscribeToWaypoints()
             }
         }
     }
@@ -154,9 +155,5 @@ class CreateHuntPresenter() : Presenter {
         val clue = Clue(UUID.randomUUID().toString().replace("-", ""), treasureHuntId, clueText)
 
         THApp.briteDatabase.insert(Clue.TABLE.NAME, clue.getContentValues())
-    }
-
-    fun saveWaypoint(waypoint: Waypoint) {
-        THApp.briteDatabase.insert(Waypoint.TABLE.NAME, waypoint.getContentValues())
     }
 }

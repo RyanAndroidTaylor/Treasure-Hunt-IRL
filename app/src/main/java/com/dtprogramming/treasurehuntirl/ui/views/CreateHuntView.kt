@@ -8,7 +8,7 @@ import com.dtprogramming.treasurehuntirl.ui.container.Container
  */
 interface CreateHuntView {
 
-    fun initLoad(clues: List<String>)
+    fun initLoad()
     fun moveToContainer(container: Container)
 
     fun updateClueList(clues: List<String>)
