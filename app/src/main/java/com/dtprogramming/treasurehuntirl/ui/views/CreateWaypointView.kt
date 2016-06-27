@@ -8,6 +8,6 @@ import com.google.android.gms.maps.model.MarkerOptions
  */
 interface CreateWaypointView {
 
-    fun loadMarker(marker: MarkerOptions): Marker
+    open fun loadMarker(marker: MarkerOptions): Marker
     fun markerMoved(marker: Marker)
 }

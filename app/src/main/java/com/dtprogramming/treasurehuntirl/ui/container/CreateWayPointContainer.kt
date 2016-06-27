@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateWaypointPresenter
@@ -31,8 +32,8 @@ class CreateWayPointContainer(val createWaypointPresenter: CreateWaypointPresent
     private lateinit var googleMap: GoogleMap
 
     private lateinit var title: EditText
-    private lateinit var lat: EditText
-    private lateinit var lng: EditText
+    private lateinit var lat: TextView
+    private lateinit var lng: TextView
 
     override fun inflate(activity: AppCompatActivity, parent: ViewGroup): Container {
         this.activity = WeakReference<AppCompatActivity>(activity)
@@ -85,15 +86,15 @@ class CreateWayPointContainer(val createWaypointPresenter: CreateWaypointPresent
     override fun loadMarker(marker: MarkerOptions): Marker {
         title.text.replace(0, title.text.length, marker.title)
 
-        lat.text.replace(0, lat.text.length, "${marker.position.latitude}")
-        lng.text.replace(0, lng.text.length, "${marker.position.longitude}")
+        lat.text = "${marker.position.latitude}"
+        lng.text = "${marker.position.longitude}"
 
         return googleMap.addMarker(marker)
     }
 
     override fun markerMoved(marker: Marker) {
-        lat.text.replace(0, lat.text.length, "${marker.position.latitude}")
-        lng.text.replace(0, lng.text.length, "${marker.position.longitude}")
+        lat.text = "${marker.position.latitude}"
+        lng.text = "${marker.position.longitude}"
     }
 
     override fun onBackPressed(): Boolean {

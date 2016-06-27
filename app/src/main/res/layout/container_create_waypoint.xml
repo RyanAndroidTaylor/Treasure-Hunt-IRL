@@ -45,13 +45,13 @@
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_minus_black_24dp"/>
 
-            <EditText
+            <TextView
                 android:id="@+id/create_waypoint_container_lat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="40dp"
-                android:inputType="numberDecimal"/>
+                android:gravity="center_horizontal"/>
 
             <ImageView
                 android:id="@+id/create_waypoint_container_inc_lat"
@@ -75,13 +75,13 @@
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_minus_black_24dp"/>
 
-            <EditText
+            <TextView
                 android:id="@+id/create_waypoint_container_lng"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="40dp"
-                android:inputType="numberDecimal"/>
+                android:gravity="center_horizontal"/>
 
             <ImageView
                 android:id="@+id/create_waypoint_container_inc_lng"
