@@ -1,8 +1,6 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
-import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.DatabaseObservables
-import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.container.CreateClueContainer
 import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
@@ -82,7 +80,16 @@ class CreateHuntPresenter() : Presenter {
                 unsubscribeToClues()
                 unsubscribeToWaypoints()
 
-                createHuntView.moveToContainer(CreateClueContainer(this))
+                val createCluePresenter = if (PresenterManager.hasPresenter(CreateCluePresenter.TAG))
+                    PresenterManager.getPresenter(CreateCluePresenter.TAG) as CreateCluePresenter
+                else
+                    PresenterManager.addPresenter(CreateCluePresenter.TAG, CreateCluePresenter()) as CreateCluePresenter
+
+                val createClueContainer = CreateClueContainer(createCluePresenter)
+
+                createCluePresenter.load(createClueContainer, this)
+
+                createHuntView.moveToContainer(createClueContainer)
             }
             CREATE_WAY_POINT -> {
                 unsubscribeToClues()
@@ -149,11 +156,5 @@ class CreateHuntPresenter() : Presenter {
         state = newState
 
         loadContainer()
-    }
-
-    fun saveClue(clueText: String) {
-        val clue = Clue(UUID.randomUUID().toString().replace("-", ""), treasureHuntId, clueText)
-
-        THApp.briteDatabase.insert(Clue.TABLE.NAME, clue.getContentValues())
     }
 }

@@ -45,7 +45,7 @@ class CreateWaypointContainerTest {
 
     @Test
     fun testInitialLayout() {
-        onView(withId(R.id.create_waypoint_container_title)).check(matches(withText("New Marker")))
+        onView(withId(R.id.create_waypoint_container_title)).check(matches(withText("New Waypoint")))
         onView(withId(R.id.create_waypoint_container_lat)).check(matches(withText("0.0")))
         onView(withId(R.id.create_waypoint_container_lng)).check(matches(withText("0.0")))
     }

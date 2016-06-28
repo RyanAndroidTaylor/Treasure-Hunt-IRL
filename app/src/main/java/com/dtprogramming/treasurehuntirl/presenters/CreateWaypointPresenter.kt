@@ -3,9 +3,6 @@ package com.dtprogramming.treasurehuntirl.presenters
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import java.util.*
 
 /**
@@ -18,8 +15,9 @@ class CreateWaypointPresenter() : Presenter {
 
     private lateinit var createHuntPresenter: CreateHuntPresenter
 
-    private lateinit var marker: Marker
-        private set
+    private var title: String = "New Waypoint"
+    private var lat: Double = 0.0
+    private var lng: Double = 0.0
 
     companion object {
         val TAG = CreateWaypointPresenter::class.java.simpleName
@@ -31,41 +29,42 @@ class CreateWaypointPresenter() : Presenter {
     }
 
     fun mapLoaded() {
-        marker = createWaypointView.loadMarker(MarkerOptions().title("New Marker").position(LatLng(0.0, 0.0)))
+        createWaypointView.loadMarker(title, lat, lng)
     }
 
-    fun mapClicked(latLng: LatLng) {
-        marker.position = latLng
+    fun mapClicked(lat: Double, lng: Double) {
+        this.lat = lat
+        this.lng = lng
 
-        createWaypointView.markerMoved(marker)
+        createWaypointView.markerMoved(lat, lng)
     }
 
     fun titleTextChanged(title: String) {
-        marker.title = title
+        this.title = title
     }
 
     fun increaseLat() {
-        val lat = marker.position.latitude + NUDGE_DISTANCE
+        lat += NUDGE_DISTANCE
 
-        mapClicked(LatLng(lat, marker.position.longitude))
+        createWaypointView.markerMoved(lat, lng)
     }
 
     fun decreaseLat() {
-        val lat = marker.position.latitude - NUDGE_DISTANCE
+        lat -= NUDGE_DISTANCE
 
-        mapClicked(LatLng(lat, marker.position.longitude))
+        createWaypointView.markerMoved(lat, lng)
     }
 
     fun increaseLng() {
-        val lng = marker.position.longitude + NUDGE_DISTANCE
+        lng += NUDGE_DISTANCE
 
-        mapClicked(LatLng(marker.position.latitude, lng))
+        createWaypointView.markerMoved(lat, lng)
     }
 
     fun decreaseLng() {
-        val lng = marker.position.longitude - NUDGE_DISTANCE
+        lng -= NUDGE_DISTANCE
 
-        mapClicked(LatLng(marker.position.latitude, lng))
+        createWaypointView.markerMoved(lat, lng)
     }
 
     fun cancel() {
@@ -75,7 +74,7 @@ class CreateWaypointPresenter() : Presenter {
     }
 
     fun save() {
-        val waypoint = Waypoint(UUID.randomUUID().toString().replace("-", ""), marker.title, createHuntPresenter.treasureHuntId, marker.position.latitude, marker.position.longitude)
+        val waypoint = Waypoint(UUID.randomUUID().toString().replace("-", ""), title, createHuntPresenter.treasureHuntId, lat, lng)
 
         THApp.briteDatabase.insert(Waypoint.TABLE.NAME, waypoint.getContentValues())
 

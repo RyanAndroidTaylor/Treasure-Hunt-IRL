@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateWaypointPresenter
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
 import com.google.android.gms.maps.GoogleMap
@@ -30,10 +29,11 @@ class CreateWayPointContainer(val createWaypointPresenter: CreateWaypointPresent
     private lateinit var activity: WeakReference<AppCompatActivity>
 
     private lateinit var googleMap: GoogleMap
+    private lateinit var marker: Marker
 
-    private lateinit var title: EditText
-    private lateinit var lat: TextView
-    private lateinit var lng: TextView
+    private lateinit var editTitle: EditText
+    private lateinit var displayLat: TextView
+    private lateinit var displayLng: TextView
 
     override fun inflate(activity: AppCompatActivity, parent: ViewGroup): Container {
         this.activity = WeakReference<AppCompatActivity>(activity)
@@ -48,9 +48,9 @@ class CreateWayPointContainer(val createWaypointPresenter: CreateWaypointPresent
 
         mapFragment.getMapAsync(this)
 
-        title = parent.create_waypoint_container_title
-        lat = parent.create_waypoint_container_lat
-        lng = parent.create_waypoint_container_lng
+        editTitle = parent.create_waypoint_container_title
+        displayLat = parent.create_waypoint_container_lat
+        displayLng = parent.create_waypoint_container_lng
 
         parent.create_waypoint_container_inc_lat.setOnClickListener { createWaypointPresenter.increaseLat() }
         parent.create_waypoint_container_dec_lat.setOnClickListener { createWaypointPresenter.decreaseLat() }
@@ -63,17 +63,17 @@ class CreateWayPointContainer(val createWaypointPresenter: CreateWaypointPresent
     override fun onMapReady(googleMap: GoogleMap?) {
         this.googleMap = googleMap!!
 
+        createWaypointPresenter.mapLoaded()
+
         if (ContextCompat.checkSelfPermission(activity.get(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             googleMap.isMyLocationEnabled = true
         }
 
         this.googleMap.setOnMapClickListener { latLng: LatLng ->
-            createWaypointPresenter.mapClicked(latLng)
+            createWaypointPresenter.mapClicked(latLng.latitude, latLng.longitude)
         }
 
-        createWaypointPresenter.mapLoaded()
-
-        title.addTextChangedListener(object : TextWatcher {
+        editTitle.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 createWaypointPresenter.titleTextChanged(s.toString())
             }
@@ -83,18 +83,20 @@ class CreateWayPointContainer(val createWaypointPresenter: CreateWaypointPresent
         })
     }
 
-    override fun loadMarker(marker: MarkerOptions): Marker {
-        title.text.replace(0, title.text.length, marker.title)
+    override fun loadMarker(title: String, lat: Double, lng: Double) {
+        marker = googleMap.addMarker(MarkerOptions().title(title).position(LatLng(lat, lng)))
 
-        lat.text = "${marker.position.latitude}"
-        lng.text = "${marker.position.longitude}"
+        editTitle.text.replace(0, editTitle.text.length, marker.title)
 
-        return googleMap.addMarker(marker)
+        displayLat.text = "${marker.position.latitude}"
+        displayLng.text = "${marker.position.longitude}"
     }
 
-    override fun markerMoved(marker: Marker) {
-        lat.text = "${marker.position.latitude}"
-        lng.text = "${marker.position.longitude}"
+    override fun markerMoved(lat: Double, lng: Double) {
+        displayLat.text = "$lat"
+        displayLng.text = "$lng"
+
+        marker.position = LatLng(lat, lng)
     }
 
     override fun onBackPressed(): Boolean {

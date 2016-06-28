@@ -11,7 +11,6 @@ import com.google.android.gms.maps.model.zzf
 import org.junit.After
 import org.junit.Before
 
-import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
@@ -44,27 +43,24 @@ class CreateWaypointPresenterTest {
     @Test
     fun testMapLoaded() {
         createWaypointPresenter.load(createWaypointView, createHuntPresenter)
-        createWaypointPresenter.mapLoaded()
 
-        Mockito.verify(createWaypointView).loadMarker(MockitoMatchers.anyObject())
+        Mockito.verify(createWaypointView).loadMarker(Mockito.anyString(), Mockito.anyDouble(), Mockito.anyDouble())
     }
 
-    // Can't figure out how to get a Marker instance
-//    @Test
-//    fun testNudgeMarker() {
-//        createWaypointPresenter.load(createWaypointView, createHuntPresenter)
-//        createWaypointPresenter.mapLoaded()
-//
-//        createWaypointPresenter.increaseLat()
-//        Mockito.verify(createWaypointView, Mockito.times(1)).markerMoved(MockitoMatchers.anyObject())
-//
-//        createWaypointPresenter.decreaseLat()
-//        Mockito.verify(createWaypointView, Mockito.times(2)).markerMoved(MockitoMatchers.anyObject())
-//
-//        createWaypointPresenter.increaseLng()
-//        Mockito.verify(createWaypointView, Mockito.times(3)).markerMoved(MockitoMatchers.anyObject())
-//
-//        createWaypointPresenter.decreaseLng()
-//        Mockito.verify(createWaypointView, Mockito.times(4)).markerMoved(MockitoMatchers.anyObject())
-//    }
+    @Test
+    fun testNudgeMarker() {
+        createWaypointPresenter.load(createWaypointView, createHuntPresenter)
+
+        createWaypointPresenter.increaseLat()
+        Mockito.verify(createWaypointView, Mockito.times(1)).markerMoved(Mockito.anyDouble(), Mockito.anyDouble())
+
+        createWaypointPresenter.decreaseLat()
+        Mockito.verify(createWaypointView, Mockito.times(2)).markerMoved(Mockito.anyDouble(), Mockito.anyDouble())
+
+        createWaypointPresenter.increaseLng()
+        Mockito.verify(createWaypointView, Mockito.times(3)).markerMoved(Mockito.anyDouble(), Mockito.anyDouble())
+
+        createWaypointPresenter.decreaseLng()
+        Mockito.verify(createWaypointView, Mockito.times(4)).markerMoved(Mockito.anyDouble(), Mockito.anyDouble())
+    }
 }
