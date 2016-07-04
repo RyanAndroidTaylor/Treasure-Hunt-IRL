@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
@@ -29,7 +30,7 @@ class CreateHuntActivity : BaseActivity(), CreateHuntView {
         val HUNT_UUID = "HuntUuid"
 
         fun getIntent(context: Context): Intent {
-            return getIntent(context, UUID.randomUUID().toString().replace("-", ""))
+            return Intent(context, CreateHuntActivity::class.java)
         }
 
         fun getIntent(context: Context, treasureHuntId: String): Intent {
@@ -53,9 +54,13 @@ class CreateHuntActivity : BaseActivity(), CreateHuntView {
             PresenterManager.addPresenter(CreateHuntPresenter.TAG, CreateHuntPresenter()) as CreateHuntPresenter
 
         if (savedInstanceState == null) {
-            createHuntPresenter.load(intent.getStringExtra(HUNT_UUID), this)
+            if (intent.hasExtra(HUNT_UUID)) {
+                createHuntPresenter.loadHunt(intent.getStringExtra(HUNT_UUID), this)
+            } else {
+                createHuntPresenter.createHunt(this)
+            }
         } else {
-            createHuntPresenter.reload(this)
+            createHuntPresenter.reloadHunt(this)
         }
     }
 
@@ -82,7 +87,7 @@ class CreateHuntActivity : BaseActivity(), CreateHuntView {
         this.container.inflate(this, activity_create_hunt_container)
     }
 
-    override fun updateClueList(clues: List<String>) {
+    override fun updateClueList(clues: List<Clue>) {
         if (container is CreateHuntContainer)
             (container as CreateHuntContainer).updateClueList(clues)
     }
@@ -90,6 +95,10 @@ class CreateHuntActivity : BaseActivity(), CreateHuntView {
     override fun updateWaypoints(waypoints: List<Waypoint>) {
         if (container is CreateHuntContainer)
             (container as CreateHuntContainer).updateWaypointList(waypoints)
+    }
+
+    override fun close() {
+        finish()
     }
 
     override fun onBackPressed() {

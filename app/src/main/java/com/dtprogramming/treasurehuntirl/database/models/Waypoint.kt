@@ -7,7 +7,7 @@ import com.dtprogramming.treasurehuntirl.database.TableColumns
 /**
  * Created by ryantaylor on 6/23/16.
  */
-class Waypoint(val id: Long, val uuid: String, val title: String, val treasureHuntId: String, val lat: Double, val long: Double) {
+data class Waypoint(val id: Long, val uuid: String, val title: String, val treasureHuntId: String, val lat: Double, val long: Double) {
 
     companion object {
         val TABLE = Table()

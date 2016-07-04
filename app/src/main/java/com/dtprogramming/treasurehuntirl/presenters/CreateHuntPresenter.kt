@@ -1,11 +1,16 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
+import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.DatabaseObservables
+import com.dtprogramming.treasurehuntirl.database.TableColumns
+import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.container.CreateClueContainer
 import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
 import com.dtprogramming.treasurehuntirl.ui.container.CreateWayPointContainer
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
+import com.dtprogramming.treasurehuntirl.util.randomUuid
 import rx.Subscription
 import java.util.*
 
@@ -13,52 +18,77 @@ import java.util.*
  * Created by ryantaylor on 6/20/16.
  */
 class CreateHuntPresenter() : Presenter {
-
     private var state = CREATE_HUNT
 
+    private var isNewHunt = false
     lateinit var treasureHuntId: String
         private set
+
     private lateinit var createHuntView: CreateHuntView
 
     private var clueSubscription: Subscription? = null
     private var waypointSubscription: Subscription? = null
 
-    var clues = ArrayList<String>()
-        private set
-    var waypoints = ArrayList<Waypoint>()
+    val clues = ArrayList<Clue>()
+    val waypoints = ArrayList<Waypoint>()
 
     companion object {
-        val TAG = CreateHuntPresenter::class.java.simpleName
+        val TAG: String = CreateHuntPresenter::class.java.simpleName
 
         val CREATE_HUNT = 0
         val CREATE_CLUE = 1
         val CREATE_WAY_POINT = 2
     }
 
-    fun load(treasureHuntId: String, createHuntView: CreateHuntView) {
+    fun createHunt(createHuntView: CreateHuntView) {
+        this.createHuntView = createHuntView
+        treasureHuntId = UUID.randomUUID().toString().replace("-", "")
+
+        isNewHunt = true
+
+        createHuntView.initLoad()
+    }
+
+    fun loadHunt(treasureHuntId: String, createHuntView: CreateHuntView) {
         this.createHuntView = createHuntView
         this.treasureHuntId = treasureHuntId
 
-        createHuntView.initLoad()
+        isNewHunt = false
 
-        subscribeToClues()
+        createHuntView.initLoad()
     }
 
-    fun reload(createHuntView: CreateHuntView) {
+    fun reloadHunt(createHuntView: CreateHuntView) {
         this.createHuntView = createHuntView
 
         loadContainer()
-
-        subscribeToClues()
     }
 
     fun mapLoaded() {
         subscribeToWaypoints()
     }
 
-    fun saveAndFinish() {
-        //TODO Save treasure hunt once it is setup
+    fun save() {
+        if (isNewHunt) {
+            val treasureHunt = TreasureHunt(randomUuid(), "Simple Title")
 
+            THApp.briteDatabase.insert(TreasureHunt.TABLE.NAME, treasureHunt.getContentValues())
+
+            for (waypoint in waypoints)
+                THApp.briteDatabase.insert(Waypoint.TABLE.NAME, waypoint.getContentValues())
+
+            for (clue in clues)
+                THApp.briteDatabase.insert(Clue.TABLE.NAME, clue.getContentValues())
+        } else {
+            val treasureHunt = TreasureHunt(treasureHuntId, "Simple Title")
+
+            THApp.briteDatabase.update(TreasureHunt.TABLE.NAME, treasureHunt.getContentValues(), TableColumns.WHERE_UUID_EQUALS, treasureHuntId)
+        }
+
+        finish()
+    }
+
+    fun cancel() {
         finish()
     }
 
@@ -67,6 +97,8 @@ class CreateHuntPresenter() : Presenter {
         unsubscribeToWaypoints()
 
         PresenterManager.removePresenter(TAG)
+
+        createHuntView.close()
     }
 
     private fun loadContainer() {
@@ -111,15 +143,13 @@ class CreateHuntPresenter() : Presenter {
     private fun subscribeToClues() {
         clueSubscription = DatabaseObservables.getClueObservable(treasureHuntId)
                 .subscribe ({
-                    val clueList = ArrayList<String>()
-
                     for (clue in it) {
-                        clueList.add(clue.text)
+                        clues.add(clue)
                     }
 
-                    clues = clueList
-
                     createHuntView.updateClueList(clues)
+
+                    unsubscribeToClues()
                 })
     }
 
@@ -133,15 +163,13 @@ class CreateHuntPresenter() : Presenter {
     private fun subscribeToWaypoints() {
         waypointSubscription = DatabaseObservables.getWaypointObservable(treasureHuntId)
         .subscribe({
-            val waypointList = ArrayList<Waypoint>()
-
             for (waypoint in it) {
-                waypointList.add(waypoint)
+                waypoints.add(waypoint)
             }
 
-            waypoints = waypointList
-
             createHuntView.updateWaypoints(waypoints)
+
+            unsubscribeToWaypoints()
         })
     }
 
@@ -156,5 +184,20 @@ class CreateHuntPresenter() : Presenter {
         state = newState
 
         loadContainer()
+    }
+
+    //TODO Look into just adding the one item to the RecyclerView instead of reloading the entire list
+    fun saveClue(clue: Clue) {
+        clues.add(clue)
+
+        if (!isNewHunt)
+            THApp.briteDatabase.insert(Clue.TABLE.NAME, clue.getContentValues())
+    }
+
+    fun saveWaypoint(waypoint: Waypoint) {
+        waypoints.add(waypoint)
+
+        if (!isNewHunt)
+            THApp.briteDatabase.insert(Waypoint.TABLE.NAME, waypoint.getContentValues())
     }
 }

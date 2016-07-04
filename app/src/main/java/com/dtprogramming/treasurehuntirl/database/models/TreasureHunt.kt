@@ -7,7 +7,7 @@ import com.dtprogramming.treasurehuntirl.database.TableColumns
 /**
  * Created by ryantaylor on 6/21/16.
  */
-data class TreasureHunt(val uuid: String, val clues: List<String>) {
+data class TreasureHunt(val uuid: String, val title: String) {
 
     companion object {
         val TABLE = Table()
@@ -17,6 +17,7 @@ data class TreasureHunt(val uuid: String, val clues: List<String>) {
         val contentValues = ContentValues()
 
         contentValues.put(TableColumns.UUID, uuid);
+        contentValues.put(TABLE.TITLE, title)
 
         return contentValues
     }

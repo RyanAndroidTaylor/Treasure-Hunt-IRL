@@ -35,25 +35,25 @@ class CreateHuntPresenterTest {
 
     @Test
     fun testLoad() {
-        createHuntPresenter.load("fake uuid", createHuntView)
+        createHuntPresenter.loadHunt("fake uuid", createHuntView)
 
         Mockito.verify(createHuntView).initLoad()
     }
 
     @Test
     fun testReload() {
-        createHuntPresenter.load("fake uuid", createHuntView)
+        createHuntPresenter.loadHunt("fake uuid", createHuntView)
 
         Mockito.verify(createHuntView).initLoad()
 
-        createHuntPresenter.reload(createHuntView)
+        createHuntPresenter.reloadHunt(createHuntView)
 
         Mockito.verify(createHuntView, Mockito.atLeastOnce()).moveToContainer(MockitoMatchers.anyObject())
     }
 
     @Test
     fun testSwitchState() {
-        createHuntPresenter.load("Fake uuid", createHuntView)
+        createHuntPresenter.loadHunt("Fake uuid", createHuntView)
 
         Mockito.verify(createHuntView).initLoad()
 
@@ -68,7 +68,7 @@ class CreateHuntPresenterTest {
 
     @Test
     fun testSaveClue() {
-        createHuntPresenter.load("Some fake ID boi", createHuntView)
+        createHuntPresenter.loadHunt("Some fake ID boi", createHuntView)
 
         createHuntPresenter.saveClue("some text")
     }

@@ -76,7 +76,7 @@ class CreateWaypointPresenter() : Presenter {
     fun save() {
         val waypoint = Waypoint(UUID.randomUUID().toString().replace("-", ""), title, createHuntPresenter.treasureHuntId, lat, lng)
 
-        THApp.briteDatabase.insert(Waypoint.TABLE.NAME, waypoint.getContentValues())
+        createHuntPresenter.saveWaypoint(waypoint)
 
         PresenterManager.removePresenter(TAG)
 

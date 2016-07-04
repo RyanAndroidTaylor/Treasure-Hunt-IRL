@@ -31,7 +31,7 @@ class CreateCluePresenter : Presenter {
     fun save() {
         val clue = Clue(UUID.randomUUID().toString().replace("-", ""), createHuntPresenter.treasureHuntId, clueText)
 
-        THApp.briteDatabase.insert(Clue.TABLE.NAME, clue.getContentValues())
+        createHuntPresenter.saveClue(clue)
 
         PresenterManager.removePresenter(TAG)
 

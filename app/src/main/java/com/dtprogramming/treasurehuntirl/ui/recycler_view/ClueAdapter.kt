@@ -8,18 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.database.models.Clue
 import kotlinx.android.synthetic.main.view_holder_clue.view.*
 
 /**
  * Created by ryantaylor on 6/16/16.
  */
-class ClueAdapter(context: Context, clues: List<String>) : ListRecyclerViewSectionAdapter<RecyclerView.ViewHolder, String>(context, clues) {
+class ClueAdapter(context: Context, clues: List<Clue>) : ListRecyclerViewSectionAdapter<RecyclerView.ViewHolder, Clue>(context, clues) {
 
-    override fun needsSectionBefore(item: String?): Boolean {
+    override fun needsSectionBefore(item: Clue?): Boolean {
         return false
     }
 
-    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder?, clue: String?) {
+    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder?, clue: Clue?) {
         if (viewHolder is ClueViewHolder) {
             clue?.let {
                 viewHolder.bind(it)
@@ -45,8 +46,8 @@ class ClueAdapter(context: Context, clues: List<String>) : ListRecyclerViewSecti
             clueText = view.view_holder_clue_text
         }
 
-        fun bind(clue: String) {
-            clueText.text = clue
+        fun bind(clue: Clue) {
+            clueText.text = clue.text
         }
     }
 }
