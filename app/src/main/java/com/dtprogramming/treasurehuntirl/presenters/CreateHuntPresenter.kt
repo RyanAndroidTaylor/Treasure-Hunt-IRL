@@ -6,9 +6,6 @@ import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
-import com.dtprogramming.treasurehuntirl.ui.container.CreateClueContainer
-import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
-import com.dtprogramming.treasurehuntirl.ui.container.CreateWayPointContainer
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import com.dtprogramming.treasurehuntirl.util.randomUuid
 import rx.Subscription
@@ -18,7 +15,6 @@ import java.util.*
  * Created by ryantaylor on 6/20/16.
  */
 class CreateHuntPresenter() : Presenter {
-    private var state = CREATE_HUNT
 
     private var isNewHunt = false
     lateinit var treasureHuntId: String
@@ -34,10 +30,6 @@ class CreateHuntPresenter() : Presenter {
 
     companion object {
         val TAG: String = CreateHuntPresenter::class.java.simpleName
-
-        val CREATE_HUNT = 0
-        val CREATE_CLUE = 1
-        val CREATE_WAY_POINT = 2
     }
 
     fun createHunt(createHuntView: CreateHuntView) {
@@ -46,7 +38,7 @@ class CreateHuntPresenter() : Presenter {
 
         isNewHunt = true
 
-        createHuntView.initLoad()
+        subscribeToClues()
     }
 
     fun loadHunt(treasureHuntId: String, createHuntView: CreateHuntView) {
@@ -55,13 +47,13 @@ class CreateHuntPresenter() : Presenter {
 
         isNewHunt = false
 
-        createHuntView.initLoad()
+        subscribeToClues()
     }
 
     fun reloadHunt(createHuntView: CreateHuntView) {
         this.createHuntView = createHuntView
 
-        loadContainer()
+        subscribeToClues()
     }
 
     fun mapLoaded() {
@@ -101,44 +93,44 @@ class CreateHuntPresenter() : Presenter {
         createHuntView.close()
     }
 
-    private fun loadContainer() {
-        when (state) {
-            CREATE_HUNT -> {
-                createHuntView.moveToContainer(CreateHuntContainer(this))
-
-                subscribeToClues()
-            }
-            CREATE_CLUE -> {
-                unsubscribeToClues()
-                unsubscribeToWaypoints()
-
-                val createCluePresenter = if (PresenterManager.hasPresenter(CreateCluePresenter.TAG))
-                    PresenterManager.getPresenter(CreateCluePresenter.TAG) as CreateCluePresenter
-                else
-                    PresenterManager.addPresenter(CreateCluePresenter.TAG, CreateCluePresenter()) as CreateCluePresenter
-
-                val createClueContainer = CreateClueContainer(createCluePresenter)
-
-                createCluePresenter.load(createClueContainer, this)
-
-                createHuntView.moveToContainer(createClueContainer)
-            }
-            CREATE_WAY_POINT -> {
-                unsubscribeToClues()
-
-                val createWaypointPresenter = if (PresenterManager.hasPresenter(CreateWaypointPresenter.TAG))
-                    PresenterManager.getPresenter(CreateWaypointPresenter.TAG) as CreateWaypointPresenter
-                else
-                    PresenterManager.addPresenter(CreateWaypointPresenter.TAG, CreateWaypointPresenter()) as CreateWaypointPresenter
-
-                val createWaypointContainer = CreateWayPointContainer(createWaypointPresenter)
-
-                createWaypointPresenter.load(createWaypointContainer, this)
-
-                createHuntView.moveToContainer(createWaypointContainer)
-            }
-        }
-    }
+//    private fun loadContainer() {
+//        when (state) {
+//            CREATE_HUNT -> {
+//                createHuntView.moveToContainer(CreateHuntContainer(this))
+//
+//                subscribeToClues()
+//            }
+//            CREATE_CLUE -> {
+//                unsubscribeToClues()
+//                unsubscribeToWaypoints()
+//
+//                val createCluePresenter = if (PresenterManager.hasPresenter(CreateCluePresenter.TAG))
+//                    PresenterManager.getPresenter(CreateCluePresenter.TAG) as CreateCluePresenter
+//                else
+//                    PresenterManager.addPresenter(CreateCluePresenter.TAG, CreateCluePresenter()) as CreateCluePresenter
+//
+//                val createClueContainer = CreateClueContainer(createCluePresenter)
+//
+//                createCluePresenter.load(createClueContainer, this)
+//
+//                createHuntView.moveToContainer(createClueContainer)
+//            }
+//            CREATE_WAY_POINT -> {
+//                unsubscribeToClues()
+//
+//                val createWaypointPresenter = if (PresenterManager.hasPresenter(CreateWaypointPresenter.TAG))
+//                    PresenterManager.getPresenter(CreateWaypointPresenter.TAG) as CreateWaypointPresenter
+//                else
+//                    PresenterManager.addPresenter(CreateWaypointPresenter.TAG, CreateWaypointPresenter()) as CreateWaypointPresenter
+//
+//                val createWaypointContainer = CreateWayPointContainer(createWaypointPresenter)
+//
+//                createWaypointPresenter.load(createWaypointContainer, this)
+//
+//                createHuntView.moveToContainer(createWaypointContainer)
+//            }
+//        }
+//    }
 
     private fun subscribeToClues() {
         clueSubscription = DatabaseObservables.getClueObservable(treasureHuntId)
@@ -178,12 +170,6 @@ class CreateHuntPresenter() : Presenter {
             if (!it.isUnsubscribed)
                 it.unsubscribe()
         }
-    }
-
-    fun switchState(newState: Int) {
-        state = newState
-
-        loadContainer()
     }
 
     //TODO Look into just adding the one item to the RecyclerView instead of reloading the entire list

@@ -36,7 +36,7 @@ class CreateHuntTabFragment : TabFragment() {
                 adapter.updateList(it)
             }
 
-            view.create_hunt_fragment_fab?.setOnClickListener { startActivity(CreateHuntActivity.getIntent(activity)) }
+            view.create_hunt_fragment_fab?.setOnClickListener { startActivity(CreateHuntActivity.getCreateNewIntent(activity)) }
         }
 
         return view

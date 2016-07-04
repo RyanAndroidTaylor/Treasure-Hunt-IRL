@@ -1,9 +1,6 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
-import com.dtprogramming.treasurehuntirl.THApp
-import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
-import java.util.*
 
 /**
  * Created by ryantaylor on 6/25/16.
@@ -13,8 +10,6 @@ class CreateWaypointPresenter() : Presenter {
 
     private lateinit var createWaypointView: CreateWaypointView
 
-    private lateinit var createHuntPresenter: CreateHuntPresenter
-
     private var title: String = "New Waypoint"
     private var lat: Double = 0.0
     private var lng: Double = 0.0
@@ -23,9 +18,8 @@ class CreateWaypointPresenter() : Presenter {
         val TAG = CreateWaypointPresenter::class.java.simpleName
     }
 
-    fun load(createWaypointView: CreateWaypointView, createHuntPresenter: CreateHuntPresenter) {
+    fun load(createWaypointView: CreateWaypointView) {
         this.createWaypointView = createWaypointView
-        this.createHuntPresenter = createHuntPresenter
     }
 
     fun mapLoaded() {
@@ -70,16 +64,19 @@ class CreateWaypointPresenter() : Presenter {
     fun cancel() {
         PresenterManager.removePresenter(TAG)
 
-        createHuntPresenter.switchState(CreateHuntPresenter.CREATE_HUNT)
+        createWaypointView.back()
+//        createHuntPresenter.switchState(CreateHuntPresenter.CREATE_HUNT)
     }
 
     fun save() {
-        val waypoint = Waypoint(UUID.randomUUID().toString().replace("-", ""), title, createHuntPresenter.treasureHuntId, lat, lng)
+//        val waypoint = Waypoint(UUID.randomUUID().toString().replace("-", ""), title, createHuntPresenter.treasureHuntId, lat, lng)
 
-        createHuntPresenter.saveWaypoint(waypoint)
+//        createHuntPresenter.saveWaypoint(waypoint)
 
         PresenterManager.removePresenter(TAG)
 
-        createHuntPresenter.switchState(CreateHuntPresenter.CREATE_HUNT)
+        createWaypointView.back()
+
+//        createHuntPresenter.switchState(CreateHuntPresenter.CREATE_HUNT)
     }
 }

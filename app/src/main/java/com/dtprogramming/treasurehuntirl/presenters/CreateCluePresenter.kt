@@ -1,9 +1,6 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
-import com.dtprogramming.treasurehuntirl.THApp
-import com.dtprogramming.treasurehuntirl.database.models.Clue
-import com.dtprogramming.treasurehuntirl.ui.container.CreateClueContainer
-import java.util.*
+import com.dtprogramming.treasurehuntirl.ui.views.CreateClueView
 
 /**
  * Created by ryantaylor on 6/28/16.
@@ -14,14 +11,12 @@ class CreateCluePresenter : Presenter {
         val TAG = CreateCluePresenter::class.java.simpleName
     }
 
-    private lateinit var createClueContainer: CreateClueContainer
-    private lateinit var createHuntPresenter: CreateHuntPresenter
+    private lateinit var createClueView: CreateClueView
 
     private var clueText = ""
 
-    fun load(createClueContainer: CreateClueContainer, createHuntPresenter: CreateHuntPresenter) {
-        this.createClueContainer = createClueContainer
-        this.createHuntPresenter = createHuntPresenter
+    fun load(createClueView: CreateClueView) {
+        this.createClueView = createClueView
     }
 
     fun onTextChanged(clueText: String) {
@@ -29,18 +24,22 @@ class CreateCluePresenter : Presenter {
     }
 
     fun save() {
-        val clue = Clue(UUID.randomUUID().toString().replace("-", ""), createHuntPresenter.treasureHuntId, clueText)
+//        val clue = Clue(UUID.randomUUID().toString().replace("-", ""), createHuntPresenter.treasureHuntId, clueText)
 
-        createHuntPresenter.saveClue(clue)
+//        createHuntPresenter.saveClue(clue)
 
         PresenterManager.removePresenter(TAG)
 
-        createHuntPresenter.switchState(CreateHuntPresenter.CREATE_HUNT)
+        createClueView.back()
+
+//        createHuntPresenter.switchState(CreateHuntPresenter.CREATE_HUNT)
     }
 
     fun cancel() {
         PresenterManager.removePresenter(TAG)
 
-        createHuntPresenter.switchState(CreateHuntPresenter.CREATE_HUNT)
+        createClueView.back()
+
+//        createHuntPresenter.switchState(CreateHuntPresenter.CREATE_HUNT)
     }
 }

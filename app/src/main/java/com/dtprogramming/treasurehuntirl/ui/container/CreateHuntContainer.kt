@@ -1,5 +1,10 @@
 package com.dtprogramming.treasurehuntirl.ui.container
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -8,9 +13,13 @@ import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
+import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
+import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
+import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
+import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
@@ -23,11 +32,13 @@ import kotlinx.android.synthetic.main.container_create_hunt.view.*
 /**
  * Created by ryantaylor on 6/20/16.
  */
-class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter) : BasicContainer(), OnMapReadyCallback {
+class CreateHuntContainer() : BasicContainer(), CreateHuntView, OnMapReadyCallback {
 
     companion object {
-        val URI = CreateHuntContainer::class.java.simpleName
+        val URI: String = CreateHuntContainer::class.java.simpleName
     }
+
+    val createHuntPresenter: CreateHuntPresenter
 
     private lateinit var adapter: ClueAdapter
 
@@ -35,20 +46,18 @@ class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter) : BasicC
 
     private var googleMap: GoogleMap? = null
 
-    override fun inflate(activity: AppCompatActivity, parent: ViewGroup): Container {
-        super.inflate(parent, R.layout.container_create_hunt)
-
-        if (googleMap == null) {
-            val mapFragment = MapFragment()
-            activity.fragmentManager.beginTransaction().replace(R.id.create_hunt_container_map_container, mapFragment).commit()
-
-            mapFragment.getMapAsync(this)
-        }
-
-        return this
+    init {
+        createHuntPresenter = if (PresenterManager.hasPresenter(CreateHuntPresenter.TAG))
+            PresenterManager.getPresenter(CreateHuntPresenter.TAG) as CreateHuntPresenter
+        else
+            PresenterManager.addPresenter(CreateHuntPresenter.TAG, CreateHuntPresenter()) as CreateHuntPresenter
     }
 
-    override fun loadViews(parent: ViewGroup) {
+    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
+        super.inflate(containerActivity, parent, extras)
+
+        inflateView(parent, R.layout.container_create_hunt)
+
         clueList = parent.create_hunt_container_clue_list
 
         clueList.layoutManager = CustomLinearLayoutManager(parent.context, LinearLayoutManager.HORIZONTAL, false)
@@ -58,11 +67,11 @@ class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter) : BasicC
         clueList.adapter = adapter
 
         parent.create_hunt_container_add_clue.setOnClickListener {
-            createHuntPresenter.switchState(CreateHuntPresenter.CREATE_CLUE)
+            containerActivity.loadContainer(CreateClueContainer.URI)
         }
 
         parent.create_hunt_container_add_waypoint.setOnClickListener {
-            createHuntPresenter.switchState(CreateHuntPresenter.CREATE_WAY_POINT)
+            containerActivity.loadContainer(CreateWayPointContainer.URI)
         }
 
         parent.create_hunt_container_save.setOnClickListener { createHuntPresenter.save() }
@@ -70,13 +79,34 @@ class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter) : BasicC
         parent.create_hunt_container_cancel.setOnClickListener { createHuntPresenter.cancel() }
 
         clueList.addOnScrollListener(ClueScrollListener())
+
+        if (extras.containsKey(CreateHuntActivity.HUNT_UUID)) {
+            createHuntPresenter.loadHunt(extras.getString(CreateHuntActivity.HUNT_UUID), this)
+        } else if (extras.containsKey(CreateHuntActivity.CREATE_NEW)) {
+            createHuntPresenter.createHunt(this)
+        } else {
+            createHuntPresenter.reloadHunt(this)
+        }
+
+        if (ContextCompat.checkSelfPermission(containerActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(containerActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+        }
+
+        if (googleMap == null) {
+            val mapFragment = MapFragment()
+            containerActivity.fragmentManager.beginTransaction().replace(R.id.create_hunt_container_map_container, mapFragment).commit()
+
+            mapFragment.getMapAsync(this)
+        }
+
+        return this
     }
 
-    fun updateClueList(clues: List<Clue>) {
+    override fun updateClueList(clues: List<Clue>) {
         adapter.updateList(clues)
     }
 
-    fun updateWaypointList(waypoints: List<Waypoint>) {
+    override fun updateWaypoints(waypoints: List<Waypoint>) {
         googleMap?.clear()
 
         if (waypoints.size > 0) {
@@ -94,6 +124,10 @@ class CreateHuntContainer(val createHuntPresenter: CreateHuntPresenter) : BasicC
 
             googleMap?.moveCamera(cameraUpdate)
         }
+    }
+
+    override fun close() {
+
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {

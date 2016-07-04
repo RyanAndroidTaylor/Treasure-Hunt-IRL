@@ -5,6 +5,8 @@ package com.dtprogramming.treasurehuntirl.ui.views
  */
 interface CreateWaypointView {
 
-    open fun loadMarker(title: String, lat: Double, lng: Double)
+    fun loadMarker(title: String, lat: Double, lng: Double)
     fun markerMoved(lat: Double, lng: Double)
+
+    fun back()
 }
