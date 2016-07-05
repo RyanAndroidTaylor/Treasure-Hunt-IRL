@@ -11,26 +11,23 @@ import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 abstract class BasicContainer : Container {
 
     protected lateinit var containerActivity: ContainerActivity
-
+    protected lateinit var parent: ViewGroup
     private lateinit var extras: Bundle
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         this.containerActivity = containerActivity
+        this.parent = parent
         this.extras = extras
 
         return this
     }
 
-    protected fun inflateView(parent: ViewGroup, layoutId: Int): Container {
+    protected fun inflateView(layoutId: Int): Container {
         if (parent.childCount > 0)
             parent.removeViewAt(0)
 
         LayoutInflater.from(parent.context).inflate(layoutId, parent, true)
 
         return this
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 }

@@ -42,14 +42,14 @@ class CreateWaypointPresenterTest {
 
     @Test
     fun testMapLoaded() {
-        createWaypointPresenter.load(createWaypointView, createHuntPresenter)
+        createWaypointPresenter.mapLoaded()
 
         Mockito.verify(createWaypointView).loadMarker(Mockito.anyString(), Mockito.anyDouble(), Mockito.anyDouble())
     }
 
     @Test
     fun testNudgeMarker() {
-        createWaypointPresenter.load(createWaypointView, createHuntPresenter)
+        createWaypointPresenter.load(createWaypointView, "fake uuid")
 
         createWaypointPresenter.increaseLat()
         Mockito.verify(createWaypointView, Mockito.times(1)).markerMoved(Mockito.anyDouble(), Mockito.anyDouble())

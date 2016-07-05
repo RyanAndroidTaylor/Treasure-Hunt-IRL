@@ -6,6 +6,7 @@ import com.dtprogramming.treasurehuntirl.ui.container.Container
 import com.dtprogramming.treasurehuntirl.ui.container.CreateClueContainer
 import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
 import com.dtprogramming.treasurehuntirl.ui.container.CreateWayPointContainer
+import java.util.*
 
 /**
  * Created by ryantaylor on 7/4/16.
@@ -15,7 +16,10 @@ abstract class ContainerActivity : BaseActivity() {
 
     protected var container: Container? = null
 
-    private var currentUri: String? = null
+    private val currentUri: String?
+        get() { return backStack.peek() }
+
+    private val backStack = Stack<String>()
 
     abstract var parent: ViewGroup
 
@@ -43,6 +47,40 @@ abstract class ContainerActivity : BaseActivity() {
             throw IllegalStateException("There was no match found for the URI: $uri")
         }
 
-        currentUri = uri
+        backStack.push(uri)
+    }
+
+    private fun loadCurrentContainer() {
+        when (currentUri) {
+            CreateHuntContainer.URI -> container = CreateHuntContainer()
+            CreateClueContainer.URI -> container = CreateClueContainer()
+            CreateWayPointContainer.URI -> container = CreateWayPointContainer()
+        }
+
+        if (container != null) {
+            container!!.inflate(this, parent, Bundle())
+        } else {
+            throw IllegalStateException("There was no match found for the URI: $currentUri")
+        }
+    }
+
+    fun finishCurrentContainer() {
+        if (backStack.size > 1) {
+            backStack.pop()
+
+            loadCurrentContainer()
+        } else {
+            finish()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (backStack.size > 1) {
+            backStack.pop()
+
+            loadCurrentContainer()
+        } else {
+            super.onBackPressed()
+        }
     }
 }

@@ -85,6 +85,12 @@ public abstract class ListRecyclerViewSectionAdapter<VH extends RecyclerView.Vie
         notifyDataSetChanged();
     }
 
+    public void addItem(T item) {
+        items.add(item);
+
+        notifyItemInserted(items.size() -1);
+    }
+
     public abstract void onBindViewHolder(VH viewHolder, T item);
 
     public void setOnListItemClickListener(OnListItemClickedListener<T> itemClickListener) {

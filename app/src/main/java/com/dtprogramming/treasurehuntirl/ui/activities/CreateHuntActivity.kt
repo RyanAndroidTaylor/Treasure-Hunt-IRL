@@ -5,8 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
-import com.dtprogramming.treasurehuntirl.ui.container.Container
 import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
 import kotlinx.android.synthetic.main.activity_create_hunt.*
 
@@ -16,8 +14,6 @@ import kotlinx.android.synthetic.main.activity_create_hunt.*
 class CreateHuntActivity : ContainerActivity() {
 
     override lateinit var parent: ViewGroup
-
-    private lateinit var createHuntPresenter: CreateHuntPresenter
 
     companion object {
         val HUNT_UUID = "HuntUuid"
@@ -61,17 +57,5 @@ class CreateHuntActivity : ContainerActivity() {
         }
 
         toolbar?.title = resources.getString(R.string.create_hunt_activity_title)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        if (isFinishing)
-            createHuntPresenter.finish()
-    }
-
-    override fun onBackPressed() {
-        if (container != null && !container!!.onBackPressed())
-            super.onBackPressed()
     }
 }

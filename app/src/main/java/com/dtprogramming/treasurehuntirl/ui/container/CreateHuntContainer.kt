@@ -5,11 +5,12 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import android.widget.Toast
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
@@ -55,8 +56,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView, OnMapReadyCallba
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
-
-        inflateView(parent, R.layout.container_create_hunt)
+        inflateView(R.layout.container_create_hunt)
 
         clueList = parent.create_hunt_container_clue_list
 
@@ -65,18 +65,6 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView, OnMapReadyCallba
         adapter = ClueAdapter(parent.context, emptyList())
 
         clueList.adapter = adapter
-
-        parent.create_hunt_container_add_clue.setOnClickListener {
-            containerActivity.loadContainer(CreateClueContainer.URI)
-        }
-
-        parent.create_hunt_container_add_waypoint.setOnClickListener {
-            containerActivity.loadContainer(CreateWayPointContainer.URI)
-        }
-
-        parent.create_hunt_container_save.setOnClickListener { createHuntPresenter.save() }
-
-        parent.create_hunt_container_cancel.setOnClickListener { createHuntPresenter.cancel() }
 
         clueList.addOnScrollListener(ClueScrollListener())
 
@@ -99,7 +87,25 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView, OnMapReadyCallba
             mapFragment.getMapAsync(this)
         }
 
+        //TODO Added edit text for title of Treasure Hunt. Then notify presenter every time the title changes
+
+        parent.create_hunt_container_save.setOnClickListener { createHuntPresenter.save() }
+
+        parent.create_hunt_container_cancel.setOnClickListener { createHuntPresenter.cancel() }
+
+        parent.create_hunt_container_add_clue.setOnClickListener { moveToContainer(CreateClueContainer.URI) }
+
+        parent.create_hunt_container_add_waypoint.setOnClickListener { moveToContainer(CreateWayPointContainer.URI) }
+
         return this
+    }
+
+    fun moveToContainer(uri: String) {
+        val extras = Bundle()
+
+        extras.putString(TableColumns.UUID, createHuntPresenter.treasureHuntId)
+
+        containerActivity.loadContainer(uri, extras)
     }
 
     override fun updateClueList(clues: List<Clue>) {
@@ -126,8 +132,12 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView, OnMapReadyCallba
         }
     }
 
-    override fun close() {
+    override fun error(message: String) {
+        Toast.makeText(containerActivity, message, Toast.LENGTH_LONG).show()
+    }
 
+    override fun finish() {
+        containerActivity.finish()
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {

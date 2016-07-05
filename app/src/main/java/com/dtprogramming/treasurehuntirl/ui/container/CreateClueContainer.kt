@@ -6,6 +6,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.database.TableColumns
+import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.presenters.CreateCluePresenter
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
@@ -33,10 +35,9 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
+        inflateView(R.layout.container_create_clue)
 
-        inflateView(parent, R.layout.container_create_clue)
-
-        createCluePresenter.load(this)
+        createCluePresenter.load(this, extras.getString(TableColumns.UUID))
 
         parent.create_clue_container_save.setOnClickListener {
             createCluePresenter.save()
@@ -54,13 +55,7 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
         return this
     }
 
-    override fun back() {
-        onBackPressed()
-    }
-
-    override fun onBackPressed(): Boolean {
-        containerActivity.loadContainer(CreateHuntContainer.URI)
-
-        return true
+    override fun finish() {
+        containerActivity.finishCurrentContainer()
     }
 }

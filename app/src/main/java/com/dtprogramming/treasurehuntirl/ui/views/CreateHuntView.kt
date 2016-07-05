@@ -11,5 +11,7 @@ interface CreateHuntView {
     fun updateClueList(clues: List<Clue>)
     fun updateWaypoints(waypoints: List<Waypoint>)
 
-    fun close()
+    fun error(message: String)
+
+    fun finish()
 }

@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.presenters.CreateWaypointPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
@@ -51,14 +52,13 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
-
-        inflateView(parent, R.layout.container_create_waypoint)
+        inflateView(R.layout.container_create_waypoint)
 
         editTitle = parent.create_waypoint_container_title
         displayLat = parent.create_waypoint_container_lat
         displayLng = parent.create_waypoint_container_lng
 
-        createWaypointPresenter.load(this)
+        createWaypointPresenter.load(this, extras.getString(TableColumns.UUID))
 
         val mapFragment = MapFragment()
 
@@ -118,13 +118,7 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
         marker.position = LatLng(lat, lng)
     }
 
-    override fun back() {
-        onBackPressed()
-    }
-
-    override fun onBackPressed(): Boolean {
-        containerActivity.loadContainer(CreateHuntContainer.URI)
-
-        return true
+    override fun finish() {
+        containerActivity.finishCurrentContainer()
     }
 }

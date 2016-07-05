@@ -2,6 +2,9 @@ package com.dtprogramming.treasurehuntirl.presenters
 
 import com.dtprogramming.treasurehuntirl.BuildConfig
 import com.dtprogramming.treasurehuntirl.MockitoMatchers
+import com.dtprogramming.treasurehuntirl.THApp
+import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import org.junit.After
 import org.junit.Before
@@ -35,41 +38,20 @@ class CreateHuntPresenterTest {
 
     @Test
     fun testLoad() {
+
         createHuntPresenter.loadHunt("fake uuid", createHuntView)
 
-        Mockito.verify(createHuntView).initLoad()
+        Mockito.verify(createHuntView).updateClueList(MockitoMatchers.anyObject())
     }
 
     @Test
     fun testReload() {
         createHuntPresenter.loadHunt("fake uuid", createHuntView)
 
-        Mockito.verify(createHuntView).initLoad()
+        Mockito.verify(createHuntView).updateClueList(MockitoMatchers.anyObject())
 
         createHuntPresenter.reloadHunt(createHuntView)
 
-        Mockito.verify(createHuntView, Mockito.atLeastOnce()).moveToContainer(MockitoMatchers.anyObject())
-    }
-
-    @Test
-    fun testSwitchState() {
-        createHuntPresenter.loadHunt("Fake uuid", createHuntView)
-
-        Mockito.verify(createHuntView).initLoad()
-
-        createHuntPresenter.switchState(CreateHuntPresenter.CREATE_CLUE)
-
-        Mockito.verify(createHuntView, Mockito.atLeastOnce()).moveToContainer(MockitoMatchers.anyObject())
-
-        createHuntPresenter.switchState(CreateHuntPresenter.CREATE_HUNT)
-
-        Mockito.verify(createHuntView, Mockito.atLeastOnce()).moveToContainer(MockitoMatchers.anyObject())
-    }
-
-    @Test
-    fun testSaveClue() {
-        createHuntPresenter.loadHunt("Some fake ID boi", createHuntView)
-
-        createHuntPresenter.saveClue("some text")
+        Mockito.verify(createHuntView, Mockito.times(2)).updateClueList(MockitoMatchers.anyObject())
     }
 }

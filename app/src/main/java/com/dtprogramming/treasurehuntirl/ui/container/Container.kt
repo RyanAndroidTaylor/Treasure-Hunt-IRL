@@ -11,5 +11,4 @@ import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 interface Container {
 
     fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container
-    fun onBackPressed(): Boolean
 }

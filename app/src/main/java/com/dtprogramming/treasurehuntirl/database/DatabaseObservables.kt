@@ -14,25 +14,28 @@ import rx.schedulers.Schedulers
  */
 object DatabaseObservables {
 
+    fun getTreasureHunt(uuid: String): Observable<MutableList<TreasureHunt>> {
+        return THApp.briteDatabase.createQuery(TreasureHunt.TABLE.NAME, TableColumns.WHERE_UUID_EQUALS, uuid)
+                .mapToList { TreasureHunt(it.getString(TableColumns.UUID), it.getString(TreasureHunt.TABLE.TITLE)) }
+                .observeOn(AndroidSchedulers.mainThread())
+    }
+
     fun getTreasureHunts(): Observable<MutableList<TreasureHunt>> {
         return THApp.briteDatabase.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
                 .mapToList { TreasureHunt(it.getString(TableColumns.UUID), it.getString(TreasureHunt.TABLE.TITLE)) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
     }
 
     fun getClueObservable(treasureHuntId: String): Observable<MutableList<Clue>> {
-        return THApp.briteDatabase.createQuery(Clue.TABLE.NAME, "SELECT * FROM ${Clue.TABLE.NAME}")
+        return THApp.briteDatabase.createQuery(Clue.TABLE.NAME, "SELECT * FROM ${Clue.TABLE.NAME} WHERE ${Clue.TABLE.TREASURE_HUNT}=?", treasureHuntId)
                 .mapToList { Clue(it.getString(TableColumns.UUID), it.getString(Clue.TABLE.TREASURE_HUNT), it.getString(Clue.TABLE.TEXT)) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
     }
 
     fun getWaypointObservable(treasureHuntId: String): Observable<MutableList<Waypoint>> {
-        return THApp.briteDatabase.createQuery(Waypoint.TABLE.NAME, "SELECT * FROM ${Waypoint.TABLE.NAME}")
+        return THApp.briteDatabase.createQuery(Waypoint.TABLE.NAME, "SELECT * FROM ${Waypoint.TABLE.NAME} WHERE ${Waypoint.TABLE.TREASURE_HUNT}=?", treasureHuntId)
                 .mapToList { Waypoint(it.getString(TableColumns.UUID), it.getString(Waypoint.TABLE.TITLE), it.getString(Waypoint.TABLE.TREASURE_HUNT), it.getDouble(Waypoint.TABLE.LAT), it.getDouble(Waypoint.TABLE.LNG)) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
     }
 }
 
