@@ -1,6 +1,7 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
 import com.dtprogramming.treasurehuntirl.THApp
+import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.ui.views.CreateClueView
 import java.util.*
@@ -8,7 +9,7 @@ import java.util.*
 /**
  * Created by ryantaylor on 6/28/16.
  */
-class CreateCluePresenter : Presenter {
+class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
 
     companion object {
         val TAG: String = CreateCluePresenter::class.java.simpleName
@@ -29,9 +30,7 @@ class CreateCluePresenter : Presenter {
     }
 
     fun save() {
-        val clue = Clue(UUID.randomUUID().toString().replace("-", ""), treasureHuntId, clueText)
-
-        THApp.briteDatabase.insert(Clue.TABLE.NAME, clue.getContentValues())
+        clueConnection.insert(Clue(UUID.randomUUID().toString().replace("-", ""), treasureHuntId, clueText))
 
         PresenterManager.removePresenter(TAG)
 

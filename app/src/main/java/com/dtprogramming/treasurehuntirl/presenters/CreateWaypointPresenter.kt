@@ -1,6 +1,6 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
-import com.dtprogramming.treasurehuntirl.THApp
+import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
 import java.util.*
@@ -8,7 +8,7 @@ import java.util.*
 /**
  * Created by ryantaylor on 6/25/16.
  */
-class CreateWaypointPresenter() : Presenter {
+class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Presenter {
     val NUDGE_DISTANCE = 0.00001
 
     private lateinit var createWaypointView: CreateWaypointView
@@ -73,9 +73,7 @@ class CreateWaypointPresenter() : Presenter {
     }
 
     fun save() {
-        val waypoint = Waypoint(UUID.randomUUID().toString().replace("-", ""), title, treasureHuntId, lat, lng)
-
-        THApp.briteDatabase.insert(Waypoint.TABLE.NAME, waypoint.getContentValues())
+        waypointConnection.insert(Waypoint(UUID.randomUUID().toString().replace("-", ""), title, treasureHuntId, lat, lng))
 
         PresenterManager.removePresenter(TAG)
 

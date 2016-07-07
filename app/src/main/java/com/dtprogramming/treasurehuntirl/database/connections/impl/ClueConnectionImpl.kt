@@ -5,6 +5,7 @@ import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.getString
 import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.squareup.sqlbrite.BriteDatabase
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import java.util.*
@@ -16,9 +17,23 @@ class ClueConnectionImpl : ClueConnection {
 
     override val connections = ArrayList<Subscription>()
 
+    private val database: BriteDatabase
+
+    init {
+        database = THApp.briteDatabase
+    }
+
+    override fun insert(clue: Clue) {
+        database.insert(Clue.TABLE.NAME, clue.getContentValues())
+    }
+
+    override fun update(clue: Clue) {
+        database.update(Clue.TABLE.NAME, clue.getContentValues(), TableColumns.WHERE_UUID_EQUALS, clue.uuid)
+    }
+
     override fun getTreasureHuntCluesAsync(treasureHuntId: String, onComplete: (List<Clue>) -> Unit) {
 
-        val connection = THApp.briteDatabase.createQuery(Clue.TABLE.NAME, "SELECT * FROM ${Clue.TABLE.NAME} WHERE ${Clue.TABLE.TREASURE_HUNT}=?", treasureHuntId)
+        val connection = database.createQuery(Clue.TABLE.NAME, "SELECT * FROM ${Clue.TABLE.NAME} WHERE ${Clue.TABLE.TREASURE_HUNT}=?", treasureHuntId)
                 .mapToList { Clue(it.getString(TableColumns.UUID), it.getString(Clue.TABLE.TREASURE_HUNT), it.getString(Clue.TABLE.TEXT)) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .first()

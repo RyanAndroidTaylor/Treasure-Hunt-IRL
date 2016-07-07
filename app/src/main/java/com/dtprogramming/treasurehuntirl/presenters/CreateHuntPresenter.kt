@@ -3,6 +3,7 @@ package com.dtprogramming.treasurehuntirl.presenters
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
+import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import java.util.*
@@ -12,12 +13,13 @@ import java.util.*
  */
 class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, val clueConnection: ClueConnection, val waypointConnection: WaypointConnection) : Presenter {
 
-    private var isNewHunt = false
     var treasureHuntTitle = "New Treasure Hunt"
     lateinit var treasureHuntId: String
         private set
 
     private lateinit var createHuntView: CreateHuntView
+
+    private val getCluesOnComplete = { clues: List<Clue> -> createHuntView.updateClueList(clues) }
 
     companion object {
         val TAG: String = CreateHuntPresenter::class.java.simpleName
@@ -26,8 +28,6 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
     fun createHunt(createHuntView: CreateHuntView) {
         this.createHuntView = createHuntView
         treasureHuntId = UUID.randomUUID().toString().replace("-", "")
-
-        isNewHunt = true
 
         treasureHuntConnection.insert(TreasureHunt(treasureHuntId, treasureHuntTitle))
 
@@ -44,9 +44,7 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
 
         createHuntView.setTitle(treasureHuntTitle)
 
-        clueConnection.getTreasureHuntCluesAsync(treasureHuntId, { createHuntView.updateClueList(it) })
-
-        isNewHunt = false
+        clueConnection.getTreasureHuntCluesAsync(treasureHuntId, getCluesOnComplete)
     }
 
     fun reloadHunt(createHuntView: CreateHuntView) {
@@ -54,7 +52,7 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
 
         createHuntView.setTitle(treasureHuntTitle)
 
-        clueConnection.getTreasureHuntCluesAsync(treasureHuntId, { createHuntView.updateClueList(it) })
+        clueConnection.getTreasureHuntCluesAsync(treasureHuntId, getCluesOnComplete)
     }
 
     fun mapLoaded() {

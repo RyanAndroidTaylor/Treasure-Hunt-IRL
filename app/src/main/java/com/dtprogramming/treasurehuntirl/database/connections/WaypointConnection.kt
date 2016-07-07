@@ -7,5 +7,8 @@ import com.dtprogramming.treasurehuntirl.database.models.Waypoint
  */
 interface WaypointConnection : Connection {
 
+    fun insert(waypoint: Waypoint)
+    fun update(waypoint: Waypoint)
+
     fun getTreasureHuntWaypointsAsync(treasureHuntId: String, onComplete: (List<Waypoint>) -> Unit)
 }

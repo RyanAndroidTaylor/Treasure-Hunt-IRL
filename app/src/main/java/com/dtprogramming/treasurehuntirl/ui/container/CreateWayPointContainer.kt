@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.TableColumns
+import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
 import com.dtprogramming.treasurehuntirl.presenters.CreateWaypointPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
@@ -47,7 +48,7 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
         createWaypointPresenter = if (PresenterManager.hasPresenter(CreateWaypointPresenter.TAG))
             PresenterManager.getPresenter(CreateWaypointPresenter.TAG) as CreateWaypointPresenter
         else
-            PresenterManager.addPresenter(CreateWaypointPresenter.TAG, CreateWaypointPresenter()) as CreateWaypointPresenter
+            PresenterManager.addPresenter(CreateWaypointPresenter.TAG, CreateWaypointPresenter(WaypointConnectionImpl())) as CreateWaypointPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {

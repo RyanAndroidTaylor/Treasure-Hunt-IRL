@@ -2,6 +2,9 @@ package com.dtprogramming.treasurehuntirl.presenters
 
 import com.dtprogramming.treasurehuntirl.BuildConfig
 import com.dtprogramming.treasurehuntirl.MockitoMatchers
+import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
+import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
+import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
@@ -13,6 +16,7 @@ import org.junit.Before
 
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.Mockito
 import org.robolectric.RobolectricGradleTestRunner
 import org.robolectric.annotation.Config
@@ -24,14 +28,16 @@ import org.robolectric.annotation.Config
 @Config(constants = BuildConfig::class)
 class CreateWaypointPresenterTest {
 
-    lateinit var createHuntPresenter: CreateHuntPresenter
+    lateinit var waypointConnection: WaypointConnection
+
     lateinit var createWaypointPresenter: CreateWaypointPresenter
     lateinit var createWaypointView: CreateWaypointView
 
     @Before
     fun setUp() {
-        createHuntPresenter = CreateHuntPresenter()
-        createWaypointPresenter = CreateWaypointPresenter()
+        waypointConnection = Mockito.mock(WaypointConnection::class.java)
+
+        createWaypointPresenter = CreateWaypointPresenter(waypointConnection)
         createWaypointView = Mockito.mock(CreateWaypointView::class.java)
     }
 
@@ -42,9 +48,20 @@ class CreateWaypointPresenterTest {
 
     @Test
     fun testMapLoaded() {
+        createWaypointPresenter.load(createWaypointView, "fake uuid")
+
         createWaypointPresenter.mapLoaded()
 
         Mockito.verify(createWaypointView).loadMarker(Mockito.anyString(), Mockito.anyDouble(), Mockito.anyDouble())
+    }
+
+    @Test
+    fun testMapClicked() {
+        createWaypointPresenter.load(createWaypointView, "fake uuid")
+
+        createWaypointPresenter.mapClicked(100.0, 100.0)
+
+        Mockito.verify(createWaypointView).markerMoved(100.0, 100.0)
     }
 
     @Test
@@ -62,5 +79,24 @@ class CreateWaypointPresenterTest {
 
         createWaypointPresenter.decreaseLng()
         Mockito.verify(createWaypointView, Mockito.times(4)).markerMoved(Mockito.anyDouble(), Mockito.anyDouble())
+    }
+
+    @Test
+    fun testSave() {
+        createWaypointPresenter.load(createWaypointView, "fake uuid")
+
+        createWaypointPresenter.save()
+
+        Mockito.verify(waypointConnection).insert(MockitoMatchers.anyObject())
+        Mockito.verify(createWaypointView).close()
+    }
+
+    @Test
+    fun cancel() {
+        createWaypointPresenter.load(createWaypointView, "fake uuid")
+
+        createWaypointPresenter.cancel()
+
+        Mockito.verify(createWaypointView).close()
     }
 }

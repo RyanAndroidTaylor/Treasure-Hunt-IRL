@@ -7,5 +7,8 @@ import com.dtprogramming.treasurehuntirl.database.models.Clue
  */
 interface ClueConnection : Connection {
 
+    fun insert(clue: Clue)
+    fun update(clue: Clue)
+
     fun getTreasureHuntCluesAsync(treasureHuntId: String, onComplete: (List<Clue>) -> Unit)
 }
