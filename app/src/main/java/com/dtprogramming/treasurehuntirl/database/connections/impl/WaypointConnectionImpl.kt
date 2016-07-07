@@ -47,6 +47,19 @@ class WaypointConnectionImpl : WaypointConnection {
                 }
     }
 
+    override fun getWaypointCountForTreasureHunt(treasureHuntId: String): Int {
+        val cursor = database.query("SELECT COUNT(*) FROM ${Waypoint.TABLE.NAME} WHERE ${Waypoint.TABLE.TREASURE_HUNT}=?", treasureHuntId)
+
+        val count = if (cursor.moveToFirst())
+            cursor.getInt(0)
+        else
+            0
+
+        cursor.close()
+
+        return count
+    }
+
     override fun unsubscribe() {
         for (connection in connections) {
             if (!connection.isUnsubscribed)

@@ -7,7 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.THApp
+import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
+import com.dtprogramming.treasurehuntirl.database.models.Waypoint
+import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
 import kotlinx.android.synthetic.main.view_holder_treasure_hunt.view.*
 
 /**
@@ -30,14 +36,34 @@ class TreasureHuntAdapter(context: Context, items: List<TreasureHunt>) : ListRec
 
     class TreasureHuntViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
+        val waypointConnection = WaypointConnectionImpl()
+        val clueConnection = ClueConnectionImpl()
+
         lateinit var titleText: TextView
+        lateinit var waypointCount: TextView
+        lateinit var clueCount: TextView
+
+        lateinit var treasureHunt: TreasureHunt
 
         init {
             titleText = view.treasure_hunt_view_holder_title
+            waypointCount = view.treasure_hunt_view_holder_waypoint_count
+            clueCount = view.treasure_hunt_view_holder_clue_count
+
+            view.setOnClickListener {
+                view.context.startActivity(CreateHuntActivity.getLoadIntent(view.context, treasureHunt.uuid))
+            }
         }
 
         fun bind(treasureHunt: TreasureHunt) {
+            this.treasureHunt = treasureHunt
+
+            val waypointCount = waypointConnection.getWaypointCountForTreasureHunt(treasureHunt.uuid)
+            val clueCount = clueConnection.getClueCountForTreasureHunt(treasureHunt.uuid)
+
             titleText.text = treasureHunt.title
+            this.waypointCount.text = "$waypointCount Waypoints"
+            this.clueCount.text = "$clueCount Clues"
         }
     }
 }

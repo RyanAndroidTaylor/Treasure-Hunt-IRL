@@ -138,7 +138,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView, OnMapReadyCallba
                 latLngBoundsBuilder.include(latLng)
             }
 
-            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 100)
+            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 200)
 
             googleMap?.moveCamera(cameraUpdate)
         }

@@ -49,6 +49,19 @@ class ClueConnectionImpl : ClueConnection {
         connections.add(connection)
     }
 
+    override fun getClueCountForTreasureHunt(treasureHuntId: String): Int {
+        val cursor = database.query("SELECT COUNT(*) FROM ${Clue.TABLE.NAME} WHERE ${Clue.TABLE.TREASURE_HUNT}=?", treasureHuntId)
+
+        val clueCount = if  (cursor.moveToFirst())
+            cursor.getInt(0)
+        else
+            0
+
+        cursor.close()
+
+        return clueCount
+    }
+
     override fun unsubscribe() {
         for (connection in connections) {
             if (!connection.isUnsubscribed)
