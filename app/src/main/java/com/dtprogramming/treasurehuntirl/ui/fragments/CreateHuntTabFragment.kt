@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.DatabaseObservables
+import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.TreasureHuntAdapter
 import kotlinx.android.synthetic.main.fragment_create_hunt.view.*
@@ -22,6 +23,8 @@ class CreateHuntTabFragment : TabFragment() {
 
     lateinit var adapter: TreasureHuntAdapter
 
+    var treasureHuntConnection = TreasureHuntConnectionImpl()
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_create_hunt, container, false)
 
@@ -32,9 +35,7 @@ class CreateHuntTabFragment : TabFragment() {
             adapter = TreasureHuntAdapter(context, listOf())
             recyclerView.adapter = adapter
 
-            DatabaseObservables.getTreasureHunts().subscribe {
-                adapter.updateList(it)
-            }
+            treasureHuntConnection.getTreasureHuntsAsync { adapter.updateList(it) }
 
             view.create_hunt_fragment_fab?.setOnClickListener { startActivity(CreateHuntActivity.getCreateNewIntent(activity)) }
         }

@@ -6,10 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.TreasureTabActivity">
 
+    <FrameLayout
+        android:id="@+id/action_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/card_view_background">
+
+        <EditText
+            android:id="@+id/create_hunt_container_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:hint="Title"/>
+    </FrameLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/create_hunt_container_clue_list"
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        android:layout_below="@id/action_container"
         android:layout_marginTop="@dimen/margin_normal"/>
 
     <FrameLayout
@@ -39,36 +55,9 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/action_container"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/card_view_background">
-
-        <TextView
-            android:id="@+id/create_hunt_container_save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="@dimen/margin_normal"
-            android:layout_marginRight="@dimen/margin_normal"
-            android:text="@string/save"/>
-
-        <TextView
-            android:id="@+id/create_hunt_container_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:layout_marginStart="@dimen/margin_normal"
-            android:text="@string/cancel"/>
-    </FrameLayout>
-
-    <FrameLayout
         android:id="@+id/create_hunt_container_map_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/action_container"
         android:layout_below="@id/add_action_container"
         android:background="#ff92ff"/>
 </RelativeLayout>

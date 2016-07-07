@@ -118,7 +118,11 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
         marker.position = LatLng(lat, lng)
     }
 
-    override fun finish() {
+    override fun close() {
         containerActivity.finishCurrentContainer()
+    }
+
+    override fun finish() {
+
     }
 }

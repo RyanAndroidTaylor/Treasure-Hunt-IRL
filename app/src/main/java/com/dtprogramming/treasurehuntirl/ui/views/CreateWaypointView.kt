@@ -8,5 +8,5 @@ interface CreateWaypointView {
     fun loadMarker(title: String, lat: Double, lng: Double)
     fun markerMoved(lat: Double, lng: Double)
 
-    fun finish()
+    fun close()
 }

@@ -8,10 +8,10 @@ import com.dtprogramming.treasurehuntirl.ui.container.Container
  * Created by ryantaylor on 6/20/16.
  */
 interface CreateHuntView {
+
     fun updateClueList(clues: List<Clue>)
     fun updateWaypoints(waypoints: List<Waypoint>)
+    fun setTitle(title: String)
 
     fun error(message: String)
-
-    fun finish()
 }

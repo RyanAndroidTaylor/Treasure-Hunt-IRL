@@ -35,12 +35,12 @@ class CreateCluePresenter : Presenter {
 
         PresenterManager.removePresenter(TAG)
 
-        createClueView.finish()
+        createClueView.close()
     }
 
     fun cancel() {
         PresenterManager.removePresenter(TAG)
 
-        createClueView.finish()
+        createClueView.close()
     }
 }

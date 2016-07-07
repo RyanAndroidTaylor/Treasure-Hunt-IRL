@@ -27,12 +27,13 @@ import org.junit.runner.RunWith
 class CreateHuntActivityTest {
 
     @get:Rule
-    val activityTestRule = ActivityTestRule(CreateHuntActivity::class.java, true, false)
+    val activityTestRule: ActivityTestRule<CreateHuntActivity> = ActivityTestRule(CreateHuntActivity::class.java, true, false)
 
     @Before
     fun setUp() {
         val intent = Intent()
-        intent.putExtra(CreateHuntActivity.HUNT_UUID, "some uuid")
+        intent.putExtra(CreateHuntActivity.CREATE_NEW, true)
+
         activityTestRule.launchActivity(intent)
     }
 

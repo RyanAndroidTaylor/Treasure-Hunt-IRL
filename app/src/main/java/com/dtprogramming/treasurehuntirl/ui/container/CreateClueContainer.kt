@@ -55,7 +55,11 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
         return this
     }
 
-    override fun finish() {
+    override fun close() {
         containerActivity.finishCurrentContainer()
+    }
+
+    override fun finish() {
+
     }
 }

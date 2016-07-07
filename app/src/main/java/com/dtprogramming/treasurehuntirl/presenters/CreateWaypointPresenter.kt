@@ -69,7 +69,7 @@ class CreateWaypointPresenter() : Presenter {
     fun cancel() {
         PresenterManager.removePresenter(TAG)
 
-        createWaypointView.finish()
+        createWaypointView.close()
     }
 
     fun save() {
@@ -79,6 +79,6 @@ class CreateWaypointPresenter() : Presenter {
 
         PresenterManager.removePresenter(TAG)
 
-        createWaypointView.finish()
+        createWaypointView.close()
     }
 }

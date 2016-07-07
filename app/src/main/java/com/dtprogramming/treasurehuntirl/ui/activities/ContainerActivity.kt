@@ -50,6 +50,7 @@ abstract class ContainerActivity : BaseActivity() {
         backStack.push(uri)
     }
 
+
     private fun loadCurrentContainer() {
         when (currentUri) {
             CreateHuntContainer.URI -> container = CreateHuntContainer()
@@ -65,7 +66,10 @@ abstract class ContainerActivity : BaseActivity() {
     }
 
     fun finishCurrentContainer() {
+        container?.finish()
+
         if (backStack.size > 1) {
+
             backStack.pop()
 
             loadCurrentContainer()
@@ -75,6 +79,8 @@ abstract class ContainerActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
+        container?.finish()
+
         if (backStack.size > 1) {
             backStack.pop()
 

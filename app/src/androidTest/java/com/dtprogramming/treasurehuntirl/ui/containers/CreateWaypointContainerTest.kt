@@ -31,7 +31,7 @@ class CreateWaypointContainerTest {
     @Before
     fun setUp() {
         val intent = Intent()
-        intent.putExtra(CreateHuntActivity.HUNT_UUID, "some uuid")
+        intent.putExtra(CreateHuntActivity.CREATE_NEW, true)
         activityTestRule.launchActivity(intent)
 
         onView(withId(R.id.create_hunt_container_add_waypoint)).perform(click())

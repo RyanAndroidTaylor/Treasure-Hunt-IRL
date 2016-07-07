@@ -7,10 +7,16 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.TableColumns
+import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
@@ -41,6 +47,8 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView, OnMapReadyCallba
 
     val createHuntPresenter: CreateHuntPresenter
 
+    private lateinit var editTitle: EditText
+
     private lateinit var adapter: ClueAdapter
 
     private lateinit var clueList: RecyclerView
@@ -51,12 +59,14 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView, OnMapReadyCallba
         createHuntPresenter = if (PresenterManager.hasPresenter(CreateHuntPresenter.TAG))
             PresenterManager.getPresenter(CreateHuntPresenter.TAG) as CreateHuntPresenter
         else
-            PresenterManager.addPresenter(CreateHuntPresenter.TAG, CreateHuntPresenter()) as CreateHuntPresenter
+            PresenterManager.addPresenter(CreateHuntPresenter.TAG, CreateHuntPresenter(TreasureHuntConnectionImpl(), ClueConnectionImpl(), WaypointConnectionImpl())) as CreateHuntPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
         inflateView(R.layout.container_create_hunt)
+
+        editTitle = parent.create_hunt_container_title
 
         clueList = parent.create_hunt_container_clue_list
 
@@ -87,11 +97,13 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView, OnMapReadyCallba
             mapFragment.getMapAsync(this)
         }
 
-        //TODO Added edit text for title of Treasure Hunt. Then notify presenter every time the title changes
-
-        parent.create_hunt_container_save.setOnClickListener { createHuntPresenter.save() }
-
-        parent.create_hunt_container_cancel.setOnClickListener { createHuntPresenter.cancel() }
+        parent.create_hunt_container_title.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                createHuntPresenter.titleChange(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         parent.create_hunt_container_add_clue.setOnClickListener { moveToContainer(CreateClueContainer.URI) }
 
@@ -132,12 +144,16 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView, OnMapReadyCallba
         }
     }
 
+    override fun setTitle(title: String) {
+        editTitle.setText(title)
+    }
+
     override fun error(message: String) {
         Toast.makeText(containerActivity, message, Toast.LENGTH_LONG).show()
     }
 
     override fun finish() {
-        containerActivity.finish()
+        createHuntPresenter.finish()
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
