@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.util
 
+import android.database.Cursor
 import java.util.*
 
 /**
@@ -8,4 +9,12 @@ import java.util.*
 
 fun randomUuid(): String {
     return UUID.randomUUID().toString().replace("-", "")
+}
+
+fun Cursor.getString(columnName: String): String {
+    return getString(getColumnIndex(columnName))
+}
+
+fun Cursor.getDouble(columnName: String): Double {
+    return getDouble(getColumnIndex(columnName))
 }

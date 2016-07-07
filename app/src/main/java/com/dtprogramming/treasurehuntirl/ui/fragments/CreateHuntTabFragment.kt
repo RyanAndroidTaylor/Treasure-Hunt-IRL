@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.database.DatabaseObservables
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.TreasureHuntAdapter

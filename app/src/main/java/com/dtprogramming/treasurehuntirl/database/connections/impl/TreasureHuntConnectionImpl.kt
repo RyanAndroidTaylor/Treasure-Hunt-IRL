@@ -3,7 +3,7 @@ package com.dtprogramming.treasurehuntirl.database.connections.impl
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
-import com.dtprogramming.treasurehuntirl.database.getString
+import com.dtprogramming.treasurehuntirl.util.getString
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.squareup.sqlbrite.BriteDatabase
 import rx.Subscription

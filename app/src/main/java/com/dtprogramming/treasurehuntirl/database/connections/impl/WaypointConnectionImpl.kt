@@ -3,8 +3,8 @@ package com.dtprogramming.treasurehuntirl.database.connections.impl
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
-import com.dtprogramming.treasurehuntirl.database.getDouble
-import com.dtprogramming.treasurehuntirl.database.getString
+import com.dtprogramming.treasurehuntirl.util.getDouble
+import com.dtprogramming.treasurehuntirl.util.getString
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.squareup.sqlbrite.BriteDatabase
 import rx.Subscription
