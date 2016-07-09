@@ -123,7 +123,7 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
         containerActivity.finishCurrentContainer()
     }
 
-    override fun finish() {
+    override fun onFinish() {
 
     }
 }

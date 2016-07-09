@@ -7,19 +7,20 @@ import com.dtprogramming.treasurehuntirl.database.TableColumns
 /**
  * Created by ryantaylor on 6/21/16.
  */
-data class Clue(val id: Long, val uuid: String, val treasureHuntId: String, val text: String) {
+data class Clue(val id: Long, val uuid: String, val treasureHuntId: String, val answerId: String, val text: String) {
 
     companion object {
         val TABLE = Table()
     }
 
-    constructor(uuid: String, treasureHuntId: String, text: String) : this(-1L, uuid, treasureHuntId, text)
+    constructor(uuid: String, treasureHuntId: String, answerId: String, text: String) : this(-1L, uuid, treasureHuntId, answerId, text)
 
     fun getContentValues(): ContentValues {
         val contentValues = ContentValues()
 
         contentValues.put(TableColumns.UUID, uuid)
         contentValues.put(TABLE.TREASURE_HUNT, treasureHuntId)
+        contentValues.put(TABLE.ANSWER, answerId)
         contentValues.put(TABLE.TEXT, text)
 
         return contentValues;
@@ -29,6 +30,7 @@ data class Clue(val id: Long, val uuid: String, val treasureHuntId: String, val 
         val NAME: String
 
         val TREASURE_HUNT: String
+        val ANSWER: String
         val TEXT: String
 
         val CREATE: String
@@ -38,6 +40,7 @@ data class Clue(val id: Long, val uuid: String, val treasureHuntId: String, val 
 
             NAME = quickTable.open("ClueTable")
             TREASURE_HUNT = quickTable.buildTextColumn("TreasureHunt").foreignKey(TreasureHunt.TABLE.NAME, TableColumns.UUID).build()
+            ANSWER = quickTable.buildTextColumn("Answer").build()
             TEXT = quickTable.buildTextColumn("Text").build()
             CREATE = quickTable.retrieveCreateString()
         }

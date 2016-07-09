@@ -99,20 +99,20 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_gravity="bottom"
-        android:paddingLeft="@dimen/margin_normal"
-        android:paddingRight="@dimen/margin_normal">
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
 
-        <TextView
+        <Button
             android:id="@+id/create_waypoint_container_cancel"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="@string/cancel"/>
 
-        <TextView
+        <Button
             android:id="@+id/create_waypoint_container_save"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"

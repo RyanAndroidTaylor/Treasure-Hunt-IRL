@@ -2,10 +2,7 @@ package com.dtprogramming.treasurehuntirl.ui.activities
 
 import android.os.Bundle
 import android.view.ViewGroup
-import com.dtprogramming.treasurehuntirl.ui.container.Container
-import com.dtprogramming.treasurehuntirl.ui.container.CreateClueContainer
-import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
-import com.dtprogramming.treasurehuntirl.ui.container.CreateWayPointContainer
+import com.dtprogramming.treasurehuntirl.ui.container.*
 import java.util.*
 
 /**
@@ -17,7 +14,9 @@ abstract class ContainerActivity : BaseActivity() {
     protected var container: Container? = null
 
     private val currentUri: String?
-        get() { return backStack.peek() }
+        get() {
+            return backStack.peek()
+        }
 
     private val backStack = Stack<String>()
 
@@ -35,38 +34,32 @@ abstract class ContainerActivity : BaseActivity() {
     }
 
     fun loadContainer(uri: String, extras: Bundle) {
-        when (uri) {
-            CreateHuntContainer.URI -> container = CreateHuntContainer()
-            CreateClueContainer.URI -> container = CreateClueContainer()
-            CreateWayPointContainer.URI -> container = CreateWayPointContainer()
-        }
+        container = getContainerForUri(uri)
 
-        if (container != null) {
-            container!!.inflate(this, parent, extras)
-        } else {
-            throw IllegalStateException("There was no match found for the URI: $uri")
-        }
+        container?.inflate(this, parent, extras)
 
         backStack.push(uri)
     }
 
 
     private fun loadCurrentContainer() {
-        when (currentUri) {
-            CreateHuntContainer.URI -> container = CreateHuntContainer()
-            CreateClueContainer.URI -> container = CreateClueContainer()
-            CreateWayPointContainer.URI -> container = CreateWayPointContainer()
-        }
+        container = getContainerForUri(currentUri)
 
-        if (container != null) {
-            container!!.inflate(this, parent, Bundle())
-        } else {
-            throw IllegalStateException("There was no match found for the URI: $currentUri")
+        container?.inflate(this, parent, Bundle())
+    }
+
+    private fun getContainerForUri(uri: String?): Container {
+        when (uri) {
+            CreateHuntContainer.URI -> return CreateHuntContainer()
+            CreateClueContainer.URI -> return CreateClueContainer()
+            CreateWayPointContainer.URI -> return CreateWayPointContainer()
+            CreateAnswerContainer.URI -> return CreateAnswerContainer()
+            else -> throw IllegalStateException("There was no match found for the URI: $uri")
         }
     }
 
     fun finishCurrentContainer() {
-        container?.finish()
+        container?.onFinish()
 
         if (backStack.size > 1) {
 
@@ -79,7 +72,7 @@ abstract class ContainerActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        container?.finish()
+        container?.onFinish()
 
         if (backStack.size > 1) {
             backStack.pop()

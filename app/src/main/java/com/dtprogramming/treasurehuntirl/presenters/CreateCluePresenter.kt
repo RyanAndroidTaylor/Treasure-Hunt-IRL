@@ -1,6 +1,5 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
-import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.ui.views.CreateClueView
@@ -25,12 +24,16 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
         this.treasureHuntId = treasureHuntId
     }
 
+    fun reload(createClueView: CreateClueView) {
+        this.createClueView = createClueView
+    }
+
     fun onTextChanged(clueText: String) {
         this.clueText = clueText
     }
 
     fun save() {
-        clueConnection.insert(Clue(UUID.randomUUID().toString().replace("-", ""), treasureHuntId, clueText))
+        clueConnection.insert(Clue(UUID.randomUUID().toString().replace("-", ""), treasureHuntId, "answers not setup", clueText))
 
         PresenterManager.removePresenter(TAG)
 

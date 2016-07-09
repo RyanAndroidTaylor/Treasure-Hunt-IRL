@@ -1,16 +1,13 @@
 package com.dtprogramming.treasurehuntirl.ui.container
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
-import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.presenters.CreateCluePresenter
-import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.views.CreateClueView
@@ -38,10 +35,17 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
         super.inflate(containerActivity, parent, extras)
         inflateView(R.layout.container_create_clue)
 
-        createCluePresenter.load(this, extras.getString(TableColumns.UUID))
+        if (extras.containsKey(TableColumns.UUID))
+            createCluePresenter.load(this, extras.getString(TableColumns.UUID))
+        else
+            createCluePresenter.reload(this)
 
         parent.create_clue_container_save.setOnClickListener {
             createCluePresenter.save()
+        }
+
+        parent.create_clue_container_add_answer.setOnClickListener {
+            containerActivity.loadContainer(CreateAnswerContainer.URI)
         }
 
         parent.create_clue__container_clue_text.addTextChangedListener(object : TextWatcher {
@@ -60,7 +64,7 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
         containerActivity.finishCurrentContainer()
     }
 
-    override fun finish() {
+    override fun onFinish() {
 
     }
 }

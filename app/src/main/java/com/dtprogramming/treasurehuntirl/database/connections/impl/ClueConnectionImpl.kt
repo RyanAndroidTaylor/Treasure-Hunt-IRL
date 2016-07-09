@@ -34,7 +34,7 @@ class ClueConnectionImpl : ClueConnection {
     override fun getTreasureHuntCluesAsync(treasureHuntId: String, onComplete: (List<Clue>) -> Unit) {
 
         val connection = database.createQuery(Clue.TABLE.NAME, "SELECT * FROM ${Clue.TABLE.NAME} WHERE ${Clue.TABLE.TREASURE_HUNT}=?", treasureHuntId)
-                .mapToList { Clue(it.getString(TableColumns.UUID), it.getString(Clue.TABLE.TREASURE_HUNT), it.getString(Clue.TABLE.TEXT)) }
+                .mapToList { Clue(it.getString(TableColumns.UUID), it.getString(Clue.TABLE.TREASURE_HUNT), "answers not setup", it.getString(Clue.TABLE.TEXT)) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .first()
                 .subscribe {

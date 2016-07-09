@@ -152,7 +152,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView, OnMapReadyCallba
         Toast.makeText(containerActivity, message, Toast.LENGTH_LONG).show()
     }
 
-    override fun finish() {
+    override fun onFinish() {
         createHuntPresenter.finish()
     }
 
