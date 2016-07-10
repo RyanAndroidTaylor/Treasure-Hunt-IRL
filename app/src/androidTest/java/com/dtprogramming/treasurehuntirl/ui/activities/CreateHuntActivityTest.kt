@@ -48,7 +48,6 @@ class CreateHuntActivityTest {
         onView(withId(R.id.create_hunt_container_add_clue)).perform(click())
 
         onView(withId(R.id.create_clue__container_clue_text)).check(matches(isDisplayed()))
-        onView(withId(R.id.create_clue_container_answer_text)).check(matches(isDisplayed()))
     }
 
     @Test

@@ -11,6 +11,8 @@ import android.support.test.espresso.Espresso.*
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
+import com.dtprogramming.treasurehuntirl.ui.Actions
+import com.dtprogramming.treasurehuntirl.ui.Matchers
 import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
 import org.junit.After
 import org.junit.Before
@@ -46,26 +48,27 @@ class CreateWaypointContainerTest {
     @Test
     fun testInitialLayout() {
         onView(withId(R.id.create_waypoint_container_title)).check(matches(withText("New Waypoint")))
-        onView(withId(R.id.create_waypoint_container_lat)).check(matches(withText("0.0")))
-        onView(withId(R.id.create_waypoint_container_lng)).check(matches(withText("0.0")))
+        onView(withId(R.id.create_waypoint_container_adjust_lat)).check(matches(Matchers.withAdjustableValueViewText("0.0")))
+        onView(withId(R.id.create_waypoint_container_adjust_lng)).check(matches(Matchers.withAdjustableValueViewText("0.0")))
     }
 
+    @Test
     fun testIncreaseDecreaseLatitudeAndLongitude() {
-        onView(withId(R.id.create_waypoint_container_lat)).check(matches(withText("0.0")))
-        onView(withId(R.id.create_waypoint_container_lng)).check(matches(withText("0.0")))
+        onView(withId(R.id.create_waypoint_container_adjust_lat)).check(matches(Matchers.withAdjustableValueViewText("0.0")))
+        onView(withId(R.id.create_waypoint_container_adjust_lng)).check(matches(Matchers.withAdjustableValueViewText("0.0")))
 
         // Latitude
-        onView(withId(R.id.create_waypoint_container_inc_lat)).perform(click())
-        onView(withId(R.id.create_waypoint_container_lat)).check(matches(withText(NUDGE_DISTANCE)))
+        onView(withId(R.id.create_waypoint_container_adjust_lat)).perform(Actions.clickCenterRight())
+        onView(withId(R.id.create_waypoint_container_adjust_lat)).check(matches(Matchers.withAdjustableValueViewText(NUDGE_DISTANCE)))
 
-        onView(withId(R.id.create_waypoint_container_dec_lat)).perform(click())
-        onView(withId(R.id.create_waypoint_container_lat)).check(matches(withText("0.0")))
+        onView(withId(R.id.create_waypoint_container_adjust_lat)).perform(Actions.clickCenterLeft())
+        onView(withId(R.id.create_waypoint_container_adjust_lat)).check(matches(Matchers.withAdjustableValueViewText("0.0")))
 
         // Longitude
-        onView(withId(R.id.create_waypoint_container_inc_lng)).perform(click())
-        onView(withId(R.id.create_waypoint_container_lng)).check(matches(withText(NUDGE_DISTANCE)))
+        onView(withId(R.id.create_waypoint_container_adjust_lng)).perform(Actions.clickCenterRight())
+        onView(withId(R.id.create_waypoint_container_adjust_lng)).check(matches(Matchers.withAdjustableValueViewText(NUDGE_DISTANCE)))
 
-        onView(withId(R.id.create_waypoint_container_dec_lng)).perform(click())
-        onView(withId(R.id.create_waypoint_container_lng)).check(matches(withText("0.0")))
+        onView(withId(R.id.create_waypoint_container_adjust_lng)).perform(Actions.clickCenterLeft())
+        onView(withId(R.id.create_waypoint_container_adjust_lng)).check(matches(Matchers.withAdjustableValueViewText("0.0")))
     }
 }

@@ -1,7 +1,9 @@
 package com.dtprogramming.treasurehuntirl.ui
 
+import android.view.View
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.TreasureHuntAdapter
+import com.dtprogramming.treasurehuntirl.ui.views.AdjustableValueView
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
@@ -10,6 +12,18 @@ import org.hamcrest.TypeSafeMatcher
  * Created by ryantaylor on 6/20/16.
  */
 object Matchers {
+
+    fun withAdjustableValueViewText(text: String): Matcher<View> {
+        return object : TypeSafeMatcher<View>() {
+            override fun matchesSafely(item: View?): Boolean {
+                return item != null && item is AdjustableValueView && item.mText.toString().equals(text)
+            }
+
+            override fun describeTo(description: Description?) {
+                description?.appendText("No AdjustableValueView with text: $text")
+            }
+        }
+    }
 
     fun withClueText(expectedClueText: String): Matcher<ClueAdapter.ClueViewHolder> {
         return object : TypeSafeMatcher<ClueAdapter.ClueViewHolder>() {

@@ -50,7 +50,7 @@ class CreateHuntTabFragmentTest {
             waypointConnection.insert(Waypoint("waypoint$i uuid", "waypoint $i", "simple uuid", i * 100.0, i * 200.0))
 
         for (i in 1..5)
-            clueConnection.insert(Clue("clue$i uuid", "simple uuid", "clue $i"))
+            clueConnection.insert(Clue("clue$i uuid", "simple uuid", "answer uuid", "clue $i"))
 
         onView(withId(R.id.drawer_layout)).perform(swipeLeft())
         onView(withId(R.id.drawer_layout)).perform(swipeLeft())
