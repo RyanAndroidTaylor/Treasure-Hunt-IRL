@@ -2,7 +2,6 @@ package com.dtprogramming.treasurehuntirl.ui.container
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View.OnClickListener
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
@@ -31,7 +30,6 @@ class CreateAnswerContainer : BasicContainer() {
         parent.container_create_answer_cancel.setOnClickListener { containerActivity.finishCurrentContainer() }
 
         adjustableArea.setOnLeftDrawableClickListener {
-            Log.i("CreateAnswerContainer", "Left drawable clicked")
 
             if (area > 1) {
                 area --
@@ -41,7 +39,6 @@ class CreateAnswerContainer : BasicContainer() {
         }
 
         adjustableArea.container_create_answer_adjustable_zone.setOnRightDrawableClickListener {
-            Log.i("CreateAnswerContainer", "Right drawable clicked")
 
             if (area < 9999) {
                 area ++

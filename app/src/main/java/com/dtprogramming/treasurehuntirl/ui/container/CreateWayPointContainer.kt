@@ -4,18 +4,17 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
 import com.dtprogramming.treasurehuntirl.presenters.CreateWaypointPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
+import com.dtprogramming.treasurehuntirl.ui.views.AdjustableValueView
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
@@ -24,7 +23,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.container_create_waypoint.view.*
-import java.lang.ref.WeakReference
 
 /**
  * Created by ryantaylor on 6/22/16.
@@ -41,8 +39,9 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
     private lateinit var marker: Marker
 
     private lateinit var editTitle: EditText
-    private lateinit var displayLat: TextView
-    private lateinit var displayLng: TextView
+
+    private lateinit var adjustableLat: AdjustableValueView
+    private lateinit var adjustableLng: AdjustableValueView
 
     init {
         createWaypointPresenter = if (PresenterManager.hasPresenter(CreateWaypointPresenter.TAG))
@@ -56,8 +55,6 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
         inflateView(R.layout.container_create_waypoint)
 
         editTitle = parent.create_waypoint_container_title
-        displayLat = parent.create_waypoint_container_lat
-        displayLng = parent.create_waypoint_container_lng
 
         createWaypointPresenter.load(this, extras.getString(TableColumns.UUID))
 
@@ -67,10 +64,14 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
 
         mapFragment.getMapAsync(this)
 
-        parent.create_waypoint_container_inc_lat.setOnClickListener { createWaypointPresenter.increaseLat() }
-        parent.create_waypoint_container_dec_lat.setOnClickListener { createWaypointPresenter.decreaseLat() }
-        parent.create_waypoint_container_inc_lng.setOnClickListener { createWaypointPresenter.increaseLng() }
-        parent.create_waypoint_container_dec_lng.setOnClickListener { createWaypointPresenter.decreaseLng() }
+        adjustableLat = parent.create_waypoint_container_adjust_lat
+        adjustableLng = parent.create_waypoint_container_adjust_lng
+
+        adjustableLat.setOnLeftDrawableClickListener { createWaypointPresenter.decreaseLat() }
+        adjustableLat.setOnRightDrawableClickListener { createWaypointPresenter.increaseLat() }
+        adjustableLng.setOnLeftDrawableClickListener { createWaypointPresenter.decreaseLng() }
+        adjustableLng.setOnRightDrawableClickListener { createWaypointPresenter.increaseLng() }
+
         parent.create_waypoint_container_save.setOnClickListener { createWaypointPresenter.save() }
         parent.create_waypoint_container_cancel.setOnClickListener { createWaypointPresenter.cancel() }
 
@@ -108,13 +109,13 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
 
         editTitle.text.replace(0, editTitle.text.length, marker.title)
 
-        displayLat.text = "${marker.position.latitude}"
-        displayLng.text = "${marker.position.longitude}"
+        adjustableLat.mText = "${marker.position.latitude}"
+        adjustableLng.mText = "${marker.position.longitude}"
     }
 
     override fun markerMoved(lat: Double, lng: Double) {
-        displayLat.text = "$lat"
-        displayLng.text = "$lng"
+        adjustableLat.mText = "$lat"
+        adjustableLng.mText = "$lng"
 
         marker.position = LatLng(lat, lng)
     }

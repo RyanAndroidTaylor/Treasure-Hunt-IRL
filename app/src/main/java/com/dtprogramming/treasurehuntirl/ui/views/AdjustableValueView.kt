@@ -7,7 +7,6 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.dtprogramming.treasurehuntirl.R
@@ -97,14 +96,14 @@ class AdjustableValueView : View {
             mText = ""
 
         mLeftDrawable?.let {
-            val top = y.toInt() + (height / 2) - (it.intrinsicHeight / 2)
+            val top = (height / 2) - (it.intrinsicHeight / 2)
 
-            it.setBounds(x.toInt(), top, x.toInt() + it.intrinsicWidth, top + it.intrinsicHeight)
+            it.setBounds(0, top, it.intrinsicWidth, top + it.intrinsicHeight)
         }
 
         mRightDrawable?.let {
-            val left = x.toInt() + width - it.intrinsicWidth
-            val top = y.toInt() + (height / 2) - (it.intrinsicHeight / 2)
+            val left = width - it.intrinsicWidth
+            val top = (height / 2) - (it.intrinsicHeight / 2)
 
             it.setBounds(left, top, left + it.intrinsicWidth, top + it.intrinsicHeight)
         }
@@ -119,8 +118,8 @@ class AdjustableValueView : View {
 
         mTextLayout = StaticLayout(mText, mTextPaint, textWidth.toInt(), Layout.Alignment.ALIGN_CENTER, 1f, 0f, true)
 
-        val textLeft = x.toInt() + (width / 2) - (textWidth.toInt() / 2)
-        val textTop = y.toInt() + (height / 2) - (textHeight / 2)
+        val textLeft = (width / 2) - (textWidth.toInt() / 2)
+        val textTop = (height / 2) - (textHeight / 2)
         mTextOrigin.set(textLeft, textTop)
     }
 

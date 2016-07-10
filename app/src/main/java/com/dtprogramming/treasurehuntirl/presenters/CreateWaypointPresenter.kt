@@ -42,6 +42,7 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
         this.title = title
     }
 
+    //TODO Adjust nudge distance based on map zoom. So the father out you are zoomed the bigger the nudge
     fun increaseLat() {
         lat += NUDGE_DISTANCE
 

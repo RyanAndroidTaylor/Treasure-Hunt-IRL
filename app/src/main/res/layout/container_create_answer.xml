@@ -12,10 +12,11 @@
 
         <com.dtprogramming.treasurehuntirl.ui.views.AdjustableValueView
             android:id="@+id/container_create_answer_adjustable_zone"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_minus_black_24dp"
-            android:drawableRight="@drawable/ic_plus_black_24dp"/>
+            android:drawableRight="@drawable/ic_plus_black_24dp"
+            android:text="Some Text"/>
 
     <!--<FrameLayout-->
         <!--android:layout_width="match_parent"-->
