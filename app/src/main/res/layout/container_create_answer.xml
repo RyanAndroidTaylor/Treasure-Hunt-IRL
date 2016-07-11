@@ -4,26 +4,18 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <!--<EditText-->
-        <!--android:id="@+id/container_create_answer_text"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="4"/>-->
+    <EditText
+        android:id="@+id/container_create_answer_text"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"/>
 
-        <com.dtprogramming.treasurehuntirl.ui.views.AdjustableValueView
-            android:id="@+id/container_create_answer_adjustable_zone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_minus_black_24dp"
-            android:drawableRight="@drawable/ic_plus_black_24dp"
-            android:text="Some Text"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="20">
 
-    <!--<FrameLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="20">-->
-
-    <!--</FrameLayout>-->
+    </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

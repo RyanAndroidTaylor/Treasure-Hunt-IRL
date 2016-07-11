@@ -1,6 +1,5 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
-import android.util.Log
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
@@ -59,9 +58,7 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
         this.title = title
     }
 
-    //TODO Adjust nudge distance based on map zoom. So the father out you are zoomed the bigger the nudge
     fun increaseLat() {
-        Log.i("CreateWaypointPresenter", "AdjustedNudgeDistance $adjustedNudgeDistance")
         lat += adjustedNudgeDistance
 
         createWaypointView.markerMoved(lat, lng)

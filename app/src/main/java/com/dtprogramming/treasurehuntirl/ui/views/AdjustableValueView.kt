@@ -74,6 +74,7 @@ class AdjustableValueView : View {
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
         val heightSize = MeasureSpec.getSize(heightMeasureSpec)
 
+        //TODO Convert to sp and dp values
         var finalWidth = 600
         var finalHeight = if (mTextSize > 90)
             mTextSize
