@@ -16,6 +16,7 @@ import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.views.AdjustableValueView
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
+import com.dtprogramming.treasurehuntirl.util.format
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -81,7 +82,7 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
     override fun onMapReady(googleMap: GoogleMap?) {
         this.googleMap = googleMap!!
 
-        createWaypointPresenter.mapLoaded()
+        createWaypointPresenter.mapLoaded(this.googleMap.cameraPosition.zoom)
 
         if (ContextCompat.checkSelfPermission(containerActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             googleMap.isMyLocationEnabled = true
@@ -89,6 +90,10 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
 
         this.googleMap.setOnMapClickListener { latLng: LatLng ->
             createWaypointPresenter.mapClicked(latLng.latitude, latLng.longitude)
+        }
+
+        this.googleMap.setOnCameraChangeListener {
+            createWaypointPresenter.updateZoom(it.zoom)
         }
 
         editTitle.addTextChangedListener(object : TextWatcher {
@@ -109,13 +114,13 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
 
         editTitle.text.replace(0, editTitle.text.length, marker.title)
 
-        adjustableLat.mText = "${marker.position.latitude}"
-        adjustableLng.mText = "${marker.position.longitude}"
+        adjustableLat.mText = "${marker.position.latitude.format(6)}"
+        adjustableLng.mText = "${marker.position.longitude.format(6)}"
     }
 
     override fun markerMoved(lat: Double, lng: Double) {
-        adjustableLat.mText = "$lat"
-        adjustableLng.mText = "$lng"
+        adjustableLat.mText = "${lat.format(6)}"
+        adjustableLng.mText = "${lng.format(6)}"
 
         marker.position = LatLng(lat, lng)
     }

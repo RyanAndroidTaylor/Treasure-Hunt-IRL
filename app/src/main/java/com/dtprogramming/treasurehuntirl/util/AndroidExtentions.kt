@@ -18,3 +18,5 @@ fun Cursor.getString(columnName: String): String {
 fun Cursor.getDouble(columnName: String): Double {
     return getDouble(getColumnIndex(columnName))
 }
+
+fun Double.format(digits: Int) = java.lang.String.format("%.${digits}f", this)

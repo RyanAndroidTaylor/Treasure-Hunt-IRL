@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
+import android.util.Log
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
@@ -9,7 +10,7 @@ import java.util.*
  * Created by ryantaylor on 6/25/16.
  */
 class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Presenter {
-    val NUDGE_DISTANCE = 0.00001
+    val BASE_NUDGE_DISTANCE = 1.0
 
     private lateinit var createWaypointView: CreateWaypointView
     private lateinit var treasureHuntId: String
@@ -17,6 +18,20 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
     private var title: String = "New Waypoint"
     private var lat: Double = 0.0
     private var lng: Double = 0.0
+
+    private var zoom = 0f
+    private val adjustedNudgeDistance: Double
+        get() {
+            if (zoom <= 2)
+                return BASE_NUDGE_DISTANCE
+
+            var finalNudgeDistance = BASE_NUDGE_DISTANCE
+            for (i in 2..zoom.toInt()) {
+                finalNudgeDistance *= 0.5
+            }
+
+            return finalNudgeDistance
+        }
 
     companion object {
         val TAG: String = CreateWaypointPresenter::class.java.simpleName
@@ -27,7 +42,9 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
         this.treasureHuntId = treasureHuntId
     }
 
-    fun mapLoaded() {
+    fun mapLoaded(zoom: Float) {
+        this.zoom = zoom
+
         createWaypointView.loadMarker(title, lat, lng)
     }
 
@@ -44,27 +61,32 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
 
     //TODO Adjust nudge distance based on map zoom. So the father out you are zoomed the bigger the nudge
     fun increaseLat() {
-        lat += NUDGE_DISTANCE
+        Log.i("CreateWaypointPresenter", "AdjustedNudgeDistance $adjustedNudgeDistance")
+        lat += adjustedNudgeDistance
 
         createWaypointView.markerMoved(lat, lng)
     }
 
     fun decreaseLat() {
-        lat -= NUDGE_DISTANCE
+        lat -= adjustedNudgeDistance
 
         createWaypointView.markerMoved(lat, lng)
     }
 
     fun increaseLng() {
-        lng += NUDGE_DISTANCE
+        lng += adjustedNudgeDistance
 
         createWaypointView.markerMoved(lat, lng)
     }
 
     fun decreaseLng() {
-        lng -= NUDGE_DISTANCE
+        lng -= adjustedNudgeDistance
 
         createWaypointView.markerMoved(lat, lng)
+    }
+
+    fun updateZoom(zoom: Float) {
+        this.zoom = zoom
     }
 
     fun cancel() {
