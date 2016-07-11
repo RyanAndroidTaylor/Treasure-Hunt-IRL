@@ -35,8 +35,8 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
         super.inflate(containerActivity, parent, extras)
         inflateView(R.layout.container_create_clue)
 
-        if (extras.containsKey(TableColumns.UUID))
-            createCluePresenter.load(this, extras.getString(TableColumns.UUID))
+        if (extras.containsKey(CreateTreasureChestContainer.TREASURE_CHEST_UUID))
+            createCluePresenter.load(this, extras.getString(CreateTreasureChestContainer.TREASURE_CHEST_UUID))
         else
             createCluePresenter.reload(this)
 

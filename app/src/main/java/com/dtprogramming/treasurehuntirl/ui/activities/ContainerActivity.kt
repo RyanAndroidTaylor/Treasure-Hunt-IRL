@@ -54,6 +54,7 @@ abstract class ContainerActivity : BaseActivity() {
             CreateClueContainer.URI -> return CreateClueContainer()
             CreateWayPointContainer.URI -> return CreateWayPointContainer()
             CreateAnswerContainer.URI -> return CreateAnswerContainer()
+            CreateTreasureChestContainer.URI -> return CreateTreasureChestContainer()
             else -> throw IllegalStateException("There was no match found for the URI: $uri")
         }
     }

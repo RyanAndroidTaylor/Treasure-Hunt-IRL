@@ -13,13 +13,13 @@ data class Clue(val id: Long, val uuid: String, val treasureHuntId: String, val 
         val TABLE = Table()
     }
 
-    constructor(uuid: String, treasureHuntId: String, answerId: String, text: String) : this(-1L, uuid, treasureHuntId, answerId, text)
+    constructor(uuid: String, treasureChestId: String, answerId: String, text: String) : this(-1L, uuid, treasureChestId, answerId, text)
 
     fun getContentValues(): ContentValues {
         val contentValues = ContentValues()
 
         contentValues.put(TableColumns.UUID, uuid)
-        contentValues.put(TABLE.TREASURE_HUNT, treasureHuntId)
+        contentValues.put(TABLE.TREASURE_CHEST, treasureHuntId)
         contentValues.put(TABLE.ANSWER, answerId)
         contentValues.put(TABLE.TEXT, text)
 
@@ -29,7 +29,7 @@ data class Clue(val id: Long, val uuid: String, val treasureHuntId: String, val 
     class Table {
         val NAME: String
 
-        val TREASURE_HUNT: String
+        val TREASURE_CHEST: String
         val ANSWER: String
         val TEXT: String
 
@@ -39,7 +39,7 @@ data class Clue(val id: Long, val uuid: String, val treasureHuntId: String, val 
             val quickTable = QuickTable()
 
             NAME = quickTable.open("ClueTable")
-            TREASURE_HUNT = quickTable.buildTextColumn("TreasureHunt").foreignKey(TreasureHunt.TABLE.NAME, TableColumns.UUID).build()
+            TREASURE_CHEST = quickTable.buildTextColumn("TreasureChest").build()
             ANSWER = quickTable.buildTextColumn("Answer").build()
             TEXT = quickTable.buildTextColumn("Text").build()
             CREATE = quickTable.retrieveCreateString()

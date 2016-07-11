@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activities.TreasureTabActivity">
+
+    <FrameLayout
+        android:id="@+id/title_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/card_view_background">
+
+        <EditText
+            android:id="@+id/create_chest_container_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:hint="Title"/>
+    </FrameLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/create_chest_container_clue_list"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@id/title_container"
+        android:layout_marginTop="@dimen/margin_normal"/>
+
+    <FrameLayout
+        android:id="@+id/add_action_container"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_below="@id/create_chest_container_clue_list"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:background="@color/card_view_background">
+
+        <TextView
+            android:id="@+id/create_chest_container_add_clue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:text="@string/add_clue"
+            android:textColor="@color/colorAccent"/>
+
+        <TextView
+            android:id="@+id/create_chest_container_add_waypoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:text="@string/add_waypoint"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/create_chest_container_map_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/add_action_container"
+        android:background="#ff92ff"/>
+
+    <FrameLayout
+        android:id="@+id/persist_action_container"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/card_view_background">
+
+        <TextView
+            android:id="@+id/create_chest_container_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:text="@string/cancel"/>
+
+        <TextView
+            android:id="@+id/create_chest_container_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:text="@string/save"/>
+    </FrameLayout>
+</RelativeLayout>

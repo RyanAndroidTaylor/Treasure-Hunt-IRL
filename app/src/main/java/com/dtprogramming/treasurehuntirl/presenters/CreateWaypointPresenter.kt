@@ -93,7 +93,7 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
     }
 
     fun save() {
-        waypointConnection.insert(Waypoint(UUID.randomUUID().toString().replace("-", ""), title, treasureHuntId, lat, lng))
+        waypointConnection.insert(Waypoint(UUID.randomUUID().toString().replace("-", ""), treasureHuntId, lat, lng))
 
         PresenterManager.removePresenter(TAG)
 
