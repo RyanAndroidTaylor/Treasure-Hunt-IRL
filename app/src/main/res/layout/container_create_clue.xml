@@ -4,34 +4,18 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <LinearLayout
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="200dp"
+        android:layout_margin="@dimen/margin_normal"
+        card_view:cardCornerRadius="4dp">
 
-        <android.support.v7.widget.CardView
+        <EditText
+            android:id="@+id/create_clue__container_clue_text"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_margin="@dimen/margin_normal"
-            card_view:cardCornerRadius="4dp">
-
-            <EditText
-                android:id="@+id/create_clue__container_clue_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"/>
-        </android.support.v7.widget.CardView>
-
-        <TextView
-            android:id="@+id/create_clue_container_add_answer"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:layout_marginStart="@dimen/margin_normal"
-            android:layout_marginTop="@dimen/margin_small"
-            android:text="@string/add_answer"
-            android:textColor="@color/colorAccent"/>
-    </LinearLayout>
+            android:layout_gravity="bottom"/>
+    </android.support.v7.widget.CardView>
 
     <TextView
         android:id="@+id/create_clue_container_save"
@@ -39,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_marginBottom="@dimen/margin_normal"
-        android:layout_marginRight="@dimen/margin_normal"
         android:layout_marginEnd="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
         android:text="@string/save"/>
 </FrameLayout>

@@ -31,35 +31,17 @@ class ClueConnectionImpl : ClueConnection {
         database.update(Clue.TABLE.NAME, clue.getContentValues(), TableColumns.WHERE_UUID_EQUALS, clue.uuid)
     }
 
-    override fun getTreasureHuntCluesAsync(treasureHuntId: String, onComplete: (List<Clue>) -> Unit) {
+    override fun getClueForTreasureChest(treasureChestId: String): Clue? {
+        val cursor = database.query("SELECT * FROM ${Clue.TABLE.NAME} WHERE ${Clue.TABLE.TREASURE_CHEST}=?", treasureChestId)
 
-        val connection = database.createQuery(Clue.TABLE.NAME, "SELECT * FROM ${Clue.TABLE.NAME} WHERE ${Clue.TABLE.TREASURE_CHEST}=?", treasureHuntId)
-                .mapToList { Clue(it.getString(TableColumns.UUID), it.getString(Clue.TABLE.TREASURE_CHEST), "answers not setup", it.getString(Clue.TABLE.TEXT)) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .first()
-                .subscribe {
-                    val clues = ArrayList<Clue>()
+        var clue: Clue? = null
 
-                    for (clue in it)
-                        clues.add(clue)
-
-                    onComplete(clues)
-                }
-
-        connections.add(connection)
-    }
-
-    override fun getClueCountForTreasureHunt(treasureHuntId: String): Int {
-        val cursor = database.query("SELECT COUNT(*) FROM ${Clue.TABLE.NAME} WHERE ${Clue.TABLE.TREASURE_CHEST}=?", treasureHuntId)
-
-        val clueCount = if  (cursor.moveToFirst())
-            cursor.getInt(0)
-        else
-            0
+        if (cursor != null && cursor.moveToFirst())
+            clue = Clue(cursor)
 
         cursor.close()
 
-        return clueCount
+        return clue
     }
 
     override fun unsubscribe() {

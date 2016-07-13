@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".ui.activities.TreasureTabActivity">
 
     <FrameLayout
@@ -21,67 +23,55 @@
             android:hint="Title"/>
     </FrameLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/create_chest_container_clue_list"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_below="@id/title_container"
-        android:layout_marginTop="@dimen/margin_normal"/>
+        android:layout_margin="@dimen/margin_normal">
+
+        <Button
+            android:id="@+id/create_chest_container_add_clue"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Add Clue"
+            android:textColor="@color/colorAccent"/>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/create_chest_container_clue_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            card_view:cardCornerRadius="6dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/create_chest_container_clue_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="@dimen/margin_small"
+                android:hint="@string/add_clue_hint"/>
+        </android.support.v7.widget.CardView>
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/add_action_container"
         android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:layout_below="@id/create_chest_container_clue_list"
-        android:layout_marginTop="@dimen/margin_normal"
         android:background="@color/card_view_background">
-
-        <TextView
-            android:id="@+id/create_chest_container_add_clue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:text="@string/add_clue"
-            android:textColor="@color/colorAccent"/>
 
         <TextView
             android:id="@+id/create_chest_container_add_waypoint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="@dimen/margin_normal"
-            android:text="@string/add_waypoint"/>
+            android:layout_gravity="center"
+            android:text="@string/add_waypoint"
+            android:textColor="@color/colorAccent"/>
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/create_chest_container_map_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/add_action_container"
         android:background="#ff92ff"/>
-
-    <FrameLayout
-        android:id="@+id/persist_action_container"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/card_view_background">
-
-        <TextView
-            android:id="@+id/create_chest_container_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:text="@string/cancel"/>
-
-        <TextView
-            android:id="@+id/create_chest_container_save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="@dimen/margin_normal"
-            android:text="@string/save"/>
-    </FrameLayout>
-</RelativeLayout>
+</LinearLayout>

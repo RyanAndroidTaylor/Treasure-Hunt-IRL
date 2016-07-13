@@ -9,13 +9,13 @@ import android.text.TextWatcher
 import android.view.ViewGroup
 import android.widget.EditText
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
 import com.dtprogramming.treasurehuntirl.presenters.CreateWaypointPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.views.AdjustableValueView
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
+import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
 import com.dtprogramming.treasurehuntirl.util.format
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
@@ -57,7 +57,10 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
 
         editTitle = parent.create_waypoint_container_title
 
-        createWaypointPresenter.load(this, extras.getString(TableColumns.UUID))
+        if (extras.containsKey(TREASURE_CHEST_UUID))
+            createWaypointPresenter.load(this, extras.getString(TREASURE_CHEST_UUID))
+        else
+            createWaypointPresenter.reload(this)
 
         val mapFragment = MapFragment()
 

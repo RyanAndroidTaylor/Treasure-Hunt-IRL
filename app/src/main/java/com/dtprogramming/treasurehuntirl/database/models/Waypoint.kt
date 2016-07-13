@@ -7,7 +7,7 @@ import com.dtprogramming.treasurehuntirl.database.TableColumns
 /**
  * Created by ryantaylor on 6/23/16.
  */
-data class Waypoint(val id: Long, val uuid: String, val treasureHuntId: String, val lat: Double, val long: Double) {
+data class Waypoint(val id: Long, val uuid: String, val treasureChestId: String, val lat: Double, val long: Double) {
 
     companion object {
         val TABLE = Table()
@@ -19,7 +19,7 @@ data class Waypoint(val id: Long, val uuid: String, val treasureHuntId: String, 
         val contentValues = ContentValues()
 
         contentValues.put(TableColumns.UUID, uuid)
-        contentValues.put(TABLE.TREASURE_CHEST, treasureHuntId)
+        contentValues.put(TABLE.TREASURE_CHEST, treasureChestId)
         contentValues.put(TABLE.LAT, lat)
         contentValues.put(TABLE.LNG, long)
 

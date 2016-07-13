@@ -3,10 +3,7 @@ package com.dtprogramming.treasurehuntirl.database
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.dtprogramming.treasurehuntirl.database.models.Answer
-import com.dtprogramming.treasurehuntirl.database.models.Clue
-import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
-import com.dtprogramming.treasurehuntirl.database.models.Waypoint
+import com.dtprogramming.treasurehuntirl.database.models.*
 
 /**
  * Created by ryantaylor on 6/21/16.
@@ -22,5 +19,6 @@ class DatabaseOpenHelper(context: Context) : SQLiteOpenHelper(context, "THApp", 
         db?.execSQL(Clue.TABLE.CREATE)
         db?.execSQL(Waypoint.TABLE.CREATE)
         db?.execSQL(Answer.TABLE.CREATE)
+        db?.execSQL(TreasureChest.TABLE.CREATE)
     }
 }

@@ -15,17 +15,37 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
     }
 
     private lateinit var createClueView: CreateClueView
+
+    private lateinit var clueId: String
     private lateinit var treasureHuntId: String
 
     private var clueText = ""
 
-    fun load(createClueView: CreateClueView, treasureHuntId: String) {
+    fun create(createClueView: CreateClueView, treasureHuntId: String) {
         this.createClueView = createClueView
         this.treasureHuntId = treasureHuntId
+
+        clueConnection.insert(Clue(clueId, treasureHuntId, clueText))
+    }
+
+    fun load(createClueView: CreateClueView, treasureChestId: String) {
+        this.createClueView = createClueView
+        this.treasureHuntId = treasureChestId
+
+        val clue = clueConnection.getClueForTreasureChest(treasureChestId)
+
+        clue?.let {
+            clueId = it.uuid
+            clueText = it.text
+        }
+
+        createClueView.setClueText(clueText)
     }
 
     fun reload(createClueView: CreateClueView) {
         this.createClueView = createClueView
+
+        createClueView.setClueText(clueText)
     }
 
     fun onTextChanged(clueText: String) {
@@ -33,7 +53,7 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
     }
 
     fun save() {
-        clueConnection.insert(Clue(UUID.randomUUID().toString().replace("-", ""), treasureHuntId, "answers not setup", clueText))
+        clueConnection.update(Clue(clueId, treasureHuntId, clueText))
 
         PresenterManager.removePresenter(TAG)
 

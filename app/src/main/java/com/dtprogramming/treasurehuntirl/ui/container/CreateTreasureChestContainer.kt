@@ -5,23 +5,34 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.TableColumns
+import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateTreasureChestPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
+import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
 import com.dtprogramming.treasurehuntirl.ui.views.CreateTreasureChestView
+import com.dtprogramming.treasurehuntirl.util.CLUE_UUID
+import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
+import com.dtprogramming.treasurehuntirl.util.NEW
+import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
@@ -38,17 +49,15 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
 
     companion object {
         val URI: String = CreateTreasureChestContainer::class.java.simpleName
-        val TREASURE_CHEST_UUID = "TreasureChestUuid"
-        val NEW = "New"
     }
 
     private var createTreasureChestPresenter: CreateTreasureChestPresenter
 
     private lateinit var editTitle: EditText
 
-    private lateinit var adapter: ClueAdapter
-
-    private lateinit var clueList: RecyclerView
+    private lateinit var addClue: Button
+    private lateinit var clueContainer: CardView
+    private lateinit var clueText: TextView
 
     private var googleMap: GoogleMap? = null
 
@@ -56,35 +65,16 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         createTreasureChestPresenter = if (PresenterManager.hasPresenter(CreateTreasureChestPresenter.TAG))
             PresenterManager.getPresenter(CreateTreasureChestPresenter.TAG) as CreateTreasureChestPresenter
         else
-            PresenterManager.addPresenter(CreateTreasureChestPresenter.TAG, CreateTreasureChestPresenter()) as CreateTreasureChestPresenter
+            PresenterManager.addPresenter(CreateTreasureChestPresenter.TAG, CreateTreasureChestPresenter(TreasureChestConnectionImpl(), ClueConnectionImpl())) as CreateTreasureChestPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
         inflateView(R.layout.container_create_treasure_chest)
 
-        if (ContextCompat.checkSelfPermission(containerActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(containerActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-        }
-
-        if (extras.containsKey(TREASURE_CHEST_UUID))
-            createTreasureChestPresenter.loadTreasureChest(extras.getString(TREASURE_CHEST_UUID), this)
-        else if (extras.containsKey(NEW))
-            createTreasureChestPresenter.newTreasureChest(this)
-        else
-            createTreasureChestPresenter.reload(this)
+        checkForLocationPermission()
 
         editTitle = parent.create_chest_container_title
-
-        clueList = parent.create_chest_container_clue_list
-
-        clueList.layoutManager = CustomLinearLayoutManager(parent.context, LinearLayoutManager.HORIZONTAL, false)
-
-        adapter = ClueAdapter(parent.context, emptyList())
-
-        clueList.adapter = adapter
-
-        clueList.addOnScrollListener(ClueScrollListener())
 
         if (googleMap == null) {
             val mapFragment = MapFragment()
@@ -101,11 +91,47 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        parent.create_chest_container_add_clue.setOnClickListener { moveToContainer(CreateClueContainer.URI) }
+        addClue = parent.create_chest_container_add_clue
+        clueContainer = parent.create_chest_container_clue_container
+        clueText = parent.create_chest_container_clue_text
+
+        addClue.setOnClickListener {
+            val bundle = Bundle()
+
+            bundle.putString(TREASURE_CHEST_UUID, createTreasureChestPresenter.treasureChestId)
+            bundle.putBoolean(NEW, true)
+
+            containerActivity.loadContainer(CreateClueContainer.URI, bundle)
+        }
+
+        clueContainer.setOnClickListener {
+            val bundle = Bundle()
+
+            bundle.putString(TREASURE_CHEST_UUID, createTreasureChestPresenter.treasureChestId)
+
+            containerActivity.loadContainer(CreateClueContainer.URI, bundle)
+        }
 
         parent.create_chest_container_add_waypoint.setOnClickListener { moveToContainer(CreateWayPointContainer.URI) }
 
+        loadPresenter(extras)
+
         return this
+    }
+
+    private fun loadPresenter(extras: Bundle) {
+        if (extras.containsKey(TREASURE_CHEST_UUID))
+            createTreasureChestPresenter.loadTreasureChest(extras.getString(TREASURE_CHEST_UUID), extras.getString(HUNT_UUID), this)
+        else if (extras.containsKey(NEW))
+            createTreasureChestPresenter.newTreasureChest(extras.getString(HUNT_UUID), this)
+        else
+            createTreasureChestPresenter.reload(this)
+    }
+
+    private fun checkForLocationPermission() {
+        if (ContextCompat.checkSelfPermission(containerActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(containerActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+        }
     }
 
     override fun onMapReady(map: GoogleMap?) {
@@ -114,8 +140,11 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         createTreasureChestPresenter.mapLoaded()
     }
 
-    override fun updateClueList(clues: List<Clue>) {
-        adapter.updateList(clues)
+    override fun displayClue(clue: Clue) {
+        addClue.visibility = View.GONE
+        clueContainer.visibility = View.VISIBLE
+
+        clueText.text = clue.text
     }
 
     override fun updateWaypoints(waypoints: List<Waypoint>) {
@@ -142,6 +171,10 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         editTitle.setText(title)
     }
 
+    override fun close() {
+        containerActivity.finishCurrentContainer()
+    }
+
     fun moveToContainer(uri: String) {
         val extras = Bundle()
 
@@ -151,6 +184,6 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
     }
 
     override fun onFinish() {
-
+        createTreasureChestPresenter.finish()
     }
 }

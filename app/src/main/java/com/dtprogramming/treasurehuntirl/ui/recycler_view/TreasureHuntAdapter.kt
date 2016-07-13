@@ -36,9 +36,6 @@ class TreasureHuntAdapter(context: Context, items: List<TreasureHunt>) : ListRec
 
     class TreasureHuntViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val waypointConnection = WaypointConnectionImpl()
-        val clueConnection = ClueConnectionImpl()
-
         lateinit var titleText: TextView
         lateinit var waypointCount: TextView
         lateinit var clueCount: TextView
@@ -58,8 +55,7 @@ class TreasureHuntAdapter(context: Context, items: List<TreasureHunt>) : ListRec
         fun bind(treasureHunt: TreasureHunt) {
             this.treasureHunt = treasureHunt
 
-            val waypointCount = waypointConnection.getWaypointCountForTreasureHunt(treasureHunt.uuid)
-            val clueCount = clueConnection.getClueCountForTreasureHunt(treasureHunt.uuid)
+            //TODO show how many treasure chest there are
 
             titleText.text = treasureHunt.title
             this.waypointCount.text = "$waypointCount Waypoints"

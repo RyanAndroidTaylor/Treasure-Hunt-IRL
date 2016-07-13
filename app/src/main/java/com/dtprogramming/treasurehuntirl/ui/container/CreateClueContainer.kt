@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.ViewGroup
+import android.widget.EditText
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
@@ -11,6 +12,8 @@ import com.dtprogramming.treasurehuntirl.presenters.CreateCluePresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.views.CreateClueView
+import com.dtprogramming.treasurehuntirl.util.NEW
+import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
 import kotlinx.android.synthetic.main.container_create_clue.view.*
 
 /**
@@ -24,6 +27,8 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
 
     private lateinit var createCluePresenter: CreateCluePresenter
 
+    private lateinit var clueText: EditText
+
     init {
         createCluePresenter = if (PresenterManager.hasPresenter(CreateCluePresenter.TAG))
             PresenterManager.getPresenter(CreateCluePresenter.TAG) as CreateCluePresenter
@@ -35,8 +40,12 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
         super.inflate(containerActivity, parent, extras)
         inflateView(R.layout.container_create_clue)
 
-        if (extras.containsKey(CreateTreasureChestContainer.TREASURE_CHEST_UUID))
-            createCluePresenter.load(this, extras.getString(CreateTreasureChestContainer.TREASURE_CHEST_UUID))
+        clueText = parent.create_clue__container_clue_text
+
+        if (extras.containsKey(TREASURE_CHEST_UUID))
+            createCluePresenter.load(this, extras.getString(TREASURE_CHEST_UUID))
+        else if (extras.containsKey(NEW))
+            createCluePresenter.create(this, extras.getString(TREASURE_CHEST_UUID))
         else
             createCluePresenter.reload(this)
 
@@ -44,11 +53,7 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
             createCluePresenter.save()
         }
 
-        parent.create_clue_container_add_answer.setOnClickListener {
-            containerActivity.loadContainer(CreateAnswerContainer.URI)
-        }
-
-        parent.create_clue__container_clue_text.addTextChangedListener(object : TextWatcher {
+        clueText.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 createCluePresenter.onTextChanged(s.toString())
             }
@@ -58,6 +63,10 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
         })
 
         return this
+    }
+
+    override fun setClueText(text: String) {
+        clueText.setText(text)
     }
 
     override fun close() {

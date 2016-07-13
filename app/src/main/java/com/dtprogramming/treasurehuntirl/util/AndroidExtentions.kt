@@ -15,8 +15,16 @@ fun Cursor.getString(columnName: String): String {
     return getString(getColumnIndex(columnName))
 }
 
+fun Cursor.getStringOrNull(columnName: String): String? {
+    return getString(getColumnIndex(columnName))
+}
+
 fun Cursor.getDouble(columnName: String): Double {
     return getDouble(getColumnIndex(columnName))
+}
+
+fun Cursor.getLong(columnName: String): Long {
+    return getLong(getColumnIndex(columnName))
 }
 
 fun Double.format(digits: Int) = java.lang.String.format("%.${digits}f", this)

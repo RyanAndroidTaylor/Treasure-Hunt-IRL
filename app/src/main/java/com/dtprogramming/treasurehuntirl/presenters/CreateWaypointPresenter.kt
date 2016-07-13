@@ -41,6 +41,10 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
         this.treasureHuntId = treasureHuntId
     }
 
+    fun reload(createWaypointView: CreateWaypointView) {
+        this.createWaypointView = createWaypointView
+    }
+
     fun mapLoaded(zoom: Float) {
         this.zoom = zoom
 
