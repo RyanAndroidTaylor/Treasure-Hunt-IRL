@@ -2,6 +2,7 @@ package com.dtprogramming.treasurehuntirl.ui.container
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 
@@ -11,5 +12,8 @@ import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 interface Container {
 
     fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container
+    fun reload(parent: ViewGroup)
     fun onFinish()
+
+    fun getRootView(): View?
 }

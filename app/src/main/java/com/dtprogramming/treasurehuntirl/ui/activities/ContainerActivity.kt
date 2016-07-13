@@ -19,6 +19,7 @@ abstract class ContainerActivity : BaseActivity() {
         }
 
     private val backStack = Stack<String>()
+    private val containerMap = HashMap<String, Container>()
 
     abstract var parent: ViewGroup
 
@@ -36,28 +37,33 @@ abstract class ContainerActivity : BaseActivity() {
     }
 
     fun loadContainer(uri: String, extras: Bundle) {
-        container = getContainerForUri(uri)
-
-        container?.inflate(this, parent, extras)
+        InflateContainer(uri, extras)
 
         backStack.push(uri)
     }
 
 
     private fun loadCurrentContainer() {
-        container = getContainerForUri(currentUri)
-
-        container?.inflate(this, parent, Bundle())
+        InflateContainer(currentUri, Bundle())
     }
 
-    private fun getContainerForUri(uri: String?): Container {
-        when (uri) {
-            CreateHuntContainer.URI -> return CreateHuntContainer()
-            CreateClueContainer.URI -> return CreateClueContainer()
-            CreateWayPointContainer.URI -> return CreateWayPointContainer()
-            CreateAnswerContainer.URI -> return CreateAnswerContainer()
-            CreateTreasureChestContainer.URI -> return CreateTreasureChestContainer()
-            else -> throw IllegalStateException("There was no match found for the URI: $uri")
+    private fun InflateContainer(uri: String?, extras: Bundle) {
+        if (containerMap.containsKey(uri)) {
+            container = containerMap[uri]!!
+
+            container?.reload(parent)
+        } else {
+            when (uri) {
+                CreateHuntContainer.URI -> container = CreateHuntContainer()
+                CreateClueContainer.URI -> container = CreateClueContainer()
+                CreateWayPointContainer.URI -> container = CreateWayPointContainer()
+                CreateTreasureChestContainer.URI -> container = CreateTreasureChestContainer()
+                else -> throw IllegalStateException("There was no match found for the URI: $uri")
+            }
+
+            containerMap.put(uri, container!!)
+
+            container?.inflate(this, parent, extras)
         }
     }
 
@@ -65,6 +71,7 @@ abstract class ContainerActivity : BaseActivity() {
         container?.onFinish()
 
         if (backStack.size > 1) {
+            containerMap.remove(currentUri)
 
             backStack.pop()
 
@@ -78,6 +85,8 @@ abstract class ContainerActivity : BaseActivity() {
         container?.onFinish()
 
         if (backStack.size > 1) {
+            containerMap.remove(currentUri)
+
             backStack.pop()
 
             loadCurrentContainer()
