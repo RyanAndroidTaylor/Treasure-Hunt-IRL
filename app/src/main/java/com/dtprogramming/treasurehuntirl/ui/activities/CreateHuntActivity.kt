@@ -55,6 +55,10 @@ class CreateHuntActivity : ContainerActivity() {
             loadContainer(CreateHuntContainer.URI, extras)
         }
 
-        toolbar?.title = resources.getString(R.string.create_hunt_activity_title)
+        toolbar?.title = stringFrom(R.string.treasure_hunt_action_bar_title)
+    }
+
+    override fun setToolBarTitle(title: String) {
+        toolbar?.title = title
     }
 }

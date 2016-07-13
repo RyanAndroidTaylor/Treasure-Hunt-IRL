@@ -14,16 +14,9 @@
         tools:text="Big Bad Hunt"/>
 
     <TextView
-        android:id="@+id/treasure_hunt_view_holder_waypoint_count"
+        android:id="@+id/treasure_hunt_view_holder_chest_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
         tools:text="12 Waypoints"/>
-
-    <TextView
-        android:id="@+id/treasure_hunt_view_holder_clue_count"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="15 Clues"/>
-
 </LinearLayout>

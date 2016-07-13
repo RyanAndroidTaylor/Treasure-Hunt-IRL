@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.THApp
+import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
@@ -36,16 +38,18 @@ class TreasureHuntAdapter(context: Context, items: List<TreasureHunt>) : ListRec
 
     class TreasureHuntViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
+        var treasureChestConnection: TreasureChestConnection
+
         lateinit var titleText: TextView
-        lateinit var waypointCount: TextView
-        lateinit var clueCount: TextView
+        lateinit var chestCount: TextView
 
         lateinit var treasureHunt: TreasureHunt
 
         init {
+            treasureChestConnection = TreasureChestConnectionImpl()
+
             titleText = view.treasure_hunt_view_holder_title
-            waypointCount = view.treasure_hunt_view_holder_waypoint_count
-            clueCount = view.treasure_hunt_view_holder_clue_count
+            chestCount = view.treasure_hunt_view_holder_chest_count
 
             view.setOnClickListener {
                 view.context.startActivity(CreateHuntActivity.getLoadIntent(view.context, treasureHunt.uuid))
@@ -55,11 +59,11 @@ class TreasureHuntAdapter(context: Context, items: List<TreasureHunt>) : ListRec
         fun bind(treasureHunt: TreasureHunt) {
             this.treasureHunt = treasureHunt
 
-            //TODO show how many treasure chest there are
+            treasureChestConnection.getTreasureChestCountForTreasureHunt(treasureHunt.uuid, {gold: Int, silver: Int, bronze: Int ->
+                chestCount.text = "$gold Gold Treasure Chests"
+            })
 
             titleText.text = treasureHunt.title
-            this.waypointCount.text = "$waypointCount Waypoints"
-            this.clueCount.text = "$clueCount Clues"
         }
     }
 }

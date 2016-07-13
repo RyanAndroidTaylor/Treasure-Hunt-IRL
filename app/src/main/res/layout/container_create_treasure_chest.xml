@@ -25,8 +25,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_margin="@dimen/margin_normal">
+        android:layout_height="100dp">
 
         <Button
             android:id="@+id/create_chest_container_add_clue"
@@ -41,6 +40,7 @@
             android:id="@+id/create_chest_container_clue_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin_normal"
             android:visibility="gone"
             card_view:cardCornerRadius="6dp">
 
@@ -56,7 +56,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="8dp"
         android:background="@color/card_view_background"/>
 
     <FrameLayout

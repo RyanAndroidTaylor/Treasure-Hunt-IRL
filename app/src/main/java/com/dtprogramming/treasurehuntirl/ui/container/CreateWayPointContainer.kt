@@ -14,6 +14,7 @@ import com.dtprogramming.treasurehuntirl.ui.views.AdjustableValueView
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
 import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
 import com.dtprogramming.treasurehuntirl.util.format
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -49,6 +50,7 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
         inflateView(R.layout.container_create_waypoint)
+        containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.waypoint_action_bar_title))
 
         if (extras.containsKey(TREASURE_CHEST_UUID))
             createWaypointPresenter.load(this, extras.getString(TREASURE_CHEST_UUID))
@@ -99,6 +101,10 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
 
         adjustableLat.mText = "${marker.position.latitude.format(6)}"
         adjustableLng.mText = "${marker.position.longitude.format(6)}"
+
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(LatLng(lat, lng), 12.0f)
+
+        googleMap.moveCamera(cameraUpdate)
     }
 
     override fun markerMoved(lat: Double, lng: Double) {

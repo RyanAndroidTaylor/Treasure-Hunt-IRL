@@ -42,7 +42,7 @@ object Matchers {
             override fun matchesSafely(item: TreasureHuntAdapter.TreasureHuntViewHolder?): Boolean {
                 return item != null
                         && item.titleText.text.toString().equals(expectedTitle)
-                        && item.waypointCount.text.toString().equals("$expectedWaypointCount Waypoints")
+                        && item.chestCount.text.toString().equals("$expectedWaypointCount Waypoints")
                         && item.clueCount.text.toString().equals("$expectedClueCount Clues")
             }
 

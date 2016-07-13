@@ -29,6 +29,8 @@ abstract class ContainerActivity : BaseActivity() {
         super.onSaveInstanceState(outState)
     }
 
+    abstract fun setToolBarTitle(title: String)
+
     fun loadContainer(uri: String) {
         loadContainer(uri, Bundle())
     }

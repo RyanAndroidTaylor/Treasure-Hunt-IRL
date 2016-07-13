@@ -74,6 +74,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
         inflateView(R.layout.container_create_treasure_chest)
+        containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.treasure_chest_action_bar_title))
 
         checkForLocationPermission()
 
@@ -135,6 +136,12 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
     override fun onMapReady(map: GoogleMap?) {
         this.googleMap = map
 
+        this.googleMap?.setOnMarkerClickListener {
+            moveToContainer(CreateWayPointContainer.URI)
+
+            true
+        }
+
         createTreasureChestPresenter.mapLoaded()
     }
 
@@ -146,21 +153,13 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
     }
 
     override fun displayWaypoint(waypoint: Waypoint) {
-        val latLngBoundsBuilder = LatLngBounds.Builder()
-
         val latLng = LatLng(waypoint.lat, waypoint.long)
 
         googleMap?.addMarker(MarkerOptions().title("Waypoint").position(latLng))
 
-        latLngBoundsBuilder.include(latLng)
-
-        val cameraPosition = CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 0)
+        val cameraPosition = CameraUpdateFactory.newLatLngZoom(latLng, 12.0f)
 
         googleMap?.moveCamera(cameraPosition)
-
-        val cameraZoom = CameraUpdateFactory.zoomTo(12.0f)
-
-        googleMap?.moveCamera(cameraZoom)
     }
 
     override fun setTitle(title: String) {
