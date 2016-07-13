@@ -64,15 +64,23 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
         return this
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        createCluePresenter.unsubscribe()
+    }
+
+    override fun onReload(parent: ViewGroup) {
+        super.onReload(parent)
+
+        createCluePresenter.reload(this)
+    }
+
     override fun setClueText(text: String) {
         clueText.setText(text)
     }
 
     override fun close() {
         containerActivity.finishCurrentContainer()
-    }
-
-    override fun onFinish() {
-
     }
 }

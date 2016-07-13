@@ -77,6 +77,18 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
         return this
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        createWaypointPresenter.unsubscribe()
+    }
+
+    override fun onReload(parent: ViewGroup) {
+        super.onReload(parent)
+
+        createWaypointPresenter.reload(this)
+    }
+
     override fun onMapReady(googleMap: GoogleMap?) {
         this.googleMap = googleMap!!
 

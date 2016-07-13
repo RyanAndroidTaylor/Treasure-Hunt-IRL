@@ -5,8 +5,8 @@ import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.util.getString
-import com.dtprogramming.treasurehuntirl.util.getStringOrNull
 import com.squareup.sqlbrite.BriteDatabase
+import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import java.util.*
 
@@ -14,6 +14,8 @@ import java.util.*
  * Created by ryantaylor on 7/11/16.
  */
 class TreasureChestConnectionImpl : TreasureChestConnection {
+
+    override val connections = ArrayList<Subscription>()
 
     private val database: BriteDatabase
 
@@ -48,7 +50,7 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
     }
 
     override fun getTreasureChestsForTreasureHuntAsync(treasureHuntId: String, onComplete: (List<TreasureChest>) -> Unit) {
-        database.createQuery(TreasureChest.TABLE.NAME, "SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntId)
+        val connection = database.createQuery(TreasureChest.TABLE.NAME, "SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntId)
                 .mapToList { TreasureChest(it.getString(TableColumns.UUID), it.getString(TreasureChest.TABLE.TREASURE_HUNT), it.getString(TreasureChest.TABLE.TITLE)) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .first()
@@ -60,6 +62,8 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
 
                     onComplete(treasureChests)
                 }
+
+        connections.add(connection)
     }
 
     //TODO Turn this async once we are figuring out the count of all different types of treasure chests
@@ -73,5 +77,14 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
         cursor.close()
 
         onComplete(count, 0, 0)
+    }
+
+    override fun unsubscribe() {
+        for (connection in connections) {
+            if (!connection.isUnsubscribed)
+                connection.unsubscribe()
+        }
+
+        connections.clear()
     }
 }

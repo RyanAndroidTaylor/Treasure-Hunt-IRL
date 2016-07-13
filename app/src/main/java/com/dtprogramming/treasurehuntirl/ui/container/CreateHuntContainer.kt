@@ -56,7 +56,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
 
         treasureChestList.layoutManager = LinearLayoutManager(containerActivity)
 
-        adapter = TreasureChestAdapter(loadTreasureChest, containerActivity, listOf())
+        adapter = TreasureChestAdapter(treasureChestSelectedListener, containerActivity, listOf())
 
         treasureChestList.adapter = adapter
 
@@ -78,13 +78,22 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         return this
     }
 
-    val loadTreasureChest: (treasureChest: TreasureChest) -> Unit = {
-        val extras = Bundle()
+    override fun onPause() {
+        super.onPause()
 
-        extras.putString(TREASURE_CHEST_UUID, it.uuid)
-        extras.putString(HUNT_UUID, it.treasureHuntId)
+        createHuntPresenter.unSubscribe()
+    }
 
-        containerActivity.loadContainer(CreateTreasureChestContainer.URI, extras)
+    override fun onReload(parent: ViewGroup) {
+        super.onReload(parent)
+
+        createHuntPresenter.reload(this)
+    }
+
+    override fun onFinish() {
+        super.onFinish()
+
+        createHuntPresenter.finish()
     }
 
     override fun setTitle(title: String) {
@@ -95,6 +104,15 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         adapter.updateList(treasureChests)
     }
 
+    val treasureChestSelectedListener: (treasureChest: TreasureChest) -> Unit = {
+        val extras = Bundle()
+
+        extras.putString(TREASURE_CHEST_UUID, it.uuid)
+        extras.putString(HUNT_UUID, it.treasureHuntId)
+
+        containerActivity.loadContainer(CreateTreasureChestContainer.URI, extras)
+    }
+
     fun loadCreateTreasureChestContainer() {
         val bundle = Bundle()
 
@@ -102,9 +120,5 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         bundle.putString(HUNT_UUID, createHuntPresenter.treasureHuntId)
 
         containerActivity.loadContainer(CreateTreasureChestContainer.URI, bundle)
-    }
-
-    override fun onFinish() {
-        createHuntPresenter.finish()
     }
 }

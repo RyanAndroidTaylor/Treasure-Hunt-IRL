@@ -36,11 +36,19 @@ abstract class BasicContainer : Container {
         return this
     }
 
-    override fun reload(parent: ViewGroup) {
+    override fun onPause() {
+
+    }
+
+    override fun onReload(parent: ViewGroup) {
         if (parent.childCount > 0)
             parent.removeViewAt(0)
 
         parent.addView(rootView)
+    }
+
+    override fun onFinish() {
+
     }
 
     override fun getRootView(): View? {

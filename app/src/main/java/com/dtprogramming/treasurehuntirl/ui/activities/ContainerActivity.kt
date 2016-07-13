@@ -51,7 +51,7 @@ abstract class ContainerActivity : BaseActivity() {
         if (containerMap.containsKey(uri)) {
             container = containerMap[uri]!!
 
-            container?.reload(parent)
+            container?.onReload(parent)
         } else {
             when (uri) {
                 CreateHuntContainer.URI -> container = CreateHuntContainer()

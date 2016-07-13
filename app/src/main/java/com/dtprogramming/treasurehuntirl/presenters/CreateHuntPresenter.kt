@@ -35,16 +35,14 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
         this.createHuntView = createHuntView
         this.treasureHuntId = treasureHuntId
 
-        treasureChestConnection.getTreasureChestsForTreasureHuntAsync(treasureHuntId, { createHuntView.onTreasureChestsLoaded(it) })
-
+        requestTreasureChestsForTreasureHunt()
         loadTreasureHunt()
     }
 
     fun reload(createHuntView: CreateHuntView) {
         this.createHuntView = createHuntView
 
-        treasureChestConnection.getTreasureChestsForTreasureHuntAsync(treasureHuntId, { createHuntView.onTreasureChestsLoaded(it) })
-
+        requestTreasureChestsForTreasureHunt()
         loadTreasureHunt()
     }
 
@@ -55,8 +53,17 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
         createHuntView.setTitle(treasureHuntTitle)
     }
 
+    private fun requestTreasureChestsForTreasureHunt() {
+        treasureChestConnection.getTreasureChestsForTreasureHuntAsync(treasureHuntId, { createHuntView.onTreasureChestsLoaded(it) })
+    }
+
     fun onTitleChanged(newTitle: String) {
         treasureHuntTitle = newTitle
+    }
+
+    fun unSubscribe() {
+        treasureHuntConnection.unsubscribe()
+        treasureChestConnection.unsubscribe()
     }
 
     fun finish() {

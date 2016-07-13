@@ -22,6 +22,7 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
     private var new = false
 
     private var zoom = 0f
+
     private val adjustedNudgeDistance: Double
         get() {
             if (zoom <= 2)
@@ -43,6 +44,18 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
         this.createWaypointView = createWaypointView
         this.treasureChestId = treasureHuntId
 
+        loadWaypoint()
+    }
+
+    fun reload(createWaypointView: CreateWaypointView) {
+        this.createWaypointView = createWaypointView
+    }
+
+    override fun unsubscribe() {
+        waypointConnection.unsubscribe()
+    }
+
+    private fun loadWaypoint() {
         val waypoint = waypointConnection.getWaypointForTreasureChest(treasureChestId)
 
         if (waypoint !=  null) {
@@ -53,10 +66,6 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
             new = true
             waypointId = randomUuid()
         }
-    }
-
-    fun reload(createWaypointView: CreateWaypointView) {
-        this.createWaypointView = createWaypointView
     }
 
     fun mapLoaded() {

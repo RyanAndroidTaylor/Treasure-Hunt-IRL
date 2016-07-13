@@ -91,11 +91,8 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
                 createTreasureChestPresenter.titleChanged(s.toString())
             }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun afterTextChanged(s: Editable?) { }
         })
 
         addClue.setOnClickListener { moveToContainer(CreateClueContainer.URI) }
@@ -109,28 +106,20 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         return this
     }
 
-    private fun loadPresenter(extras: Bundle) {
-        if (extras.containsKey(TREASURE_CHEST_UUID))
-            createTreasureChestPresenter.loadTreasureChest(extras.getString(TREASURE_CHEST_UUID), extras.getString(HUNT_UUID), this)
-        else if (extras.containsKey(NEW))
-            createTreasureChestPresenter.newTreasureChest(extras.getString(HUNT_UUID), this)
-        else
-            createTreasureChestPresenter.reload(this)
+    override fun onReload(parent: ViewGroup) {
+        super.onReload(parent)
+
+        createTreasureChestPresenter.reload(this)
     }
 
-    private fun checkForLocationPermission() {
-        if (ContextCompat.checkSelfPermission(containerActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(containerActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-        }
+    override fun onPause() {
+        super.onPause()
+
+        createTreasureChestPresenter.unsubscribe()
     }
 
-    override fun loadMap() {
-        addWaypoint.visibility = View.GONE
-
-        val mapFragment = MapFragment()
-        containerActivity.fragmentManager.beginTransaction().replace(R.id.create_chest_container_map_container, mapFragment).commit()
-
-        mapFragment.getMapAsync(this)
+    override fun onFinish() {
+        createTreasureChestPresenter.finish()
     }
 
     override fun onMapReady(map: GoogleMap?) {
@@ -143,6 +132,15 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         }
 
         createTreasureChestPresenter.mapLoaded()
+    }
+
+    override fun loadMap() {
+        addWaypoint.visibility = View.GONE
+
+        val mapFragment = MapFragment()
+        containerActivity.fragmentManager.beginTransaction().replace(R.id.create_chest_container_map_container, mapFragment).commit()
+
+        mapFragment.getMapAsync(this)
     }
 
     override fun displayClue(clue: Clue) {
@@ -170,15 +168,26 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         containerActivity.finishCurrentContainer()
     }
 
-    fun moveToContainer(uri: String) {
+    private fun loadPresenter(extras: Bundle) {
+        if (extras.containsKey(TREASURE_CHEST_UUID))
+            createTreasureChestPresenter.load(extras.getString(TREASURE_CHEST_UUID), extras.getString(HUNT_UUID), this)
+        else if (extras.containsKey(NEW))
+            createTreasureChestPresenter.create(extras.getString(HUNT_UUID), this)
+        else
+            createTreasureChestPresenter.reload(this)
+    }
+
+    private fun checkForLocationPermission() {
+        if (ContextCompat.checkSelfPermission(containerActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(containerActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+        }
+    }
+
+    private fun moveToContainer(uri: String) {
         val extras = Bundle()
 
         extras.putString(TREASURE_CHEST_UUID, createTreasureChestPresenter.treasureChestId)
 
         containerActivity.loadContainer(uri, extras)
-    }
-
-    override fun onFinish() {
-        createTreasureChestPresenter.finish()
     }
 }

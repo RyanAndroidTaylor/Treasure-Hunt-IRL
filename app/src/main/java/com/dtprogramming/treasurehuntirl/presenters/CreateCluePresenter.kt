@@ -27,6 +27,22 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
         this.createClueView = createClueView
         this.treasureHuntId = treasureChestId
 
+        loadClue(treasureChestId)
+
+        createClueView.setClueText(clueText)
+    }
+
+    fun reload(createClueView: CreateClueView) {
+        this.createClueView = createClueView
+
+        createClueView.setClueText(clueText)
+    }
+
+    override fun unsubscribe() {
+        clueConnection.unsubscribe()
+    }
+
+    private fun loadClue(treasureChestId: String) {
         val clue = clueConnection.getClueForTreasureChest(treasureChestId)
 
         if (clue != null) {
@@ -36,14 +52,6 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
             new = true
             clueId = randomUuid()
         }
-
-        createClueView.setClueText(clueText)
-    }
-
-    fun reload(createClueView: CreateClueView) {
-        this.createClueView = createClueView
-
-        createClueView.setClueText(clueText)
     }
 
     fun onTextChanged(clueText: String) {

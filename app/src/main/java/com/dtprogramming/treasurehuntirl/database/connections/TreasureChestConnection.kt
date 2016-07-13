@@ -5,7 +5,7 @@ import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 /**
  * Created by ryantaylor on 7/11/16.
  */
-interface TreasureChestConnection {
+interface TreasureChestConnection : Connection {
 
     fun insert(treasureChest: TreasureChest)
     fun update(treasureChest: TreasureChest)
