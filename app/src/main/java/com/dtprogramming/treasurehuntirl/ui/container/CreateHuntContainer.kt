@@ -3,7 +3,10 @@ package com.dtprogramming.treasurehuntirl.ui.container
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.ViewGroup
+import android.widget.EditText
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
@@ -29,6 +32,8 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
 
     private val createHuntPresenter: CreateHuntPresenter
 
+    private lateinit var treasureHuntTitle: EditText
+
     private lateinit var treasureChestList: RecyclerView
     private lateinit var adapter: TreasureChestAdapter
 
@@ -42,6 +47,8 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
         inflateView(R.layout.container_create_hunt)
+
+        treasureHuntTitle = parent.create_hunt_container_title
 
         parent.create_hunt_container_add_chest.setOnClickListener { loadCreateTreasureChestContainer() }
 
@@ -60,6 +67,14 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         else
             createHuntPresenter.reload(this)
 
+        treasureHuntTitle.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                createHuntPresenter.onTitleChanged(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
         return this
     }
 
@@ -70,6 +85,10 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         extras.putString(HUNT_UUID, it.treasureHuntId)
 
         containerActivity.loadContainer(CreateTreasureChestContainer.URI, extras)
+    }
+
+    override fun setTitle(title: String) {
+        treasureHuntTitle.setText(title)
     }
 
     override fun onTreasureChestsLoaded(treasureChests: List<TreasureChest>) {

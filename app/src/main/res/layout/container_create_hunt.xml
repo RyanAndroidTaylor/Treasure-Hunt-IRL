@@ -6,11 +6,38 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.TreasureTabActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/create_hunt_container_chest_list"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/margin_normal"/>
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/create_hunt_container_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_small"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:background="@color/divider_background">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/treasure_chests_title"/>
+        </FrameLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/create_hunt_container_chest_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin_normal"/>
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/create_hunt_container_add_chest"

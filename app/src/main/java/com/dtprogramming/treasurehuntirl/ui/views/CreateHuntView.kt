@@ -7,5 +7,6 @@ import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
  */
 interface CreateHuntView {
 
+    fun setTitle(title: String)
     fun onTreasureChestsLoaded(treasureChests: List<TreasureChest>)
 }

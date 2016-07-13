@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         card_view:cardCornerRadius="6dp"
-        android:backgroundTint="@color/card_view_background">
+        android:backgroundTint="@color/divider_background">
 
         <TextView
             android:id="@+id/view_holder_clue_text"
