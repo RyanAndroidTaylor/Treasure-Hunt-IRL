@@ -3,6 +3,7 @@ package com.dtprogramming.treasurehuntirl.presenters
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.ui.views.CreateClueView
+import com.dtprogramming.treasurehuntirl.util.randomUuid
 import java.util.*
 
 /**
@@ -19,14 +20,8 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
     private lateinit var clueId: String
     private lateinit var treasureHuntId: String
 
+    private var new = false
     private var clueText = ""
-
-    fun create(createClueView: CreateClueView, treasureHuntId: String) {
-        this.createClueView = createClueView
-        this.treasureHuntId = treasureHuntId
-
-        clueConnection.insert(Clue(clueId, treasureHuntId, clueText))
-    }
 
     fun load(createClueView: CreateClueView, treasureChestId: String) {
         this.createClueView = createClueView
@@ -34,9 +29,12 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
 
         val clue = clueConnection.getClueForTreasureChest(treasureChestId)
 
-        clue?.let {
-            clueId = it.uuid
-            clueText = it.text
+        if (clue != null) {
+            clueId = clue.uuid
+            clueText = clue.text
+        } else {
+            new = true
+            clueId = randomUuid()
         }
 
         createClueView.setClueText(clueText)
@@ -53,7 +51,10 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
     }
 
     fun save() {
-        clueConnection.update(Clue(clueId, treasureHuntId, clueText))
+        if (new)
+            clueConnection.insert(Clue(clueId, treasureHuntId, clueText))
+        else
+            clueConnection.update(Clue(clueId, treasureHuntId, clueText))
 
         PresenterManager.removePresenter(TAG)
 

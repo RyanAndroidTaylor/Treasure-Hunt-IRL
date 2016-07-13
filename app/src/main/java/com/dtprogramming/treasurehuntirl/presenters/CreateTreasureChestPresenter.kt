@@ -2,6 +2,7 @@ package com.dtprogramming.treasurehuntirl.presenters
 
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
+import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.ui.views.CreateTreasureChestView
 import com.dtprogramming.treasurehuntirl.util.randomUuid
@@ -9,7 +10,7 @@ import com.dtprogramming.treasurehuntirl.util.randomUuid
 /**
  * Created by ryantaylor on 7/11/16.
  */
-class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestConnection, val clueConnection: ClueConnection) : Presenter {
+class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestConnection, val clueConnection: ClueConnection, val waypointConnection: WaypointConnection) : Presenter {
 
     companion object {
         val TAG: String = CreateTreasureChestPresenter::class.java.simpleName
@@ -38,7 +39,6 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         this.treasureChestId = treasureChestId
         this.treasureHuntId = treasureHuntId
 
-        //TODO Load waypoint when it's setup
         val treasureChest = treasureChestConnection.getTreasureChest(treasureChestId)
 
         treasureChestTitle = treasureChest.title
@@ -47,6 +47,11 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         val clue = clueConnection.getClueForTreasureChest(treasureChestId)
 
         clue?.let { createTreasureChestView.displayClue(it) }
+
+        val waypoint = waypointConnection.getWaypointForTreasureChest(treasureChestId)
+
+        if (waypoint != null)
+            createTreasureChestView.loadMap()
     }
 
     fun reload(createTreasureChestView: CreateTreasureChestView) {
@@ -57,6 +62,11 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         clue?.let { createTreasureChestView.displayClue(it) }
 
         createTreasureChestView.setTitle(treasureChestTitle)
+
+        val waypoint = waypointConnection.getWaypointForTreasureChest(treasureChestId)
+
+        if (waypoint != null)
+            createTreasureChestView.loadMap()
     }
 
     fun titleChanged(newTitle: String) {
@@ -64,7 +74,9 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     }
 
     fun mapLoaded() {
+        val waypoint = waypointConnection.getWaypointForTreasureChest(treasureChestId)
 
+        waypoint?.let { createTreasureChestView.displayWaypoint(it) }
     }
 
     fun finish() {

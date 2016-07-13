@@ -32,32 +32,17 @@ class WaypointConnectionImpl : WaypointConnection {
         database.update(Waypoint.TABLE.NAME, waypoint.getContentValues(), TableColumns.WHERE_UUID_EQUALS, waypoint.uuid)
     }
 
-    override fun getTreasureHuntWaypointsAsync(treasureChestId: String, onComplete: (List<Waypoint>) -> Unit) {
-        database.createQuery(Waypoint.TABLE.NAME, "SELECT * FROM ${Waypoint.TABLE.NAME} WHERE ${Waypoint.TABLE.TREASURE_CHEST}=?", treasureChestId)
-                .mapToList { Waypoint(it.getString(TableColumns.UUID), it.getString(Waypoint.TABLE.TREASURE_CHEST), it.getDouble(Waypoint.TABLE.LAT), it.getDouble(Waypoint.TABLE.LNG)) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .first()
-                .subscribe {
-                    val waypoints = ArrayList<Waypoint>()
+    override fun getWaypointForTreasureChest(treasureChestId: String): Waypoint? {
+        val cursor = database.query("SELECT * FROM ${Waypoint.TABLE.NAME} WHERE ${Waypoint.TABLE.TREASURE_CHEST}=?", treasureChestId)
 
-                    for (waypoint in it)
-                        waypoints.add(waypoint)
+        var waypoint: Waypoint? = null
 
-                    onComplete(waypoints)
-                }
-    }
-
-    override fun getWaypointCountForTreasureHunt(treasureHuntId: String): Int {
-        val cursor = database.query("SELECT COUNT(*) FROM ${Waypoint.TABLE.NAME} WHERE ${Waypoint.TABLE.TREASURE_CHEST}=?", treasureHuntId)
-
-        val count = if (cursor.moveToFirst())
-            cursor.getInt(0)
-        else
-            0
+        if (cursor.moveToFirst())
+            waypoint = Waypoint(cursor)
 
         cursor.close()
 
-        return count
+        return waypoint
     }
 
     override fun unsubscribe() {

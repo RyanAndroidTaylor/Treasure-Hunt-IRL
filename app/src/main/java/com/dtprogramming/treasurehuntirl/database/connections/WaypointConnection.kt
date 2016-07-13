@@ -10,7 +10,5 @@ interface WaypointConnection : Connection {
     fun insert(waypoint: Waypoint)
     fun update(waypoint: Waypoint)
 
-    fun getTreasureHuntWaypointsAsync(treasureChestId: String, onComplete: (List<Waypoint>) -> Unit)
-
-    fun getWaypointCountForTreasureHunt(treasureHuntId: String): Int
+    fun getWaypointForTreasureChest(treasureChestId: String): Waypoint?
 }

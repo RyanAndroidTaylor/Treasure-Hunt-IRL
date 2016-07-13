@@ -1,59 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/create_waypoint_container_map_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="30dp"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:layout_weight="80"/>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:layout_marginRight="@dimen/margin_normal"
-            android:layout_marginTop="@dimen/margin_normal">
+    <com.dtprogramming.treasurehuntirl.ui.views.AdjustableValueView
+        android:id="@+id/create_waypoint_container_adjust_lat"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:drawableLeft="@drawable/ic_minus_black_24dp"
+        android:drawableRight="@drawable/ic_plus_black_24dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/title_hint"/>
-
-            <EditText
-                android:id="@+id/create_waypoint_container_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"/>
-        </FrameLayout>
-
-        <com.dtprogramming.treasurehuntirl.ui.views.AdjustableValueView
-            android:id="@+id/create_waypoint_container_adjust_lat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_minus_black_24dp"
-            android:drawableRight="@drawable/ic_plus_black_24dp"/>
-
-        <com.dtprogramming.treasurehuntirl.ui.views.AdjustableValueView
-            android:id="@+id/create_waypoint_container_adjust_lng"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_minus_black_24dp"
-            android:drawableRight="@drawable/ic_plus_black_24dp"/>
-
-        <FrameLayout
-            android:id="@+id/create_waypoint_container_map_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </LinearLayout>
+    <com.dtprogramming.treasurehuntirl.ui.views.AdjustableValueView
+        android:id="@+id/create_waypoint_container_adjust_lng"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:drawableLeft="@drawable/ic_minus_black_24dp"
+        android:drawableRight="@drawable/ic_plus_black_24dp"/>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="10"
         android:layout_gravity="bottom">
 
         <Button
@@ -72,4 +52,4 @@
             android:layout_gravity="right|center_vertical"
             android:text="@string/save"/>
     </FrameLayout>
-</FrameLayout>
+</LinearLayout>

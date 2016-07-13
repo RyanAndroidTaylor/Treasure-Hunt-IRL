@@ -44,8 +44,6 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
 
         if (extras.containsKey(TREASURE_CHEST_UUID))
             createCluePresenter.load(this, extras.getString(TREASURE_CHEST_UUID))
-        else if (extras.containsKey(NEW))
-            createCluePresenter.create(this, extras.getString(TREASURE_CHEST_UUID))
         else
             createCluePresenter.reload(this)
 

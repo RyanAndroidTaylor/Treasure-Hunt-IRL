@@ -10,7 +10,7 @@ import com.dtprogramming.treasurehuntirl.util.getString
 /**
  * Created by ryantaylor on 6/21/16.
  */
-data class Clue(val id: Long, val uuid: String, val treasureHuntId: String, val text: String) {
+data class Clue(val id: Long, val uuid: String, val treasureChestId: String, val text: String) {
 
     companion object {
         val TABLE = Table()
@@ -24,7 +24,7 @@ data class Clue(val id: Long, val uuid: String, val treasureHuntId: String, val 
         val contentValues = ContentValues()
 
         contentValues.put(TableColumns.UUID, uuid)
-        contentValues.put(TABLE.TREASURE_CHEST, treasureHuntId)
+        contentValues.put(TABLE.TREASURE_CHEST, treasureChestId)
         contentValues.put(TABLE.TEXT, text)
 
         return contentValues;

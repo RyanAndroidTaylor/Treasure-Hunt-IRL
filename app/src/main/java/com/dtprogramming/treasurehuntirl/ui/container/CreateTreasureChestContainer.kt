@@ -19,6 +19,7 @@ import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateTreasureChestPresenter
@@ -59,13 +60,15 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
     private lateinit var clueContainer: CardView
     private lateinit var clueText: TextView
 
+    private lateinit var addWaypoint: Button
+
     private var googleMap: GoogleMap? = null
 
     init {
         createTreasureChestPresenter = if (PresenterManager.hasPresenter(CreateTreasureChestPresenter.TAG))
             PresenterManager.getPresenter(CreateTreasureChestPresenter.TAG) as CreateTreasureChestPresenter
         else
-            PresenterManager.addPresenter(CreateTreasureChestPresenter.TAG, CreateTreasureChestPresenter(TreasureChestConnectionImpl(), ClueConnectionImpl())) as CreateTreasureChestPresenter
+            PresenterManager.addPresenter(CreateTreasureChestPresenter.TAG, CreateTreasureChestPresenter(TreasureChestConnectionImpl(), ClueConnectionImpl(), WaypointConnectionImpl())) as CreateTreasureChestPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
@@ -76,43 +79,29 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
 
         editTitle = parent.create_chest_container_title
 
-        if (googleMap == null) {
-            val mapFragment = MapFragment()
-            containerActivity.fragmentManager.beginTransaction().replace(R.id.create_chest_container_map_container, mapFragment).commit()
-
-            mapFragment.getMapAsync(this)
-        }
-
-        parent.create_chest_container_title.addTextChangedListener(object : TextWatcher {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                createTreasureChestPresenter.titleChanged(s.toString())
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun afterTextChanged(s: Editable?) {}
-        })
+        addWaypoint = parent.create_chest_container_add_waypoint
 
         addClue = parent.create_chest_container_add_clue
         clueContainer = parent.create_chest_container_clue_container
         clueText = parent.create_chest_container_clue_text
 
-        addClue.setOnClickListener {
-            val bundle = Bundle()
+        parent.create_chest_container_title.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                createTreasureChestPresenter.titleChanged(s.toString())
+            }
 
-            bundle.putString(TREASURE_CHEST_UUID, createTreasureChestPresenter.treasureChestId)
-            bundle.putBoolean(NEW, true)
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
 
-            containerActivity.loadContainer(CreateClueContainer.URI, bundle)
-        }
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
 
-        clueContainer.setOnClickListener {
-            val bundle = Bundle()
+        addClue.setOnClickListener { moveToContainer(CreateClueContainer.URI) }
 
-            bundle.putString(TREASURE_CHEST_UUID, createTreasureChestPresenter.treasureChestId)
+        clueContainer.setOnClickListener { moveToContainer(CreateClueContainer.URI) }
 
-            containerActivity.loadContainer(CreateClueContainer.URI, bundle)
-        }
-
-        parent.create_chest_container_add_waypoint.setOnClickListener { moveToContainer(CreateWayPointContainer.URI) }
+        addWaypoint.setOnClickListener { moveToContainer(CreateWayPointContainer.URI) }
 
         loadPresenter(extras)
 
@@ -134,6 +123,15 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         }
     }
 
+    override fun loadMap() {
+        addWaypoint.visibility = View.GONE
+
+        val mapFragment = MapFragment()
+        containerActivity.fragmentManager.beginTransaction().replace(R.id.create_chest_container_map_container, mapFragment).commit()
+
+        mapFragment.getMapAsync(this)
+    }
+
     override fun onMapReady(map: GoogleMap?) {
         this.googleMap = map
 
@@ -147,24 +145,22 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         clueText.text = clue.text
     }
 
-    override fun updateWaypoints(waypoints: List<Waypoint>) {
-        googleMap?.clear()
+    override fun displayWaypoint(waypoint: Waypoint) {
+        val latLngBoundsBuilder = LatLngBounds.Builder()
 
-        if (waypoints.size > 0) {
-            val latLngBoundsBuilder = LatLngBounds.Builder()
+        val latLng = LatLng(waypoint.lat, waypoint.long)
 
-            for (waypoint in waypoints) {
-                val latLng = LatLng(waypoint.lat, waypoint.long)
+        googleMap?.addMarker(MarkerOptions().title("Waypoint").position(latLng))
 
-                googleMap?.addMarker(MarkerOptions().title("Waypoint").position(latLng))
+        latLngBoundsBuilder.include(latLng)
 
-                latLngBoundsBuilder.include(latLng)
-            }
+        val cameraPosition = CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 0)
 
-            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 200)
+        googleMap?.moveCamera(cameraPosition)
 
-            googleMap?.moveCamera(cameraUpdate)
-        }
+        val cameraZoom = CameraUpdateFactory.zoomTo(12.0f)
+
+        googleMap?.moveCamera(cameraZoom)
     }
 
     override fun setTitle(title: String) {

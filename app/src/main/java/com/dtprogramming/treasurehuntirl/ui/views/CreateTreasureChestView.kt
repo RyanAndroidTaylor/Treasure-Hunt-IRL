@@ -8,8 +8,10 @@ import com.dtprogramming.treasurehuntirl.database.models.Waypoint
  */
 interface CreateTreasureChestView {
 
+    fun loadMap()
+
     fun displayClue(clue: Clue)
-    fun updateWaypoints(waypoints: List<Waypoint>)
+    fun displayWaypoint(waypoint: Waypoint)
     fun setTitle(title: String)
 
     fun close()
