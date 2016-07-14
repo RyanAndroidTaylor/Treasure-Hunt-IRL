@@ -67,7 +67,7 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
     }
 
     //TODO Turn this async once we are figuring out the count of all different types of treasure chests
-    override fun getTreasureChestCountForTreasureHunt(treasureHuntId: String, onComplete: (goldCount: Int, silverCount: Int, bronzeCount: Int) -> Unit) {
+    override fun getTreasureChestCountForTreasureHunt(treasureHuntId: String, onComplete: (count: Int) -> Unit) {
         val cursor = database.query("SELECT COUNT(*) FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntId)
 
         cursor.moveToFirst()
@@ -76,7 +76,7 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
 
         cursor.close()
 
-        onComplete(count, 0, 0)
+        onComplete(count)
     }
 
     override fun unsubscribe() {

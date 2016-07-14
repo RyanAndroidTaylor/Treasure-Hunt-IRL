@@ -15,5 +15,5 @@ interface TreasureChestConnection : Connection {
     fun getTreasureChest(treasureChestId: String): TreasureChest
     fun getTreasureChestsForTreasureHuntAsync(treasureHuntId: String, onComplete: (List<TreasureChest>) -> Unit)
 
-    fun getTreasureChestCountForTreasureHunt(treasureHuntId: String, onComplete: (goldCount: Int, silverCount: Int, bronzeCount: Int) -> Unit)
+    fun getTreasureChestCountForTreasureHunt(treasureHuntId: String, onComplete: (count: Int) -> Unit)
 }

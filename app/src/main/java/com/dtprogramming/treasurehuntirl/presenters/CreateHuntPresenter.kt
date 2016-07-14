@@ -46,6 +46,11 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
         loadTreasureHunt()
     }
 
+    override fun unsubscribe() {
+        treasureHuntConnection.unsubscribe()
+        treasureChestConnection.unsubscribe()
+    }
+
     private fun loadTreasureHunt() {
         val treasureHunt = treasureHuntConnection.getTreasureHunt(treasureHuntId)
 

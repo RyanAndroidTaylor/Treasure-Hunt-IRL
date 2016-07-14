@@ -59,8 +59,11 @@ class TreasureHuntAdapter(context: Context, items: List<TreasureHunt>) : ListRec
         fun bind(treasureHunt: TreasureHunt) {
             this.treasureHunt = treasureHunt
 
-            treasureChestConnection.getTreasureChestCountForTreasureHunt(treasureHunt.uuid, {gold: Int, silver: Int, bronze: Int ->
-                chestCount.text = "$gold Gold Treasure Chests"
+            treasureChestConnection.getTreasureChestCountForTreasureHunt(treasureHunt.uuid, {count: Int ->
+                if (count == 1)
+                    chestCount.text = "$count Treasure Chest"
+                else
+                    chestCount.text = "$count Treasure Chests"
             })
 
             titleText.text = treasureHunt.title
