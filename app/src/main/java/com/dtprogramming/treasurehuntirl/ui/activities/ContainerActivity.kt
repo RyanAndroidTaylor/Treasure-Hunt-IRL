@@ -30,6 +30,19 @@ abstract class ContainerActivity : BaseActivity() {
         super.onSaveInstanceState(outState)
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        container?.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if (isFinishing)
+            container?.onFinish()
+    }
+
     abstract fun setToolBarTitle(title: String)
 
     fun loadContainer(uri: String) {
@@ -68,8 +81,6 @@ abstract class ContainerActivity : BaseActivity() {
     }
 
     fun finishCurrentContainer() {
-        container?.onFinish()
-
         if (backStack.size > 1) {
             containerMap.remove(currentUri)
 
@@ -82,8 +93,6 @@ abstract class ContainerActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        container?.onFinish()
-
         if (backStack.size > 1) {
             containerMap.remove(currentUri)
 

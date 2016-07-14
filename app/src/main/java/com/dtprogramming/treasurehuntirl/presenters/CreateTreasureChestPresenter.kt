@@ -33,6 +33,8 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         treasureChestId = randomUuid()
 
         treasureChestConnection.insert(TreasureChest(treasureChestId, treasureHuntId, treasureChestTitle))
+
+        createTreasureChestView.setTitle(treasureChestTitle)
     }
 
     fun load(treasureChestId: String, treasureHuntId: String, createTreasureChestView: CreateTreasureChestView) {

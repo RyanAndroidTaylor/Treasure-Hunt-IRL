@@ -36,7 +36,7 @@ class TreasureChestAdapter(val onItemClickListener: (TreasureChest) -> Unit, con
 
         private var treasureChest: TreasureChest? = null
 
-        private val treasureChestTitle: TextView
+        val treasureChestTitle: TextView
 
         init {
             treasureChestTitle = view.adapter_treasure_chest_title
