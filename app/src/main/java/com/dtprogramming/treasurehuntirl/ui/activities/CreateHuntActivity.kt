@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
+import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
+import com.dtprogramming.treasurehuntirl.util.NEW
 import kotlinx.android.synthetic.main.activity_create_hunt.*
 
 /**
@@ -16,13 +18,10 @@ class CreateHuntActivity : ContainerActivity() {
     override lateinit var parent: ViewGroup
 
     companion object {
-        val HUNT_UUID = "HuntUuid"
-        val CREATE_NEW = "CreateNew"
-
         fun getCreateNewIntent(context: Context): Intent {
             val intent = Intent(context, CreateHuntActivity::class.java)
 
-            intent.putExtra(CREATE_NEW, true)
+            intent.putExtra(NEW, true)
 
             return intent
         }
@@ -50,12 +49,16 @@ class CreateHuntActivity : ContainerActivity() {
 
             if (intent.hasExtra(HUNT_UUID))
                 extras.putString(HUNT_UUID, intent.getStringExtra(HUNT_UUID))
-            if (intent.hasExtra(CREATE_NEW))
-                extras.putBoolean(CREATE_NEW, intent.getBooleanExtra(CREATE_NEW, true))
+            if (intent.hasExtra(NEW))
+                extras.putBoolean(NEW, intent.getBooleanExtra(NEW, true))
 
             loadContainer(CreateHuntContainer.URI, extras)
         }
 
-        toolbar?.title = resources.getString(R.string.create_hunt_activity_title)
+        toolbar?.title = stringFrom(R.string.treasure_hunt_action_bar_title)
+    }
+
+    override fun setToolBarTitle(title: String) {
+        toolbar?.title = title
     }
 }

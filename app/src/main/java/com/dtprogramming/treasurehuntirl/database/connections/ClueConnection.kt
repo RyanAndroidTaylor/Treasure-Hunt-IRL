@@ -10,7 +10,5 @@ interface ClueConnection : Connection {
     fun insert(clue: Clue)
     fun update(clue: Clue)
 
-    fun getTreasureHuntCluesAsync(treasureHuntId: String, onComplete: (List<Clue>) -> Unit)
-
-    fun getClueCountForTreasureHunt(treasureHuntId: String): Int
+    fun getClueForTreasureChest(treasureChestId: String): Clue?
 }

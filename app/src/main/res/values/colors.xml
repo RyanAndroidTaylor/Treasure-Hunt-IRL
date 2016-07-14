@@ -4,6 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="card_view_background">#dddddd</color>
+    <color name="divider_background">#dddddd</color>
     <color name="white">#FFFFFF</color>
 </resources>

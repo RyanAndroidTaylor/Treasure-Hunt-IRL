@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Treasure Hunt IRL</string>
-    <string name="create_hunt_activity_title">Create Hunt</string>
+    <string name="treasure_hunt_action_bar_title">Treasure Hunt</string>
+    <string name="treasure_chest_action_bar_title">Treasure Chest</string>
+    <string name="clue_action_bar_title">Clue</string>
+    <string name="waypoint_action_bar_title">Waypoint</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -14,4 +17,5 @@
     <string name="add_waypoint">Add Waypoint</string>
     <string name="title_hint">Title:</string>
     <string name="add_answer">Add Answer</string>
+    <string name="treasure_chests_title">Treasure Chests</string>
 </resources>

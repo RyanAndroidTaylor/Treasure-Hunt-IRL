@@ -1,79 +1,79 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
-import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
+import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
-import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
-import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
-import java.util.*
+import com.dtprogramming.treasurehuntirl.util.randomUuid
 
 /**
  * Created by ryantaylor on 6/20/16.
  */
-class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, val clueConnection: ClueConnection, val waypointConnection: WaypointConnection) : Presenter {
+class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, val treasureChestConnection: TreasureChestConnection) : Presenter {
 
     var treasureHuntTitle = "New Treasure Hunt"
+
     lateinit var treasureHuntId: String
         private set
 
     private lateinit var createHuntView: CreateHuntView
 
-    private val getCluesOnComplete = { clues: List<Clue> -> createHuntView.updateClueList(clues) }
-
     companion object {
         val TAG: String = CreateHuntPresenter::class.java.simpleName
     }
 
-    fun createHunt(createHuntView: CreateHuntView) {
+    fun create(createHuntView: CreateHuntView) {
         this.createHuntView = createHuntView
-        treasureHuntId = UUID.randomUUID().toString().replace("-", "")
+        treasureHuntId = randomUuid()
 
         treasureHuntConnection.insert(TreasureHunt(treasureHuntId, treasureHuntTitle))
 
         createHuntView.setTitle(treasureHuntTitle)
     }
 
-    fun loadHunt(treasureHuntId: String, createHuntView: CreateHuntView) {
+    fun load(createHuntView: CreateHuntView, treasureHuntId: String) {
+        this.createHuntView = createHuntView
+        this.treasureHuntId = treasureHuntId
+
+        requestTreasureChestsForTreasureHunt()
+        loadTreasureHunt()
+    }
+
+    fun reload(createHuntView: CreateHuntView) {
         this.createHuntView = createHuntView
 
+        requestTreasureChestsForTreasureHunt()
+        loadTreasureHunt()
+    }
+
+    override fun unsubscribe() {
+        treasureHuntConnection.unsubscribe()
+        treasureChestConnection.unsubscribe()
+    }
+
+    private fun loadTreasureHunt() {
         val treasureHunt = treasureHuntConnection.getTreasureHunt(treasureHuntId)
 
-        this.treasureHuntId = treasureHunt.uuid
         treasureHuntTitle = treasureHunt.title
-
         createHuntView.setTitle(treasureHuntTitle)
-
-        clueConnection.getTreasureHuntCluesAsync(treasureHuntId, getCluesOnComplete)
     }
 
-    fun reloadHunt(createHuntView: CreateHuntView) {
-        this.createHuntView = createHuntView
-
-        createHuntView.setTitle(treasureHuntTitle)
-
-        clueConnection.getTreasureHuntCluesAsync(treasureHuntId, getCluesOnComplete)
+    private fun requestTreasureChestsForTreasureHunt() {
+        treasureChestConnection.getTreasureChestsForTreasureHuntAsync(treasureHuntId, { createHuntView.onTreasureChestsLoaded(it) })
     }
 
-    fun mapLoaded() {
-        waypointConnection.getTreasureHuntWaypointsAsync(treasureHuntId, { createHuntView.updateWaypoints(it) })
+    fun onTitleChanged(newTitle: String) {
+        treasureHuntTitle = newTitle
     }
 
-    fun titleChange(title: String) {
-        treasureHuntTitle = title
+    fun unSubscribe() {
+        treasureHuntConnection.unsubscribe()
+        treasureChestConnection.unsubscribe()
     }
 
     fun finish() {
-        save()
-
-        treasureHuntConnection.unsubscribe()
-        clueConnection.unsubscribe()
-        waypointConnection.unsubscribe()
+        treasureHuntConnection.update(TreasureHunt(treasureHuntId, treasureHuntTitle))
 
         PresenterManager.removePresenter(TAG)
-    }
-
-    private fun save() {
-        treasureHuntConnection.update(TreasureHunt(treasureHuntId, treasureHuntTitle))
     }
 }

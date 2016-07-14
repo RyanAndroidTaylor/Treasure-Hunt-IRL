@@ -16,4 +16,8 @@ open class BaseActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
     }
+
+    fun stringFrom(resourceId: Int): String {
+        return resources.getString(resourceId)
+    }
 }

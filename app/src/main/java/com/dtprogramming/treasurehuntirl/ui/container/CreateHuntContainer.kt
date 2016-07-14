@@ -1,164 +1,124 @@
 package com.dtprogramming.treasurehuntirl.ui.container
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Toast
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.database.TableColumns
-import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
-import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
-import com.dtprogramming.treasurehuntirl.database.models.Clue
-import com.dtprogramming.treasurehuntirl.database.models.Waypoint
+import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
-import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueAdapter
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.TreasureChestAdapter
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapFragment
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
+import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
+import com.dtprogramming.treasurehuntirl.util.NEW
+import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
 import kotlinx.android.synthetic.main.container_create_hunt.view.*
 
 /**
  * Created by ryantaylor on 6/20/16.
  */
-class CreateHuntContainer() : BasicContainer(), CreateHuntView, OnMapReadyCallback {
+class CreateHuntContainer() : BasicContainer(), CreateHuntView {
 
     companion object {
         val URI: String = CreateHuntContainer::class.java.simpleName
     }
 
-    val createHuntPresenter: CreateHuntPresenter
+    private val createHuntPresenter: CreateHuntPresenter
 
-    private lateinit var editTitle: EditText
+    private lateinit var treasureHuntTitle: EditText
 
-    private lateinit var adapter: ClueAdapter
-
-    private lateinit var clueList: RecyclerView
-
-    private var googleMap: GoogleMap? = null
+    private lateinit var treasureChestList: RecyclerView
+    private lateinit var adapter: TreasureChestAdapter
 
     init {
         createHuntPresenter = if (PresenterManager.hasPresenter(CreateHuntPresenter.TAG))
             PresenterManager.getPresenter(CreateHuntPresenter.TAG) as CreateHuntPresenter
         else
-            PresenterManager.addPresenter(CreateHuntPresenter.TAG, CreateHuntPresenter(TreasureHuntConnectionImpl(), ClueConnectionImpl(), WaypointConnectionImpl())) as CreateHuntPresenter
+            PresenterManager.addPresenter(CreateHuntPresenter.TAG, CreateHuntPresenter(TreasureHuntConnectionImpl(), TreasureChestConnectionImpl())) as CreateHuntPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
         inflateView(R.layout.container_create_hunt)
 
-        editTitle = parent.create_hunt_container_title
+        treasureHuntTitle = parent.create_hunt_container_title
 
-        clueList = parent.create_hunt_container_clue_list
+        parent.create_hunt_container_add_chest.setOnClickListener { loadCreateTreasureChestContainer() }
 
-        clueList.layoutManager = CustomLinearLayoutManager(parent.context, LinearLayoutManager.HORIZONTAL, false)
+        treasureChestList = parent.create_hunt_container_chest_list
 
-        adapter = ClueAdapter(parent.context, emptyList())
+        treasureChestList.layoutManager = LinearLayoutManager(containerActivity)
 
-        clueList.adapter = adapter
+        adapter = TreasureChestAdapter(treasureChestSelectedListener, containerActivity, listOf())
 
-        clueList.addOnScrollListener(ClueScrollListener())
+        treasureChestList.adapter = adapter
 
-        if (extras.containsKey(CreateHuntActivity.HUNT_UUID)) {
-            createHuntPresenter.loadHunt(extras.getString(CreateHuntActivity.HUNT_UUID), this)
-        } else if (extras.containsKey(CreateHuntActivity.CREATE_NEW)) {
-            createHuntPresenter.createHunt(this)
-        } else {
-            createHuntPresenter.reloadHunt(this)
-        }
+        if (extras.containsKey(HUNT_UUID))
+            createHuntPresenter.load(this, extras.getString(HUNT_UUID))
+        else if (extras.containsKey(NEW))
+            createHuntPresenter.create(this)
+        else
+            createHuntPresenter.reload(this)
 
-        if (ContextCompat.checkSelfPermission(containerActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(containerActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-        }
-
-        if (googleMap == null) {
-            val mapFragment = MapFragment()
-            containerActivity.fragmentManager.beginTransaction().replace(R.id.create_hunt_container_map_container, mapFragment).commit()
-
-            mapFragment.getMapAsync(this)
-        }
-
-        parent.create_hunt_container_title.addTextChangedListener(object : TextWatcher {
+        treasureHuntTitle.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                createHuntPresenter.titleChange(s.toString())
+                createHuntPresenter.onTitleChanged(s.toString())
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        parent.create_hunt_container_add_clue.setOnClickListener { moveToContainer(CreateClueContainer.URI) }
-
-        parent.create_hunt_container_add_waypoint.setOnClickListener { moveToContainer(CreateWayPointContainer.URI) }
-
         return this
     }
 
-    fun moveToContainer(uri: String) {
-        val extras = Bundle()
+    override fun onPause() {
+        super.onPause()
 
-        extras.putString(TableColumns.UUID, createHuntPresenter.treasureHuntId)
-
-        containerActivity.loadContainer(uri, extras)
+        createHuntPresenter.unSubscribe()
     }
 
-    override fun updateClueList(clues: List<Clue>) {
-        adapter.updateList(clues)
-    }
+    override fun onReload(parent: ViewGroup) {
+        super.onReload(parent)
 
-    override fun updateWaypoints(waypoints: List<Waypoint>) {
-        googleMap?.clear()
-
-        if (waypoints.size > 0) {
-            val latLngBoundsBuilder = LatLngBounds.Builder()
-
-            for (waypoint in waypoints) {
-                val latLng = LatLng(waypoint.lat, waypoint.long)
-
-                googleMap?.addMarker(MarkerOptions().title(waypoint.title).position(latLng))
-
-                latLngBoundsBuilder.include(latLng)
-            }
-
-            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), 200)
-
-            googleMap?.moveCamera(cameraUpdate)
-        }
-    }
-
-    override fun setTitle(title: String) {
-        editTitle.setText(title)
-    }
-
-    override fun error(message: String) {
-        Toast.makeText(containerActivity, message, Toast.LENGTH_LONG).show()
+        createHuntPresenter.reload(this)
     }
 
     override fun onFinish() {
+        super.onFinish()
+
         createHuntPresenter.finish()
     }
 
-    override fun onMapReady(googleMap: GoogleMap?) {
-        this.googleMap = googleMap
+    override fun setTitle(title: String) {
+        treasureHuntTitle.setText(title)
+    }
 
-        createHuntPresenter.mapLoaded()
+    override fun onTreasureChestsLoaded(treasureChests: List<TreasureChest>) {
+        adapter.updateList(treasureChests)
+    }
+
+    val treasureChestSelectedListener: (treasureChest: TreasureChest) -> Unit = {
+        val extras = Bundle()
+
+        extras.putString(TREASURE_CHEST_UUID, it.uuid)
+        extras.putString(HUNT_UUID, it.treasureHuntId)
+
+        containerActivity.loadContainer(CreateTreasureChestContainer.URI, extras)
+    }
+
+    fun loadCreateTreasureChestContainer() {
+        val bundle = Bundle()
+
+        bundle.putBoolean(NEW, true)
+        bundle.putString(HUNT_UUID, createHuntPresenter.treasureHuntId)
+
+        containerActivity.loadContainer(CreateTreasureChestContainer.URI, bundle)
     }
 }

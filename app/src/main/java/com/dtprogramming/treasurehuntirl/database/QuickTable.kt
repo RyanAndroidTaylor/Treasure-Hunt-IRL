@@ -185,6 +185,12 @@ class QuickTable constructor() {
             return this
         }
 
+        fun unique(): ColumnBuilder {
+            constraints.add(" $UNIQUE")
+
+            return this
+        }
+
         fun build(): String {
             createString.append(COMMA)
             createString.append(columnName)
