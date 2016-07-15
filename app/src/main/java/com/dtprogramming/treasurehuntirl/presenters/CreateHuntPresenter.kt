@@ -51,6 +51,12 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
         treasureChestConnection.unsubscribe()
     }
 
+    override fun finish() {
+        treasureHuntConnection.update(TreasureHunt(treasureHuntId, treasureHuntTitle))
+
+        PresenterManager.removePresenter(TAG)
+    }
+
     private fun loadTreasureHunt() {
         val treasureHunt = treasureHuntConnection.getTreasureHunt(treasureHuntId)
 
@@ -64,16 +70,5 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
 
     fun onTitleChanged(newTitle: String) {
         treasureHuntTitle = newTitle
-    }
-
-    fun unSubscribe() {
-        treasureHuntConnection.unsubscribe()
-        treasureChestConnection.unsubscribe()
-    }
-
-    fun finish() {
-        treasureHuntConnection.update(TreasureHunt(treasureHuntId, treasureHuntTitle))
-
-        PresenterManager.removePresenter(TAG)
     }
 }

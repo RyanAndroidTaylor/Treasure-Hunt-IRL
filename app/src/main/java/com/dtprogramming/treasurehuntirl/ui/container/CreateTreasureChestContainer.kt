@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -113,12 +114,16 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
     }
 
     override fun onPause() {
+        Log.i("TreasureChestContainer", "onPause()")
         super.onPause()
 
         createTreasureChestPresenter.unsubscribe()
     }
 
     override fun onFinish() {
+        Log.i("TreasureChestContainer", "onFinish()")
+        super.onFinish()
+
         createTreasureChestPresenter.finish()
     }
 
@@ -188,6 +193,6 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
 
         extras.putString(TREASURE_CHEST_UUID, createTreasureChestPresenter.treasureChestId)
 
-        containerActivity.loadContainer(uri, extras)
+        containerActivity.startContainer(uri, extras)
     }
 }

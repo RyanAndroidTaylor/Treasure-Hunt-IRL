@@ -63,6 +63,12 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         waypointConnection.unsubscribe()
     }
 
+    override fun finish() {
+        treasureChestConnection.update(TreasureChest(treasureChestId, treasureHuntId, treasureChestTitle))
+
+        PresenterManager.removePresenter(TAG)
+    }
+
     private fun loadTreasureChest() {
         val treasureChest = treasureChestConnection.getTreasureChest(treasureChestId)
 
@@ -91,11 +97,5 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         val waypoint = waypointConnection.getWaypointForTreasureChest(treasureChestId)
 
         waypoint?.let { createTreasureChestView.displayWaypoint(it) }
-    }
-
-    fun finish() {
-        treasureChestConnection.update(TreasureChest(treasureChestId, treasureHuntId, treasureChestTitle))
-
-        PresenterManager.removePresenter(TAG)
     }
 }

@@ -42,7 +42,7 @@ class CreateHuntActivity : ContainerActivity() {
         parent = activity_create_hunt_container
 
         if (savedInstanceState != null && savedInstanceState.containsKey(CURRENT_URI)) {
-            loadContainer(savedInstanceState.getString(CURRENT_URI))
+            startContainer(savedInstanceState.getString(CURRENT_URI))
         }
         else {
             val extras = Bundle()
@@ -52,7 +52,7 @@ class CreateHuntActivity : ContainerActivity() {
             if (intent.hasExtra(NEW))
                 extras.putBoolean(NEW, intent.getBooleanExtra(NEW, true))
 
-            loadContainer(CreateHuntContainer.URI, extras)
+            startContainer(CreateHuntContainer.URI, extras)
         }
 
         toolbar?.title = stringFrom(R.string.treasure_hunt_action_bar_title)

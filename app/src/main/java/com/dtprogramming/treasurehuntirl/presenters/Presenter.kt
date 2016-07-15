@@ -6,4 +6,5 @@ package com.dtprogramming.treasurehuntirl.presenters
 interface Presenter {
 
     fun unsubscribe()
+    fun finish()
 }

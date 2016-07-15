@@ -5,6 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.EditText
 import com.dtprogramming.treasurehuntirl.R
@@ -81,7 +82,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
     override fun onPause() {
         super.onPause()
 
-        createHuntPresenter.unSubscribe()
+        createHuntPresenter.unsubscribe()
     }
 
     override fun onReload(parent: ViewGroup) {
@@ -110,7 +111,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         extras.putString(TREASURE_CHEST_UUID, it.uuid)
         extras.putString(HUNT_UUID, it.treasureHuntId)
 
-        containerActivity.loadContainer(CreateTreasureChestContainer.URI, extras)
+        containerActivity.startContainer(CreateTreasureChestContainer.URI, extras)
     }
 
     fun loadCreateTreasureChestContainer() {
@@ -119,6 +120,6 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         bundle.putBoolean(NEW, true)
         bundle.putString(HUNT_UUID, createHuntPresenter.treasureHuntId)
 
-        containerActivity.loadContainer(CreateTreasureChestContainer.URI, bundle)
+        containerActivity.startContainer(CreateTreasureChestContainer.URI, bundle)
     }
 }

@@ -2,6 +2,7 @@ package com.dtprogramming.treasurehuntirl
 
 import android.app.Application
 import com.dtprogramming.treasurehuntirl.database.DatabaseOpenHelper
+import com.squareup.leakcanary.LeakCanary
 import com.squareup.sqlbrite.BriteDatabase
 import com.squareup.sqlbrite.SqlBrite
 import rx.schedulers.Schedulers
@@ -24,6 +25,8 @@ class THApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        LeakCanary.install(this)
 
         briteDatabase = SqlBrite.create().wrapDatabaseHelper(DatabaseOpenHelper(baseContext), Schedulers.io())
     }

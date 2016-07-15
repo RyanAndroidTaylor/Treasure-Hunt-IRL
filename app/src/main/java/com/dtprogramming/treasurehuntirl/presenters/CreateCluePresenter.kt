@@ -42,6 +42,10 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
         clueConnection.unsubscribe()
     }
 
+    override fun finish() {
+        PresenterManager.removePresenter(TAG)
+    }
+
     private fun loadClue(treasureChestId: String) {
         val clue = clueConnection.getClueForTreasureChest(treasureChestId)
 

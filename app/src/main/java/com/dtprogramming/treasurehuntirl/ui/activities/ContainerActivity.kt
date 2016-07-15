@@ -39,28 +39,33 @@ abstract class ContainerActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
-        if (isFinishing)
-            container?.onFinish()
+        if (isFinishing) {
+            for (container in containerMap.values) {
+                container.onFinish()
+            }
+        }
     }
 
     abstract fun setToolBarTitle(title: String)
 
-    fun loadContainer(uri: String) {
-        loadContainer(uri, Bundle())
+    fun startContainer(uri: String) {
+        startContainer(uri, Bundle())
     }
 
-    fun loadContainer(uri: String, extras: Bundle) {
-        InflateContainer(uri, extras)
+    fun startContainer(uri: String, extras: Bundle) {
+        container?.onPause()
+
+        loadContainer(uri, extras)
 
         backStack.push(uri)
     }
 
 
     private fun loadCurrentContainer() {
-        InflateContainer(currentUri, Bundle())
+        loadContainer(currentUri, Bundle())
     }
 
-    private fun InflateContainer(uri: String?, extras: Bundle) {
+    private fun loadContainer(uri: String?, extras: Bundle) {
         if (containerMap.containsKey(uri)) {
             container = containerMap[uri]!!
 
@@ -82,6 +87,8 @@ abstract class ContainerActivity : BaseActivity() {
 
     fun finishCurrentContainer() {
         if (backStack.size > 1) {
+            container?.onFinish()
+
             containerMap.remove(currentUri)
 
             backStack.pop()
@@ -94,6 +101,8 @@ abstract class ContainerActivity : BaseActivity() {
 
     override fun onBackPressed() {
         if (backStack.size > 1) {
+            container?.onFinish()
+
             containerMap.remove(currentUri)
 
             backStack.pop()

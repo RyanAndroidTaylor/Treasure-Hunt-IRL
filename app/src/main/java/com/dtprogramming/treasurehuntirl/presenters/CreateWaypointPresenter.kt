@@ -55,6 +55,10 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
         waypointConnection.unsubscribe()
     }
 
+    override fun finish() {
+        PresenterManager.removePresenter(TAG)
+    }
+
     private fun loadWaypoint() {
         val waypoint = waypointConnection.getWaypointForTreasureChest(treasureChestId)
 

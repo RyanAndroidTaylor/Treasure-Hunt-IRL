@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.util.Log
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
@@ -89,6 +90,12 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
         createWaypointPresenter.reload(this)
     }
 
+    override fun onFinish() {
+        super.onFinish()
+
+        createWaypointPresenter.finish()
+    }
+
     override fun onMapReady(googleMap: GoogleMap?) {
         this.googleMap = googleMap!!
 
@@ -128,9 +135,5 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
 
     override fun close() {
         containerActivity.finishCurrentContainer()
-    }
-
-    override fun onFinish() {
-
     }
 }

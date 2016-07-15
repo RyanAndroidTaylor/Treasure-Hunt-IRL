@@ -3,6 +3,7 @@ package com.dtprogramming.treasurehuntirl.ui.container
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.EditText
 import com.dtprogramming.treasurehuntirl.R
@@ -65,6 +66,7 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
     }
 
     override fun onPause() {
+        Log.i("CreateClueContainer", "onPause()")
         super.onPause()
 
         createCluePresenter.unsubscribe()
@@ -74,6 +76,13 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
         super.onReload(parent)
 
         createCluePresenter.reload(this)
+    }
+
+    override fun onFinish() {
+        Log.i("CreateClueContainer", "onFinish()")
+        super.onFinish()
+
+        createCluePresenter.finish()
     }
 
     override fun setClueText(text: String) {
