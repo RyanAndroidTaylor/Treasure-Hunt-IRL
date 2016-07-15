@@ -21,10 +21,10 @@ import kotlinx.android.synthetic.main.view_holder_treasure_hunt.view.*
 /**
  * Created by ryantaylor on 6/29/16.
  */
-class TreasureHuntAdapter(context: Context, items: List<TreasureHunt>) : ListRecyclerViewSectionAdapter<TreasureHuntAdapter.TreasureHuntViewHolder, TreasureHunt>(context, items) {
+class TreasureHuntAdapter(context: Context, items: List<TreasureHunt>, val itemSelected: (TreasureHunt) -> Unit) : ListRecyclerViewSectionAdapter<TreasureHuntAdapter.TreasureHuntViewHolder, TreasureHunt>(context, items) {
 
     override fun onCreateViewHolder(parent: ViewGroup?): TreasureHuntViewHolder? {
-        return TreasureHuntViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.view_holder_treasure_hunt, parent, false))
+        return TreasureHuntViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.view_holder_treasure_hunt, parent, false), itemSelected)
     }
 
     override fun onBindViewHolder(viewHolder: TreasureHuntViewHolder?, item: TreasureHunt?) {
@@ -36,7 +36,7 @@ class TreasureHuntAdapter(context: Context, items: List<TreasureHunt>) : ListRec
         return false
     }
 
-    class TreasureHuntViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class TreasureHuntViewHolder(view: View, itemSelected: (TreasureHunt) -> Unit) : RecyclerView.ViewHolder(view) {
 
         var treasureChestConnection: TreasureChestConnection
 
@@ -52,7 +52,7 @@ class TreasureHuntAdapter(context: Context, items: List<TreasureHunt>) : ListRec
             chestCount = view.treasure_hunt_view_holder_chest_count
 
             view.setOnClickListener {
-                view.context.startActivity(CreateHuntActivity.getLoadIntent(view.context, treasureHunt.uuid))
+                itemSelected(treasureHunt)
             }
         }
 

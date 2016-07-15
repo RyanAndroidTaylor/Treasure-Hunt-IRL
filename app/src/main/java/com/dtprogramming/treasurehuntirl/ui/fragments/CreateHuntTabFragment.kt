@@ -31,7 +31,7 @@ class CreateHuntTabFragment : TabFragment() {
             recyclerView = view.create_hunt_list
 
             recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            adapter = TreasureHuntAdapter(context, listOf())
+            adapter = TreasureHuntAdapter(context, listOf(), { startActivity(CreateHuntActivity.getLoadIntent(view.context, it.uuid)) })
             recyclerView.adapter = adapter
 
             treasureHuntConnection.getTreasureHuntsAsync { adapter.updateList(it) }
