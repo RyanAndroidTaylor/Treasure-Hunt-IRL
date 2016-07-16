@@ -51,8 +51,6 @@ class CreateWaypointPresenterTest {
         createWaypointPresenter.load(createWaypointView, "fake uuid")
 
         createWaypointPresenter.mapLoaded()
-
-        Mockito.verify(createWaypointView).loadMarker(Mockito.anyString(), Mockito.anyDouble(), Mockito.anyDouble())
     }
 
     @Test
