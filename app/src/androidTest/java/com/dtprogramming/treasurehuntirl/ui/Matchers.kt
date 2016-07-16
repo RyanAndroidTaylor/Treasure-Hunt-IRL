@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.ui
 
+import android.util.Log
 import android.view.View
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.TreasureChestAdapter
@@ -17,6 +18,7 @@ object Matchers {
     fun withAdjustableValueViewText(text: String): Matcher<View> {
         return object : TypeSafeMatcher<View>() {
             override fun matchesSafely(item: View?): Boolean {
+                Log.i("Matchers", "\n$text\n${(item as AdjustableValueView).mText.toString()}")
                 return item != null && item is AdjustableValueView && item.mText.toString().equals(text)
             }
 
