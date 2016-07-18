@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.ui.container
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
@@ -75,7 +76,7 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
             val circleOptions = CircleOptions()
             circleOptions.center(LatLng(lat, lng))
             circleOptions.radius(radius)
-            circleOptions.fillColor(containerActivity.resources.getColor(R.color.colorAccent))
+            circleOptions.fillColor(Color.argb(75, 0, 0, 200))
             circleOptions.strokeColor(containerActivity.resources.getColor(R.color.colorAccent))
 
             it.addCircle(circleOptions)

@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
+import android.location.Location
 import android.util.Log
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
@@ -111,6 +112,23 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
                         else
                             first
                     })
+
+                    var biggestDistance = smallestLatWaypoint.distance(biggestLatWaypoint)
+                    pointOne = Point(smallestLatWaypoint.lat, smallestLatWaypoint.long)
+                    pointTwo = Point(biggestLatWaypoint.lat, biggestLatWaypoint.long)
+
+                    if (smallestLatWaypoint.distance(biggestLngWaypiont) > biggestDistance) {
+                        pointOne = Point(smallestLatWaypoint.lat, smallestLatWaypoint.long)
+                        pointTwo = Point(biggestLngWaypiont.lat, biggestLngWaypiont.long)
+                    }
+                    if (smallestLngWaypoint.distance(biggestLatWaypoint) > biggestDistance) {
+                        pointOne = Point(smallestLngWaypoint.lat, smallestLngWaypoint.long)
+                        pointTwo = Point(biggestLatWaypoint.lat, biggestLatWaypoint.long)
+                    }
+                    if (smallestLngWaypoint.distance(biggestLngWaypiont) > biggestDistance) {
+                        pointOne = Point(smallestLngWaypoint.lat, smallestLngWaypoint.long)
+                        pointTwo = Point(biggestLngWaypiont.lat, biggestLngWaypiont.long)
+                    }
                 }
             })
         }
@@ -134,7 +152,7 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
                 val centerLat = Math.atan2(Math.sin(latOne) + Math.sin(latTwo), Math.sqrt((Math.cos(latOne) + Bx) * (Math.cos(latOne) + Bx) + By * By))
                 val centerLng = lngOne + Math.atan2(By, Math.cos(latOne) + Bx)
 
-                centerPoint = Point(centerLat, centerLng)
+                centerPoint = Point(Math.toDegrees(centerLat), Math.toDegrees(centerLng))
             } else {
                 centerPoint = Point(pointOne.lat, pointOne.lng)
             }
@@ -147,20 +165,16 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
         var radiusInMeters = 0.0
 
         if (pointOne != null && pointTwo != null) {
-            val R = 6378.137
-            val dLat = (pointTwo.lat - pointOne.lat) * Math.PI / 180
-            val dLng = (pointTwo.lng - pointOne.lng) * Math.PI / 180
-            val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(pointOne.lat * Math.PI / 180) * Math.cos(pointTwo.lat * Math.PI / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2)
-            val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-            val d = R * c
+            val distance = FloatArray(1)
 
-            radiusInMeters = d * 1000
+            Location.distanceBetween(pointOne.lat, pointOne.lng, pointTwo.lat, pointTwo.lng, distance)
+
+            radiusInMeters = distance[0].toDouble() / 2
 
         } else if (pointOne != null) {
             radiusInMeters = 1000.0
         }
 
-        Log.i("ViewTHPresenter", "Radius = $radiusInMeters")
         return radiusInMeters
     }
 
