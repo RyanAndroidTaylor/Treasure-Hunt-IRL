@@ -16,6 +16,4 @@ interface Container {
     fun onPause()
     fun onReload(parent: ViewGroup)
     fun onFinish()
-
-    fun getRootView(): View?
 }

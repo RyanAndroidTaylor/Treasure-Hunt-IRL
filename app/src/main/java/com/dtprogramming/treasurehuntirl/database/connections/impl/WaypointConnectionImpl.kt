@@ -3,6 +3,7 @@ package com.dtprogramming.treasurehuntirl.database.connections.impl
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
+import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.util.getDouble
 import com.dtprogramming.treasurehuntirl.util.getString
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
@@ -43,6 +44,18 @@ class WaypointConnectionImpl : WaypointConnection {
         cursor.close()
 
         return waypoint
+    }
+
+    override fun getWaypointsForTreasureChestsAsync(treasureChests: List<TreasureChest>, onComplete: (List<Waypoint>) -> Unit) {
+        val waypoints = ArrayList<Waypoint>()
+
+        for ((id, uuid) in treasureChests) {
+            val waypoint = getWaypointForTreasureChest(uuid)
+
+            waypoint?.let { waypoints.add(it) }
+        }
+
+        onComplete(waypoints)
     }
 
     override fun unsubscribe() {

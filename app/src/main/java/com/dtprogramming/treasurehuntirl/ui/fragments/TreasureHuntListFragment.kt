@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -8,7 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
+import com.dtprogramming.treasurehuntirl.ui.activities.ViewTreasureHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.TreasureHuntAdapter
+import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
 import kotlinx.android.synthetic.main.fragment_hunt_list.view.*
 
 /**
@@ -31,8 +35,7 @@ class TreasureHuntListFragment : TabFragment() {
 
             recyclerView.layoutManager = LinearLayoutManager(context)
 
-            //TODO Setup view treasure hunt activity and launch it when a treasure hunt is selected
-            adapter = TreasureHuntAdapter(context, listOf(), {  })
+            adapter = TreasureHuntAdapter(context, listOf(), { launchTreasureHuntActivity(it) })
 
             recyclerView.adapter = adapter
 
@@ -40,5 +43,13 @@ class TreasureHuntListFragment : TabFragment() {
         }
 
         return view
+    }
+
+    private fun launchTreasureHuntActivity(treasureHunt: TreasureHunt) {
+        val intent = Intent(context, ViewTreasureHuntActivity::class.java)
+
+        intent.putExtra(HUNT_UUID, treasureHunt.uuid)
+
+        startActivity(intent)
     }
 }

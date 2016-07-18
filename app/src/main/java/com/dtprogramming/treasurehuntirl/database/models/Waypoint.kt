@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import com.dtprogramming.treasurehuntirl.database.QuickTable
 import com.dtprogramming.treasurehuntirl.database.TableColumns
+import com.dtprogramming.treasurehuntirl.util.Point
 import com.dtprogramming.treasurehuntirl.util.getDouble
 import com.dtprogramming.treasurehuntirl.util.getLong
 import com.dtprogramming.treasurehuntirl.util.getString
@@ -30,6 +31,29 @@ data class Waypoint(val id: Long, val uuid: String, val treasureChestId: String,
         contentValues.put(TABLE.LNG, long)
 
         return contentValues;
+    }
+
+    fun biggerLat(waypoint: Waypoint): Boolean {
+        if (lat > waypoint.lat) {
+            return true
+        } else if (lat == waypoint.lat) {
+            return long >= waypoint.long
+        }
+
+        return false
+    }
+
+    fun biggerLng(waypoint: Waypoint): Boolean {
+        if (long > waypoint.long)
+            return true
+        else if (long == waypoint.long)
+            return lat >= waypoint.lat
+
+        return false
+    }
+
+    fun distance(waypoint: Waypoint): Double {
+        return Math.hypot(lat - waypoint.lat, long - waypoint.long)
     }
 
     class Table {

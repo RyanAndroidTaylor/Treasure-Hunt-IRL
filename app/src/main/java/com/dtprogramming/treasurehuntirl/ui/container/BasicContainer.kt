@@ -50,8 +50,4 @@ abstract class BasicContainer : Container {
     override fun onFinish() {
 
     }
-
-    override fun getRootView(): View? {
-        return rootView
-    }
 }
