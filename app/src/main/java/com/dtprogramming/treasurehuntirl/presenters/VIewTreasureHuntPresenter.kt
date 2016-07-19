@@ -10,6 +10,7 @@ import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.ViewTreasureHuntView
 import com.dtprogramming.treasurehuntirl.util.Point
+import java.util.*
 
 /**
  * Created by ryantaylor on 7/16/16.
@@ -30,6 +31,7 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
     private var farthestPointTwo: Point? = null
     private var centerPoint: Point? = null
     private var radiusInMeters = 0.0
+    private lateinit var waypoints: List<Waypoint>
 
     fun load(viewTreasureHuntView: ViewTreasureHuntView, treasureHuntId: String) {
         this.viewTreasureHuntView = viewTreasureHuntView
@@ -64,7 +66,8 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
                 centerPoint = calculateCenterPoint(farthestPointOne, farthestPointTwo)
                 radiusInMeters = calculateTreasureHuntRadius(farthestPointOne, farthestPointTwo)
 
-                centerPoint?.let { viewTreasureHuntView.displayArea(it.lat, it.lng, radiusInMeters) }
+                //TODO Displaying waypoint while I work on this feature. Once I have it stable I need to remove the waypoints.
+                centerPoint?.let { viewTreasureHuntView.displayArea(waypoints, it.lat, it.lng, radiusInMeters) }
             })
         })
     }
@@ -75,7 +78,7 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
 
         if (treasureChests.size > 0) {
             waypointConnection.getWaypointsForTreasureChestsAsync(treasureChests, {
-                val waypoints = it
+                waypoints = it
 
                 if (waypoints.size == 1) {
                     val waypoint = waypoints[0]
@@ -94,7 +97,7 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
                         else
                             second
                     })
-                    val biggestLngWaypiont = compareAndGetSingle(waypoints, { first, second ->
+                    val biggestLngWaypoint = compareAndGetSingle(waypoints, { first, second ->
                         if (first.biggerLng(second))
                             first
                         else
@@ -117,17 +120,19 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
                     pointOne = Point(smallestLatWaypoint.lat, smallestLatWaypoint.long)
                     pointTwo = Point(biggestLatWaypoint.lat, biggestLatWaypoint.long)
 
-                    if (smallestLatWaypoint.distance(biggestLngWaypiont) > biggestDistance) {
+                    if (smallestLatWaypoint.distance(biggestLngWaypoint) > biggestDistance) {
+                        biggestDistance = smallestLatWaypoint.distance(biggestLngWaypoint)
                         pointOne = Point(smallestLatWaypoint.lat, smallestLatWaypoint.long)
-                        pointTwo = Point(biggestLngWaypiont.lat, biggestLngWaypiont.long)
+                        pointTwo = Point(biggestLngWaypoint.lat, biggestLngWaypoint.long)
                     }
                     if (smallestLngWaypoint.distance(biggestLatWaypoint) > biggestDistance) {
+                        biggestDistance = smallestLngWaypoint.distance(biggestLatWaypoint)
                         pointOne = Point(smallestLngWaypoint.lat, smallestLngWaypoint.long)
                         pointTwo = Point(biggestLatWaypoint.lat, biggestLatWaypoint.long)
                     }
-                    if (smallestLngWaypoint.distance(biggestLngWaypiont) > biggestDistance) {
+                    if (smallestLngWaypoint.distance(biggestLngWaypoint) > biggestDistance) {
                         pointOne = Point(smallestLngWaypoint.lat, smallestLngWaypoint.long)
-                        pointTwo = Point(biggestLngWaypiont.lat, biggestLngWaypiont.long)
+                        pointTwo = Point(biggestLngWaypoint.lat, biggestLngWaypoint.long)
                     }
                 }
             })

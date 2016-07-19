@@ -8,6 +8,7 @@ import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.presenters.ViewTreasureHuntPresenter
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
@@ -70,7 +71,7 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
         viewTreasureHuntPresenter.finish()
     }
 
-    override fun displayArea(lat: Double, lng: Double, radius: Double) {
+    override fun displayArea(waypoints: List<Waypoint>, lat: Double, lng: Double, radius: Double) {
         Log.i("ViewTHContainer", "lat = $lat, lng = $lng, radius = $radius")
         googleMap?.let {
             val circleOptions = CircleOptions()
@@ -80,6 +81,10 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
             circleOptions.strokeColor(containerActivity.resources.getColor(R.color.colorAccent))
 
             it.addCircle(circleOptions)
+
+            for (waypoint in waypoints) {
+                it.addMarker(MarkerOptions().position(LatLng(waypoint.lat, waypoint.long)))
+            }
         }
     }
 
