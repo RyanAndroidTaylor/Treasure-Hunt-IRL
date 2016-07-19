@@ -69,6 +69,9 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
     private fun loadData() {
         loadDataSubscription = getLoadDataObservable(treasureHuntId).subscribe {
             centerPoint?.let { viewTreasureHuntView.displayArea(it.lat, it.lng, radiusInMeters, zoom) }
+
+            viewTreasureHuntView.displayTitle(treasureHunt.title)
+            viewTreasureHuntView.displayTreasureChestCount(treasureChests.size)
         }
     }
 

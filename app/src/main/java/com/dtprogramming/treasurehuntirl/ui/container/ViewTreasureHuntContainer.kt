@@ -3,12 +3,13 @@ package com.dtprogramming.treasurehuntirl.ui.container
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.TextureView
 import android.view.ViewGroup
+import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
-import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.presenters.ViewTreasureHuntPresenter
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
@@ -20,8 +21,6 @@ import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.container_view_treasure_hunt.view.*
 
 /**
@@ -37,6 +36,9 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
 
     private var googleMap: GoogleMap? = null
 
+    private lateinit var treasureHuntTitle: TextView
+    private lateinit var treasureChestCount: TextView
+
     init {
         viewTreasureHuntPresenter = if (PresenterManager.hasPresenter(ViewTreasureHuntPresenter.TAG))
             PresenterManager.getPresenter(ViewTreasureHuntPresenter.TAG) as ViewTreasureHuntPresenter
@@ -49,12 +51,17 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
         inflateView(R.layout.container_view_treasure_hunt)
         containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.treasure_hunt_action_bar_title))
 
+        treasureHuntTitle = parent.view_treasure_hunt_container_title
+        treasureChestCount = parent.view_treasure_hunt_container_treasure_chest_count
+
         viewTreasureHuntPresenter.load(this, extras.getString(HUNT_UUID))
 
         val mapFragment = MapFragment()
         containerActivity.fragmentManager.beginTransaction().replace(R.id.view_treasure_hunt_container_map_container, mapFragment).commit()
 
         mapFragment.getMapAsync(this)
+
+        parent.view_treasure_hunt_start.setOnClickListener { }
 
         return this
     }
@@ -75,6 +82,10 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
         viewTreasureHuntPresenter.finish()
     }
 
+    override fun displayTitle(title: String) {
+        treasureHuntTitle.text = title
+    }
+
     override fun displayArea(lat: Double, lng: Double, radius: Double, zoom: Float) {
         googleMap?.let {
             Log.i("ViewTHContainer", "lat: $lat, lng: $lng, radius: $radius, zoom: $zoom")
@@ -93,9 +104,17 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
         }
     }
 
+    override fun displayTreasureChestCount(count: Int) {
+        treasureChestCount.text = "Treasure Chests: $count"
+    }
+
     override fun onMapReady(googleMap: GoogleMap?) {
         this.googleMap = googleMap
 
         viewTreasureHuntPresenter.mapLoaded()
+    }
+
+    private fun startTreasureHunt() {
+        //TODO load the treasure hunt into the play treasure hunt activity
     }
 }
