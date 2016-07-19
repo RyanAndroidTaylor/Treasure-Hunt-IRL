@@ -14,12 +14,15 @@ import com.dtprogramming.treasurehuntirl.presenters.ViewTreasureHuntPresenter
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.views.ViewTreasureHuntView
 import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.android.synthetic.main.container_view_treasure_hunt.view.*
 
 /**
  * Created by ryantaylor on 7/16/16.
@@ -44,6 +47,7 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
         inflateView(R.layout.container_view_treasure_hunt)
+        containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.treasure_hunt_action_bar_title))
 
         viewTreasureHuntPresenter.load(this, extras.getString(HUNT_UUID))
 
@@ -71,9 +75,10 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
         viewTreasureHuntPresenter.finish()
     }
 
-    override fun displayArea(waypoints: List<Waypoint>, lat: Double, lng: Double, radius: Double) {
-        Log.i("ViewTHContainer", "lat = $lat, lng = $lng, radius = $radius")
+    override fun displayArea(lat: Double, lng: Double, radius: Double, zoom: Float) {
         googleMap?.let {
+            Log.i("ViewTHContainer", "lat: $lat, lng: $lng, radius: $radius, zoom: $zoom")
+
             val circleOptions = CircleOptions()
             circleOptions.center(LatLng(lat, lng))
             circleOptions.radius(radius)
@@ -82,9 +87,9 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
 
             it.addCircle(circleOptions)
 
-            for (waypoint in waypoints) {
-                it.addMarker(MarkerOptions().position(LatLng(waypoint.lat, waypoint.long)))
-            }
+            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(LatLng(lat, lng), zoom)
+
+            it.moveCamera(cameraUpdate)
         }
     }
 

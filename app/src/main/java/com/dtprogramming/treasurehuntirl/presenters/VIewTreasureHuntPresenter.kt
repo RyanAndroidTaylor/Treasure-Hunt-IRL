@@ -33,6 +33,7 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
     private var farthestPointTwo: Point? = null
     private var centerPoint: Point? = null
     private var radiusInMeters = 0.0
+    private var zoom = 12f
     private lateinit var waypoints: List<Waypoint>
 
     private var loadDataSubscription: Subscription? = null
@@ -66,8 +67,8 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
     }
 
     private fun loadData() {
-        getLoadDataObservable(treasureHuntId).subscribe {
-            centerPoint?.let { viewTreasureHuntView.displayArea(waypoints, it.lat, it.lng, radiusInMeters) }
+        loadDataSubscription = getLoadDataObservable(treasureHuntId).subscribe {
+            centerPoint?.let { viewTreasureHuntView.displayArea(it.lat, it.lng, radiusInMeters, zoom) }
         }
     }
 
@@ -85,6 +86,8 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
 
                     centerPoint = calculateCenterPoint(farthestPointOne, farthestPointTwo)
                     radiusInMeters = calculateTreasureHuntRadius(farthestPointOne, farthestPointTwo)
+
+                    zoom = getZoomForRadius(radiusInMeters)
 
                     true
                 }
@@ -195,6 +198,24 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
         }
 
         return radiusInMeters
+    }
+
+    private fun getZoomForRadius(radius: Double): Float {
+        when (radius) {
+            in 0..1000 -> return 14f
+            in 1001..2000 -> return 13f
+            in 2001..4000 -> return 12f
+            in 4001..8000 -> return 11f
+            in 8001..16000 -> return 10f
+            in 16001..32000 -> return 9f
+            in 32001..64000 -> return 8f
+            in 64001..128000 -> return 7f
+            in 128001..256000 -> return 6f
+            in 256001..512000 -> return 5f
+            in 512001..1240000 -> return 4f
+            in 1240001..2480000 -> return 3f
+            else -> return 2f
+        }
     }
 
     private fun compareAndGetSingle(waypoints: List<Waypoint>, compare: (first: Waypoint, second: Waypoint) -> Waypoint): Waypoint {

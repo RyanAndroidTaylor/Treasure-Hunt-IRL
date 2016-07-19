@@ -30,6 +30,6 @@ class ViewTreasureHuntActivity : ContainerActivity() {
     }
 
     override fun setToolBarTitle(title: String) {
-
+        toolbar.title = title
     }
 }

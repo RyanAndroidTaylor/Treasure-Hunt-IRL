@@ -7,5 +7,5 @@ import com.dtprogramming.treasurehuntirl.database.models.Waypoint
  */
 interface ViewTreasureHuntView {
 
-    fun displayArea(waypoints: List<Waypoint>, lat: Double, lng: Double, radius: Double)
+    fun displayArea(lat: Double, lng: Double, radius: Double, zoom: Float)
 }
