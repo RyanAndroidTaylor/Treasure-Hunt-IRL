@@ -49,6 +49,22 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
         return treasureChest
     }
 
+    override fun getTreasureChestsForTreasureHunt(treasureHuntId: String): List<TreasureChest> {
+        val treasureChests = ArrayList<TreasureChest>()
+
+        val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntId)
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                treasureChests.add(TreasureChest(cursor))
+            }
+
+            cursor.close()
+        }
+
+        return treasureChests
+    }
+
     override fun getTreasureChestsForTreasureHuntAsync(treasureHuntId: String, onComplete: (List<TreasureChest>) -> Unit) {
         val connection = database.createQuery(TreasureChest.TABLE.NAME, "SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntId)
                 .mapToList { TreasureChest(it.getString(TableColumns.UUID), it.getString(TreasureChest.TABLE.TREASURE_HUNT), it.getString(TreasureChest.TABLE.TITLE)) }

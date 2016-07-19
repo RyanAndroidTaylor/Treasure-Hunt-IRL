@@ -46,7 +46,20 @@ class WaypointConnectionImpl : WaypointConnection {
         return waypoint
     }
 
+    override fun getWaypointsForTreasureChests(treasureChests: List<TreasureChest>): List<Waypoint> {
+        val waypoints = ArrayList<Waypoint>()
+
+        for ((id, uuid) in treasureChests) {
+            val waypoint = getWaypointForTreasureChest(uuid)
+
+            waypoint?.let { waypoints.add(it) }
+        }
+
+        return waypoints
+    }
+
     override fun getWaypointsForTreasureChestsAsync(treasureChests: List<TreasureChest>, onComplete: (List<Waypoint>) -> Unit) {
+        //TODO make this async
         val waypoints = ArrayList<Waypoint>()
 
         for ((id, uuid) in treasureChests) {

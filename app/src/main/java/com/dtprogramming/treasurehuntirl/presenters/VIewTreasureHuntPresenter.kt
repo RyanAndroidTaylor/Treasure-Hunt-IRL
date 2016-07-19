@@ -1,7 +1,6 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
 import android.location.Location
-import android.util.Log
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
@@ -10,7 +9,10 @@ import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.ViewTreasureHuntView
 import com.dtprogramming.treasurehuntirl.util.Point
-import java.util.*
+import rx.Observable
+import rx.Subscription
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 
 /**
  * Created by ryantaylor on 7/16/16.
@@ -33,6 +35,8 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
     private var radiusInMeters = 0.0
     private lateinit var waypoints: List<Waypoint>
 
+    private var loadDataSubscription: Subscription? = null
+
     fun load(viewTreasureHuntView: ViewTreasureHuntView, treasureHuntId: String) {
         this.viewTreasureHuntView = viewTreasureHuntView
         this.treasureHuntId = treasureHuntId
@@ -45,100 +49,110 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
     }
 
     override fun unsubscribe() {
-
+        loadDataSubscription?.let {
+            if (!it.isUnsubscribed)
+                it.unsubscribe()
+        }
     }
 
     override fun finish() {
+        unsubscribe()
 
         PresenterManager.removePresenter(TAG)
     }
 
-    private fun loadData() {
-        treasureHunt = treasureHuntConnection.getTreasureHunt(treasureHuntId)
-
-        treasureChestConnection.getTreasureChestsForTreasureHuntAsync(treasureHuntId, {
-            treasureChests = it
-
-            calculateTwoFarthestPoints({ points: Pair<Point?, Point?> ->
-                farthestPointOne = points.first
-                farthestPointTwo = points.second
-
-                centerPoint = calculateCenterPoint(farthestPointOne, farthestPointTwo)
-                radiusInMeters = calculateTreasureHuntRadius(farthestPointOne, farthestPointTwo)
-
-                //TODO Displaying waypoint while I work on this feature. Once I have it stable I need to remove the waypoints.
-                centerPoint?.let { viewTreasureHuntView.displayArea(waypoints, it.lat, it.lng, radiusInMeters) }
-            })
-        })
+    fun mapLoaded() {
+        loadData()
     }
 
-    private fun calculateTwoFarthestPoints(onComplete: (Pair<Point?, Point?>) -> Unit) {
+    private fun loadData() {
+        getLoadDataObservable(treasureHuntId).subscribe {
+            centerPoint?.let { viewTreasureHuntView.displayArea(waypoints, it.lat, it.lng, radiusInMeters) }
+        }
+    }
+
+    private fun getLoadDataObservable(treasureHuntId: String): Observable<String> {
+        return Observable.just(treasureHuntId)
+                .first {
+                    treasureHunt = treasureHuntConnection.getTreasureHunt(treasureHuntId)
+
+                    treasureChests = treasureChestConnection.getTreasureChestsForTreasureHunt(treasureHuntId)
+                    waypoints = waypointConnection.getWaypointsForTreasureChests(treasureChests)
+
+                    val points = calculateTwoFarthestPoints(waypoints)
+                    farthestPointOne = points.first
+                    farthestPointTwo = points.second
+
+                    centerPoint = calculateCenterPoint(farthestPointOne, farthestPointTwo)
+                    radiusInMeters = calculateTreasureHuntRadius(farthestPointOne, farthestPointTwo)
+
+                    true
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+    }
+
+    private fun calculateTwoFarthestPoints(waypoints: List<Waypoint>): Pair<Point?, Point?> {
         var pointOne: Point? = null
         var pointTwo: Point? = null
 
-        if (treasureChests.size > 0) {
-            waypointConnection.getWaypointsForTreasureChestsAsync(treasureChests, {
-                waypoints = it
+        if (waypoints.size == 1) {
+            val waypoint = waypoints[0]
 
-                if (waypoints.size == 1) {
-                    val waypoint = waypoints[0]
+            pointOne = Point(waypoint.lat, waypoint.long)
+        } else if (treasureChests.size == 2) {
+            val waypointOne = waypoints[0]
+            val waypointTwo = waypoints[1]
 
-                    pointOne = Point(waypoint.lat, waypoint.long)
-                } else if (treasureChests.size == 2) {
-                    val waypointOne = waypoints[0]
-                    val waypointTwo = waypoints[1]
-
-                    pointOne = Point(waypointOne.lat, waypointOne.long)
-                    pointTwo = Point(waypointTwo.lat, waypointTwo.long)
-                } else if (treasureChests.size > 2) {
-                    val biggestLatWaypoint = compareAndGetSingle(waypoints, { first, second ->
-                        if (first.biggerLat(second))
-                            first
-                        else
-                            second
-                    })
-                    val biggestLngWaypoint = compareAndGetSingle(waypoints, { first, second ->
-                        if (first.biggerLng(second))
-                            first
-                        else
-                            second
-                    })
-                    val smallestLatWaypoint = compareAndGetSingle(waypoints, { first, second ->
-                        if (first.biggerLat(second))
-                            second
-                        else
-                            first
-                    })
-                    val smallestLngWaypoint = compareAndGetSingle(waypoints, { first, second ->
-                        if (first.biggerLng(second))
-                            second
-                        else
-                            first
-                    })
-
-                    var biggestDistance = smallestLatWaypoint.distance(biggestLatWaypoint)
-                    pointOne = Point(smallestLatWaypoint.lat, smallestLatWaypoint.long)
-                    pointTwo = Point(biggestLatWaypoint.lat, biggestLatWaypoint.long)
-
-                    if (smallestLatWaypoint.distance(biggestLngWaypoint) > biggestDistance) {
-                        biggestDistance = smallestLatWaypoint.distance(biggestLngWaypoint)
-                        pointOne = Point(smallestLatWaypoint.lat, smallestLatWaypoint.long)
-                        pointTwo = Point(biggestLngWaypoint.lat, biggestLngWaypoint.long)
-                    }
-                    if (smallestLngWaypoint.distance(biggestLatWaypoint) > biggestDistance) {
-                        biggestDistance = smallestLngWaypoint.distance(biggestLatWaypoint)
-                        pointOne = Point(smallestLngWaypoint.lat, smallestLngWaypoint.long)
-                        pointTwo = Point(biggestLatWaypoint.lat, biggestLatWaypoint.long)
-                    }
-                    if (smallestLngWaypoint.distance(biggestLngWaypoint) > biggestDistance) {
-                        pointOne = Point(smallestLngWaypoint.lat, smallestLngWaypoint.long)
-                        pointTwo = Point(biggestLngWaypoint.lat, biggestLngWaypoint.long)
-                    }
-                }
+            pointOne = Point(waypointOne.lat, waypointOne.long)
+            pointTwo = Point(waypointTwo.lat, waypointTwo.long)
+        } else if (treasureChests.size > 2) {
+            val biggestLatWaypoint = compareAndGetSingle(waypoints, { first, second ->
+                if (first.biggerLat(second))
+                    first
+                else
+                    second
             })
+            val biggestLngWaypoint = compareAndGetSingle(waypoints, { first, second ->
+                if (first.biggerLng(second))
+                    first
+                else
+                    second
+            })
+            val smallestLatWaypoint = compareAndGetSingle(waypoints, { first, second ->
+                if (first.biggerLat(second))
+                    second
+                else
+                    first
+            })
+            val smallestLngWaypoint = compareAndGetSingle(waypoints, { first, second ->
+                if (first.biggerLng(second))
+                    second
+                else
+                    first
+            })
+
+            var biggestDistance = smallestLatWaypoint.distance(biggestLatWaypoint)
+            pointOne = Point(smallestLatWaypoint.lat, smallestLatWaypoint.long)
+            pointTwo = Point(biggestLatWaypoint.lat, biggestLatWaypoint.long)
+
+            if (smallestLatWaypoint.distance(biggestLngWaypoint) > biggestDistance) {
+                biggestDistance = smallestLatWaypoint.distance(biggestLngWaypoint)
+                pointOne = Point(smallestLatWaypoint.lat, smallestLatWaypoint.long)
+                pointTwo = Point(biggestLngWaypoint.lat, biggestLngWaypoint.long)
+            }
+            if (smallestLngWaypoint.distance(biggestLatWaypoint) > biggestDistance) {
+                biggestDistance = smallestLngWaypoint.distance(biggestLatWaypoint)
+                pointOne = Point(smallestLngWaypoint.lat, smallestLngWaypoint.long)
+                pointTwo = Point(biggestLatWaypoint.lat, biggestLatWaypoint.long)
+            }
+            if (smallestLngWaypoint.distance(biggestLngWaypoint) > biggestDistance) {
+                pointOne = Point(smallestLngWaypoint.lat, smallestLngWaypoint.long)
+                pointTwo = Point(biggestLngWaypoint.lat, biggestLngWaypoint.long)
+            }
         }
 
-        onComplete(Pair(pointOne, pointTwo))
+        return Pair(pointOne, pointTwo)
     }
 
     private fun calculateCenterPoint(pointOne: Point?, pointTwo: Point?): Point? {
@@ -191,9 +205,5 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
         }
 
         return biggestLatWaypoint
-    }
-
-    fun mapLoaded() {
-        loadData()
     }
 }

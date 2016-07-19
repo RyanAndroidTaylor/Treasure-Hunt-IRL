@@ -13,6 +13,7 @@ interface TreasureChestConnection : Connection {
     fun delete(treasureChestId: String)
 
     fun getTreasureChest(treasureChestId: String): TreasureChest
+    fun getTreasureChestsForTreasureHunt(treasureHuntId: String): List<TreasureChest>
     fun getTreasureChestsForTreasureHuntAsync(treasureHuntId: String, onComplete: (List<TreasureChest>) -> Unit)
 
     fun getTreasureChestCountForTreasureHunt(treasureHuntId: String, onComplete: (count: Int) -> Unit)
