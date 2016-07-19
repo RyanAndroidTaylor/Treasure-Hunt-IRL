@@ -11,6 +11,7 @@ import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
  */
 abstract class BasicContainer : Container {
 
+    abstract protected var rootViewId: Int
     private var rootView: View? = null
 
     protected lateinit var containerActivity: ContainerActivity
@@ -22,14 +23,10 @@ abstract class BasicContainer : Container {
         this.parent = parent
         this.extras = extras
 
-        return this
-    }
-
-    protected fun inflateView(layoutId: Int): Container {
         if (parent.childCount > 0)
             parent.removeViewAt(0)
 
-        rootView = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
+        rootView = LayoutInflater.from(parent.context).inflate(rootViewId, parent, false)
 
         parent.addView(rootView)
 
@@ -44,7 +41,11 @@ abstract class BasicContainer : Container {
         if (parent.childCount > 0)
             parent.removeViewAt(0)
 
-        parent.addView(rootView)
+        if (rootView == null) {
+            rootView = LayoutInflater.from(parent.context).inflate(rootViewId, parent, false)
+        } else {
+            parent.addView(rootView)
+        }
     }
 
     override fun onFinish() {

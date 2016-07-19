@@ -2,6 +2,7 @@
     <string name="app_name">Treasure Hunt IRL</string>
     <string name="treasure_hunt_action_bar_title">Treasure Hunt</string>
     <string name="treasure_chest_action_bar_title">Treasure Chest</string>
+    <string name="play_treasure_hunt_action_bar_title">Play Treasure Hunt</string>
     <string name="clue_action_bar_title">Clue</string>
     <string name="waypoint_action_bar_title">Waypoint</string>
 

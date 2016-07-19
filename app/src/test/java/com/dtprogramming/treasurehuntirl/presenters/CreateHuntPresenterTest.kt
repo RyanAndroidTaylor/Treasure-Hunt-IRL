@@ -39,4 +39,9 @@ class CreateHuntPresenterTest {
     fun tearDown() {
 
     }
+
+    @Test
+    fun tempTest() {
+        //TODO Write test for create hunt presenter
+    }
 }

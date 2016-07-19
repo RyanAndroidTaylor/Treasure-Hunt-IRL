@@ -26,6 +26,8 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
         val URI: String = CreateClueContainer::class.java.simpleName
     }
 
+    override var rootViewId = R.layout.container_create_clue
+
     private lateinit var createCluePresenter: CreateCluePresenter
 
     private lateinit var clueText: EditText
@@ -39,7 +41,6 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
-        inflateView(R.layout.container_create_clue)
         containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.clue_action_bar_title))
 
         clueText = parent.create_clue__container_clue_text

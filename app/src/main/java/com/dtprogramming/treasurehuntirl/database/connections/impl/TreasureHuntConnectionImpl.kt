@@ -60,6 +60,22 @@ class TreasureHuntConnectionImpl : TreasureHuntConnection {
                 }
     }
 
+    override fun subscribeToTreasureHunts(onChange: (List<TreasureHunt>) -> Unit) {
+        val connection = THApp.briteDatabase.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
+                .mapToList { TreasureHunt(it.getString(TableColumns.UUID), it.getString(TreasureHunt.TABLE.TITLE)) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    val treasureHunts = ArrayList<TreasureHunt>()
+
+                    for (treasure in it)
+                        treasureHunts.add(treasure)
+
+                    onChange(treasureHunts)
+                }
+
+        connections.add(connection)
+    }
+
     override fun unsubscribe() {
         for (connection in connections) {
             if (!connection.isUnsubscribed)

@@ -3,6 +3,7 @@ package com.dtprogramming.treasurehuntirl.ui.activities
 import android.os.Bundle
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.ui.container.*
+import com.dtprogramming.treasurehuntirl.util.RELOADED
 import java.util.*
 
 /**
@@ -60,6 +61,13 @@ abstract class ContainerActivity : BaseActivity() {
         backStack.push(uri)
     }
 
+    fun reload(uri: String) {
+        val extras = Bundle()
+
+        extras.putBoolean(RELOADED, true)
+
+        startContainer(uri, extras)
+    }
 
     private fun loadCurrentContainer() {
         loadContainer(currentUri, Bundle())
@@ -71,19 +79,28 @@ abstract class ContainerActivity : BaseActivity() {
 
             container?.onReload(parent)
         } else {
-            when (uri) {
-                CreateHuntContainer.URI -> container = CreateHuntContainer()
-                CreateClueContainer.URI -> container = CreateClueContainer()
-                CreateWayPointContainer.URI -> container = CreateWayPointContainer()
-                CreateTreasureChestContainer.URI -> container = CreateTreasureChestContainer()
-                ViewTreasureHuntContainer.URI -> container = ViewTreasureHuntContainer()
-                else -> throw IllegalStateException("There was no match found for the URI: $uri")
-            }
+            container = createContainer(uri)
 
-            containerMap.put(uri, container!!)
+            containerMap.put(uri!!, container!!)
 
             container?.inflate(this, parent, extras)
         }
+    }
+
+    private fun createContainer(uri: String?): Container {
+        val container: Container
+
+        when (uri) {
+            CreateHuntContainer.URI -> container = CreateHuntContainer()
+            CreateClueContainer.URI -> container = CreateClueContainer()
+            CreateWayPointContainer.URI -> container = CreateWayPointContainer()
+            CreateTreasureChestContainer.URI -> container = CreateTreasureChestContainer()
+            ViewTreasureHuntContainer.URI -> container = ViewTreasureHuntContainer()
+            PlayTreasureHuntContainer.URI -> container = PlayTreasureHuntContainer()
+            else -> throw IllegalStateException("There was no match found for the URI: $uri")
+        }
+
+        return container
     }
 
     fun finishCurrentContainer() {

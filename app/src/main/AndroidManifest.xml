@@ -36,6 +36,10 @@
             android:name=".ui.activities.ViewTreasureHuntActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".ui.activities.PlayTreasureHuntActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

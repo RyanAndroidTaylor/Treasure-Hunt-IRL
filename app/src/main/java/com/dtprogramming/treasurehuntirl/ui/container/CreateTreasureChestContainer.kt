@@ -53,6 +53,8 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         val URI: String = CreateTreasureChestContainer::class.java.simpleName
     }
 
+    override var rootViewId = R.layout.container_create_treasure_chest
+
     private var createTreasureChestPresenter: CreateTreasureChestPresenter
 
     private lateinit var editTitle: EditText
@@ -74,7 +76,6 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
-        inflateView(R.layout.container_create_treasure_chest)
         containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.treasure_chest_action_bar_title))
 
         checkForLocationPermission()

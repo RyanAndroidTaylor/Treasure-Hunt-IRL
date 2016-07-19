@@ -38,11 +38,21 @@ class TreasureHuntListFragment : TabFragment() {
             adapter = TreasureHuntAdapter(context, listOf(), { launchTreasureHuntActivity(it) })
 
             recyclerView.adapter = adapter
-
-            treasureHuntConnection.getTreasureHuntsAsync { adapter.updateList(it) }
         }
 
         return view
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        treasureHuntConnection.unsubscribe()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        treasureHuntConnection.getTreasureHuntsAsync { adapter.updateList(it) }
     }
 
     private fun launchTreasureHuntActivity(treasureHunt: TreasureHunt) {

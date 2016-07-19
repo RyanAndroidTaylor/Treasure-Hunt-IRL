@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.ui.container
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConne
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.presenters.ViewTreasureHuntPresenter
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
+import com.dtprogramming.treasurehuntirl.ui.activities.PlayTreasureHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.views.ViewTreasureHuntView
 import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -32,6 +34,8 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
         val URI: String = ViewTreasureHuntContainer::class.java.simpleName
     }
 
+    override var rootViewId = R.layout.container_view_treasure_hunt
+
     private lateinit var viewTreasureHuntPresenter: ViewTreasureHuntPresenter
 
     private var googleMap: GoogleMap? = null
@@ -48,20 +52,23 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
-        inflateView(R.layout.container_view_treasure_hunt)
         containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.treasure_hunt_action_bar_title))
 
         treasureHuntTitle = parent.view_treasure_hunt_container_title
         treasureChestCount = parent.view_treasure_hunt_container_treasure_chest_count
 
-        viewTreasureHuntPresenter.load(this, extras.getString(HUNT_UUID))
+        if (extras.containsKey(HUNT_UUID)) {
+            viewTreasureHuntPresenter.load(this, extras.getString(HUNT_UUID))
+        } else {
+            viewTreasureHuntPresenter.reload(this)
+        }
 
         val mapFragment = MapFragment()
         containerActivity.fragmentManager.beginTransaction().replace(R.id.view_treasure_hunt_container_map_container, mapFragment).commit()
 
         mapFragment.getMapAsync(this)
 
-        parent.view_treasure_hunt_start.setOnClickListener { }
+        parent.view_treasure_hunt_start.setOnClickListener { startTreasureHunt()}
 
         return this
     }
@@ -115,6 +122,10 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
     }
 
     private fun startTreasureHunt() {
-        //TODO load the treasure hunt into the play treasure hunt activity
+        val intent = Intent(containerActivity, PlayTreasureHuntActivity::class.java)
+
+        intent.putExtra(HUNT_UUID, viewTreasureHuntPresenter.treasureHuntId)
+
+        containerActivity.startActivity(intent)
     }
 }

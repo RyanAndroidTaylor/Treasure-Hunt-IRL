@@ -17,7 +17,7 @@ import rx.schedulers.Schedulers
 /**
  * Created by ryantaylor on 7/16/16.
  */
-class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, val treasureChestConnection: TreasureChestConnection, val waypointConnection: WaypointConnection) : Presenter {
+class ViewTreasureHuntPresenter(private val treasureHuntConnection: TreasureHuntConnection, private val treasureChestConnection: TreasureChestConnection, private val waypointConnection: WaypointConnection) : Presenter {
 
     companion object {
         val TAG: String = ViewTreasureHuntPresenter::class.java.simpleName
@@ -25,7 +25,8 @@ class ViewTreasureHuntPresenter(val treasureHuntConnection: TreasureHuntConnecti
 
     private lateinit var viewTreasureHuntView: ViewTreasureHuntView
 
-    private lateinit var treasureHuntId: String
+    lateinit var treasureHuntId: String
+        private set
     private lateinit var treasureHunt: TreasureHunt
     private lateinit var treasureChests: List<TreasureChest>
 

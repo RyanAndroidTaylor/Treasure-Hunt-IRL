@@ -30,6 +30,8 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         val URI: String = CreateHuntContainer::class.java.simpleName
     }
 
+    override var rootViewId = R.layout.container_create_hunt
+
     private val createHuntPresenter: CreateHuntPresenter
 
     private lateinit var treasureHuntTitle: EditText
@@ -46,7 +48,6 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
-        inflateView(R.layout.container_create_hunt)
 
         treasureHuntTitle = parent.create_hunt_container_title
 

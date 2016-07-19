@@ -33,6 +33,8 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
         val URI: String = CreateWayPointContainer::class.java.simpleName
     }
 
+    override var rootViewId = R.layout.container_create_waypoint
+
     private lateinit var createWaypointPresenter: CreateWaypointPresenter
 
     private lateinit var googleMap: GoogleMap
@@ -50,7 +52,6 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
-        inflateView(R.layout.container_create_waypoint)
         containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.waypoint_action_bar_title))
 
         if (extras.containsKey(TREASURE_CHEST_UUID))

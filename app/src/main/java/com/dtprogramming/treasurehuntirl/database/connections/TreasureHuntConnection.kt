@@ -14,4 +14,5 @@ interface TreasureHuntConnection : Connection {
     fun getTreasureHunt(treasureHuntId: String): TreasureHunt
 
     fun getTreasureHuntsAsync(onComplete: (List<TreasureHunt>) -> Unit)
+    fun subscribeToTreasureHunts(onChange: (List<TreasureHunt>) -> Unit)
 }
