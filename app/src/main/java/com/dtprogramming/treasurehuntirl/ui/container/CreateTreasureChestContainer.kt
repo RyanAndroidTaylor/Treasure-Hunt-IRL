@@ -115,14 +115,12 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
     }
 
     override fun onPause() {
-        Log.i("TreasureChestContainer", "onPause()")
         super.onPause()
 
         createTreasureChestPresenter.unsubscribe()
     }
 
     override fun onFinish() {
-        Log.i("TreasureChestContainer", "onFinish()")
         super.onFinish()
 
         createTreasureChestPresenter.finish()

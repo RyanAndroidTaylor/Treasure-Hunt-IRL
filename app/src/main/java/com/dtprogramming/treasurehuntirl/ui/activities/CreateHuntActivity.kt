@@ -42,7 +42,7 @@ class CreateHuntActivity : ContainerActivity() {
         parent = activity_create_hunt_container
 
         if (savedInstanceState != null && savedInstanceState.containsKey(CURRENT_URI)) {
-            reload(savedInstanceState.getString(CURRENT_URI))
+            startContainer(savedInstanceState.getString(CURRENT_URI))
         } else {
             val extras = Bundle()
 

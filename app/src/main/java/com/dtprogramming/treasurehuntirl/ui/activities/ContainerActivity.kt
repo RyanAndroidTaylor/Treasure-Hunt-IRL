@@ -3,7 +3,6 @@ package com.dtprogramming.treasurehuntirl.ui.activities
 import android.os.Bundle
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.ui.container.*
-import com.dtprogramming.treasurehuntirl.util.RELOADED
 import java.util.*
 
 /**
@@ -59,14 +58,6 @@ abstract class ContainerActivity : BaseActivity() {
         loadContainer(uri, extras)
 
         backStack.push(uri)
-    }
-
-    fun reload(uri: String) {
-        val extras = Bundle()
-
-        extras.putBoolean(RELOADED, true)
-
-        startContainer(uri, extras)
     }
 
     private fun loadCurrentContainer() {

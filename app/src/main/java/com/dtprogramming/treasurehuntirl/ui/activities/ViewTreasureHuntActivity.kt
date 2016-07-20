@@ -21,7 +21,7 @@ class ViewTreasureHuntActivity : ContainerActivity() {
         parent = view_treasure_hunt_container
 
         if (savedInstanceState != null && savedInstanceState.containsKey(CURRENT_URI)) {
-            reload(savedInstanceState.getString(CURRENT_URI))
+            startContainer(savedInstanceState.getString(CURRENT_URI))
         } else if (intent.hasExtra(HUNT_UUID)) {
             val extras = Bundle()
 
