@@ -16,7 +16,7 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
     lateinit var treasureHuntId: String
         private set
 
-    private lateinit var createHuntView: CreateHuntView
+    private var createHuntView: CreateHuntView? = null
 
     companion object {
         val TAG: String = CreateHuntPresenter::class.java.simpleName
@@ -49,6 +49,8 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
     override fun unsubscribe() {
         treasureHuntConnection.unsubscribe()
         treasureChestConnection.unsubscribe()
+
+        createHuntView = null
     }
 
     override fun finish() {
@@ -61,11 +63,11 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
         val treasureHunt = treasureHuntConnection.getTreasureHunt(treasureHuntId)
 
         treasureHuntTitle = treasureHunt.title
-        createHuntView.setTitle(treasureHuntTitle)
+        createHuntView?.setTitle(treasureHuntTitle)
     }
 
     private fun requestTreasureChestsForTreasureHunt() {
-        treasureChestConnection.getTreasureChestsForTreasureHuntAsync(treasureHuntId, { createHuntView.onTreasureChestsLoaded(it) })
+        treasureChestConnection.getTreasureChestsForTreasureHuntAsync(treasureHuntId, { createHuntView?.onTreasureChestsLoaded(it) })
     }
 
     fun onTitleChanged(newTitle: String) {

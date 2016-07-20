@@ -15,7 +15,7 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
         val TAG: String = CreateCluePresenter::class.java.simpleName
     }
 
-    private lateinit var createClueView: CreateClueView
+    private var createClueView: CreateClueView? = null
 
     private lateinit var clueId: String
     private lateinit var treasureHuntId: String
@@ -40,6 +40,8 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
 
     override fun unsubscribe() {
         clueConnection.unsubscribe()
+
+        createClueView = null
     }
 
     override fun finish() {
@@ -70,12 +72,12 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
 
         PresenterManager.removePresenter(TAG)
 
-        createClueView.close()
+        createClueView?.close()
     }
 
     fun cancel() {
         PresenterManager.removePresenter(TAG)
 
-        createClueView.close()
+        createClueView?.close()
     }
 }

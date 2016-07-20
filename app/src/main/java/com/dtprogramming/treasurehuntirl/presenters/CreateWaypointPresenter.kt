@@ -11,7 +11,7 @@ import com.dtprogramming.treasurehuntirl.util.randomUuid
 class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Presenter {
     val BASE_NUDGE_DISTANCE = 1.0
 
-    private lateinit var createWaypointView: CreateWaypointView
+    private var createWaypointView: CreateWaypointView? = null
     private lateinit var treasureChestId: String
 
     private lateinit var waypointId: String
@@ -53,6 +53,8 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
 
     override fun unsubscribe() {
         waypointConnection.unsubscribe()
+
+        createWaypointView = null
     }
 
     override fun finish() {
@@ -73,38 +75,38 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
     }
 
     fun mapLoaded() {
-        createWaypointView.loadMarker(lat, lng)
+        createWaypointView?.loadMarker(lat, lng)
     }
 
     fun mapClicked(lat: Double, lng: Double) {
         this.lat = lat
         this.lng = lng
 
-        createWaypointView.markerMoved(lat, lng)
+        createWaypointView?.markerMoved(lat, lng)
     }
 
     fun increaseLat() {
         lat += adjustedNudgeDistance
 
-        createWaypointView.markerMoved(lat, lng)
+        createWaypointView?.markerMoved(lat, lng)
     }
 
     fun decreaseLat() {
         lat -= adjustedNudgeDistance
 
-        createWaypointView.markerMoved(lat, lng)
+        createWaypointView?.markerMoved(lat, lng)
     }
 
     fun increaseLng() {
         lng += adjustedNudgeDistance
 
-        createWaypointView.markerMoved(lat, lng)
+        createWaypointView?.markerMoved(lat, lng)
     }
 
     fun decreaseLng() {
         lng -= adjustedNudgeDistance
 
-        createWaypointView.markerMoved(lat, lng)
+        createWaypointView?.markerMoved(lat, lng)
     }
 
     fun updateZoom(zoom: Float) {
@@ -114,7 +116,7 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
     fun cancel() {
         PresenterManager.removePresenter(TAG)
 
-        createWaypointView.close()
+        createWaypointView?.close()
     }
 
     fun save() {
@@ -125,6 +127,6 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
 
         PresenterManager.removePresenter(TAG)
 
-        createWaypointView.close()
+        createWaypointView?.close()
     }
 }

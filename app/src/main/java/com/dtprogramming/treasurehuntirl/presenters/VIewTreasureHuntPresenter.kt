@@ -23,7 +23,7 @@ class ViewTreasureHuntPresenter(private val treasureHuntConnection: TreasureHunt
         val TAG: String = ViewTreasureHuntPresenter::class.java.simpleName
     }
 
-    private lateinit var viewTreasureHuntView: ViewTreasureHuntView
+    private var viewTreasureHuntView: ViewTreasureHuntView? = null
 
     lateinit var treasureHuntId: String
         private set
@@ -55,6 +55,8 @@ class ViewTreasureHuntPresenter(private val treasureHuntConnection: TreasureHunt
             if (!it.isUnsubscribed)
                 it.unsubscribe()
         }
+
+        viewTreasureHuntView = null
     }
 
     override fun finish() {
@@ -69,10 +71,10 @@ class ViewTreasureHuntPresenter(private val treasureHuntConnection: TreasureHunt
 
     private fun loadData() {
         loadDataSubscription = getLoadDataObservable(treasureHuntId).subscribe {
-            centerPoint?.let { viewTreasureHuntView.displayArea(it.lat, it.lng, radiusInMeters, zoom) }
+            centerPoint?.let { viewTreasureHuntView?.displayArea(it.lat, it.lng, radiusInMeters, zoom) }
 
-            viewTreasureHuntView.displayTitle(treasureHunt.title)
-            viewTreasureHuntView.displayTreasureChestCount(treasureChests.size)
+            viewTreasureHuntView?.displayTitle(treasureHunt.title)
+            viewTreasureHuntView?.displayTreasureChestCount(treasureChests.size)
         }
     }
 

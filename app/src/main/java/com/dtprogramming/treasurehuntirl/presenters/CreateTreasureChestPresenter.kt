@@ -16,7 +16,7 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         val TAG: String = CreateTreasureChestPresenter::class.java.simpleName
     }
 
-    private lateinit var createTreasureChestView: CreateTreasureChestView
+    private var createTreasureChestView: CreateTreasureChestView? = null
 
     private var treasureChestTitle = "New Treasure Chest"
         private set
@@ -61,6 +61,8 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         treasureChestConnection.unsubscribe()
         clueConnection.unsubscribe()
         waypointConnection.unsubscribe()
+
+        createTreasureChestView = null
     }
 
     override fun finish() {
@@ -73,20 +75,20 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         val treasureChest = treasureChestConnection.getTreasureChest(treasureChestId)
 
         treasureChestTitle = treasureChest.title
-        createTreasureChestView.setTitle(treasureChestTitle)
+        createTreasureChestView?.setTitle(treasureChestTitle)
     }
 
     private fun loadClue() {
         val clue = clueConnection.getClueForTreasureChest(treasureChestId)
 
-        clue?.let { createTreasureChestView.displayClue(it) }
+        clue?.let { createTreasureChestView?.displayClue(it) }
     }
 
     private fun loadWaypoint() {
         val waypoint = waypointConnection.getWaypointForTreasureChest(treasureChestId)
 
         if (waypoint != null)
-            createTreasureChestView.loadMap()
+            createTreasureChestView?.loadMap()
     }
 
     fun titleChanged(newTitle: String) {
@@ -96,6 +98,6 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     fun mapLoaded() {
         val waypoint = waypointConnection.getWaypointForTreasureChest(treasureChestId)
 
-        waypoint?.let { createTreasureChestView.displayWaypoint(it) }
+        waypoint?.let { createTreasureChestView?.displayWaypoint(it) }
     }
 }
