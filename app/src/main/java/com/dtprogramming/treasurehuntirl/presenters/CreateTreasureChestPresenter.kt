@@ -79,13 +79,13 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     }
 
     private fun loadClue() {
-        val clue = clueConnection.getClueForTreasureChest(treasureChestId)
+        val clue = clueConnection.getClueForParent(treasureChestId)
 
         clue?.let { createTreasureChestView?.displayClue(it) }
     }
 
     private fun loadWaypoint() {
-        val waypoint = waypointConnection.getWaypointForTreasureChest(treasureChestId)
+        val waypoint = waypointConnection.getWaypointForParent(treasureChestId)
 
         if (waypoint != null)
             createTreasureChestView?.loadMap()
@@ -96,7 +96,7 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     }
 
     fun mapLoaded() {
-        val waypoint = waypointConnection.getWaypointForTreasureChest(treasureChestId)
+        val waypoint = waypointConnection.getWaypointForParent(treasureChestId)
 
         waypoint?.let { createTreasureChestView?.displayWaypoint(it) }
     }

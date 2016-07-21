@@ -1,13 +1,18 @@
 package com.dtprogramming.treasurehuntirl.ui.container
 
 import android.os.Bundle
+import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
@@ -39,17 +44,24 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
     private lateinit var treasureChestList: RecyclerView
     private lateinit var adapter: TreasureChestAdapter
 
+    private lateinit var clueContainer: CardView
+    private lateinit var clueText: TextView
+    private lateinit var addClue: Button
+
     init {
         createHuntPresenter = if (PresenterManager.hasPresenter(CreateHuntPresenter.TAG))
             PresenterManager.getPresenter(CreateHuntPresenter.TAG) as CreateHuntPresenter
         else
-            PresenterManager.addPresenter(CreateHuntPresenter.TAG, CreateHuntPresenter(TreasureHuntConnectionImpl(), TreasureChestConnectionImpl())) as CreateHuntPresenter
+            PresenterManager.addPresenter(CreateHuntPresenter.TAG, CreateHuntPresenter(TreasureHuntConnectionImpl(), TreasureChestConnectionImpl(), ClueConnectionImpl())) as CreateHuntPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
 
         treasureHuntTitle = parent.create_hunt_container_title
+        clueContainer = parent.create_hunt_container_clue_container
+        clueText = parent.create_hunt_container_clue_text
+        addClue = parent.create_hunt_container_add_clue
 
         parent.create_hunt_container_add_chest.setOnClickListener { loadCreateTreasureChestContainer() }
 
@@ -75,6 +87,8 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
+
+        addClue.setOnClickListener { containerActivity.startContainer(CreateClueContainer.URI) }
 
         return this
     }
@@ -105,11 +119,18 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         adapter.updateList(treasureChests)
     }
 
+    override fun displayClue(text: String) {
+        clueContainer.visibility = View.VISIBLE
+        clueText.text = text
+
+        addClue.visibility = View.GONE
+    }
+
     val treasureChestSelectedListener: (treasureChest: TreasureChest) -> Unit = {
         val extras = Bundle()
 
         extras.putString(TREASURE_CHEST_UUID, it.uuid)
-        extras.putString(HUNT_UUID, it.treasureHuntId)
+        extras.putString(HUNT_UUID, it.treasureHuntUuid)
 
         containerActivity.startContainer(CreateTreasureChestContainer.URI, extras)
     }

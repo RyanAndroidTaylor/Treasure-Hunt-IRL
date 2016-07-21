@@ -32,8 +32,20 @@ class ClueConnectionImpl : ClueConnection {
         database.update(Clue.TABLE.NAME, clue.getContentValues(), TableColumns.WHERE_UUID_EQUALS, clue.uuid)
     }
 
-    override fun getClueForTreasureChest(treasureChestId: String): Clue? {
-        val cursor = database.query("SELECT * FROM ${Clue.TABLE.NAME} WHERE ${Clue.TABLE.TREASURE_CHEST}=?", treasureChestId)
+    override fun getClue(clueId: String): Clue {
+        val cursor = database.query("SELECT * FROM ${Clue.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", clueId)
+
+        cursor.moveToFirst()
+
+        val clue = Clue(cursor)
+
+        cursor.close()
+
+        return clue
+    }
+
+    override fun getClueForParent(parentId: String): Clue? {
+        val cursor = database.query("SELECT * FROM ${Clue.TABLE.NAME} WHERE ${Clue.TABLE.PARENT}=?", parentId)
 
         var clue: Clue? = null
 
@@ -45,13 +57,13 @@ class ClueConnectionImpl : ClueConnection {
         return clue
     }
 
-    override fun subscribeToCollectedCluesForPlayingTreasureHuntAsync(playingTreasureHuntId: String, onComplete: (List<Clue>) -> Unit) {
-        val connection = database.createQuery(Clue.TABLE.NAME, "SELECT * FROM ${Clue.TABLE.NAME} LEFT JOIN ${CollectedClue.TABLE.NAME} ON ${Clue.TABLE.NAME}.${TableColumns.UUID} = ${CollectedClue.TABLE.NAME}.${TableColumns.UUID} WHERE ${CollectedClue.TABLE.PLAYING_TREASURE_HUNT}=?", playingTreasureHuntId)
-        .mapToList { Clue(it) }
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
-            onComplete(it)
-        }
+    override fun subscribeToCollectedCluesForParentAsync(parentId: String, onComplete: (List<Clue>) -> Unit) {
+        val connection = database.createQuery(Clue.TABLE.NAME, "SELECT * FROM ${Clue.TABLE.NAME} LEFT JOIN ${CollectedClue.TABLE.NAME} ON ${Clue.TABLE.NAME}.${TableColumns.UUID} = ${CollectedClue.TABLE.NAME}.${TableColumns.UUID} WHERE ${CollectedClue.TABLE.PARENT}=?", parentId)
+                .mapToList { Clue(it) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    onComplete(it)
+                }
 
         connections.add(connection)
     }

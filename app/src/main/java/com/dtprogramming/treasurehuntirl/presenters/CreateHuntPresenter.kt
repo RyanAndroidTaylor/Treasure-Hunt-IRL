@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
+import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
@@ -9,11 +10,13 @@ import com.dtprogramming.treasurehuntirl.util.randomUuid
 /**
  * Created by ryantaylor on 6/20/16.
  */
-class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, val treasureChestConnection: TreasureChestConnection) : Presenter {
+class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, val treasureChestConnection: TreasureChestConnection, val clueConnection: ClueConnection) : Presenter {
 
     var treasureHuntTitle = "New Treasure Hunt"
 
     lateinit var treasureHuntId: String
+        private set
+    var initialClueId: String? = null
         private set
 
     private var createHuntView: CreateHuntView? = null
@@ -26,7 +29,7 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
         this.createHuntView = createHuntView
         treasureHuntId = randomUuid()
 
-        treasureHuntConnection.insert(TreasureHunt(treasureHuntId, treasureHuntTitle))
+        treasureHuntConnection.insert(TreasureHunt(treasureHuntId, treasureHuntTitle, null))
 
         createHuntView.setTitle(treasureHuntTitle)
     }
@@ -37,6 +40,7 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
 
         requestTreasureChestsForTreasureHunt()
         loadTreasureHunt()
+        loadClue()
     }
 
     fun reload(createHuntView: CreateHuntView) {
@@ -44,6 +48,7 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
 
         requestTreasureChestsForTreasureHunt()
         loadTreasureHunt()
+        loadClue()
     }
 
     override fun unsubscribe() {
@@ -54,7 +59,7 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
     }
 
     override fun finish() {
-        treasureHuntConnection.update(TreasureHunt(treasureHuntId, treasureHuntTitle))
+        treasureHuntConnection.update(TreasureHunt(treasureHuntId, treasureHuntTitle, initialClueId))
 
         PresenterManager.removePresenter(TAG)
     }
@@ -63,7 +68,17 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
         val treasureHunt = treasureHuntConnection.getTreasureHunt(treasureHuntId)
 
         treasureHuntTitle = treasureHunt.title
+        initialClueId = treasureHunt.initialClueUuid
+
         createHuntView?.setTitle(treasureHuntTitle)
+    }
+
+    private fun loadClue() {
+        initialClueId?.let {
+            val clue = clueConnection.getClue(it)
+
+            createHuntView?.displayClue(clue.text)
+        }
     }
 
     private fun requestTreasureChestsForTreasureHunt() {

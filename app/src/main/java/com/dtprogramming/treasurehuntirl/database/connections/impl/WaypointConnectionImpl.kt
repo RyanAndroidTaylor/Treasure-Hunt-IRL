@@ -33,8 +33,8 @@ class WaypointConnectionImpl : WaypointConnection {
         database.update(Waypoint.TABLE.NAME, waypoint.getContentValues(), TableColumns.WHERE_UUID_EQUALS, waypoint.uuid)
     }
 
-    override fun getWaypointForTreasureChest(treasureChestId: String): Waypoint? {
-        val cursor = database.query("SELECT * FROM ${Waypoint.TABLE.NAME} WHERE ${Waypoint.TABLE.TREASURE_CHEST}=?", treasureChestId)
+    override fun getWaypointForParent(parentUuid: String): Waypoint? {
+        val cursor = database.query("SELECT * FROM ${Waypoint.TABLE.NAME} WHERE ${Waypoint.TABLE.PARENT}=?", parentUuid)
 
         var waypoint: Waypoint? = null
 
@@ -50,7 +50,7 @@ class WaypointConnectionImpl : WaypointConnection {
         val waypoints = ArrayList<Waypoint>()
 
         for ((id, uuid) in treasureChests) {
-            val waypoint = getWaypointForTreasureChest(uuid)
+            val waypoint = getWaypointForParent(uuid)
 
             waypoint?.let { waypoints.add(it) }
         }
@@ -63,7 +63,7 @@ class WaypointConnectionImpl : WaypointConnection {
         val waypoints = ArrayList<Waypoint>()
 
         for ((id, uuid) in treasureChests) {
-            val waypoint = getWaypointForTreasureChest(uuid)
+            val waypoint = getWaypointForParent(uuid)
 
             waypoint?.let { waypoints.add(it) }
         }

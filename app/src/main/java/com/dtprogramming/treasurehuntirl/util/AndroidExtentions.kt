@@ -16,7 +16,10 @@ fun Cursor.getString(columnName: String): String {
 }
 
 fun Cursor.getStringOrNull(columnName: String): String? {
-    return getString(getColumnIndex(columnName))
+    if (getColumnIndex(columnName) == -1)
+        return null
+    else
+        return getString(getColumnIndex(columnName))
 }
 
 fun Cursor.getDouble(columnName: String): Double {

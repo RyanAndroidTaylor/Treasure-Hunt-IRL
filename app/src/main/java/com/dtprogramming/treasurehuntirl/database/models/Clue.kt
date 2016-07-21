@@ -10,21 +10,21 @@ import com.dtprogramming.treasurehuntirl.util.getString
 /**
  * Created by ryantaylor on 6/21/16.
  */
-data class Clue(val id: Long, val uuid: String, val treasureChestId: String, val text: String) {
+data class Clue(val id: Long, val uuid: String, val parentUuid: String, val text: String) {
 
     companion object {
         val TABLE = Table()
     }
 
-    constructor(uuid: String, treasureChestId: String, text: String) : this(-1L, uuid, treasureChestId, text)
+    constructor(uuid: String, parentUuid: String, text: String) : this(-1L, uuid, parentUuid, text)
 
-    constructor(cursor: Cursor): this(cursor.getLong(TableColumns.ID), cursor.getString(TableColumns.UUID), cursor.getString(TABLE.TREASURE_CHEST), cursor.getString(TABLE.TEXT))
+    constructor(cursor: Cursor): this(cursor.getLong(TableColumns.ID), cursor.getString(TableColumns.UUID), cursor.getString(TABLE.PARENT), cursor.getString(TABLE.TEXT))
 
     fun getContentValues(): ContentValues {
         val contentValues = ContentValues()
 
         contentValues.put(TableColumns.UUID, uuid)
-        contentValues.put(TABLE.TREASURE_CHEST, treasureChestId)
+        contentValues.put(TABLE.PARENT, parentUuid)
         contentValues.put(TABLE.TEXT, text)
 
         return contentValues
@@ -33,7 +33,7 @@ data class Clue(val id: Long, val uuid: String, val treasureChestId: String, val
     class Table {
         val NAME: String
 
-        val TREASURE_CHEST: String
+        val PARENT: String
         val TEXT: String
 
         val CREATE: String
@@ -42,7 +42,7 @@ data class Clue(val id: Long, val uuid: String, val treasureChestId: String, val
             val quickTable = QuickTable()
 
             NAME = quickTable.open("ClueTable")
-            TREASURE_CHEST = quickTable.buildTextColumn("TreasureChest").build()
+            PARENT = quickTable.buildTextColumn("Parent").build()
             TEXT = quickTable.buildTextColumn("Text").build()
             CREATE = quickTable.retrieveCreateString()
         }

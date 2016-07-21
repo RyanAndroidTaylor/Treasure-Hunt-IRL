@@ -31,16 +31,12 @@ import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
 import com.dtprogramming.treasurehuntirl.ui.views.CreateTreasureChestView
-import com.dtprogramming.treasurehuntirl.util.CLUE_UUID
-import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
-import com.dtprogramming.treasurehuntirl.util.NEW
-import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
+import com.dtprogramming.treasurehuntirl.util.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.container_create_treasure_chest.view.*
 
@@ -190,7 +186,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
     private fun moveToContainer(uri: String) {
         val extras = Bundle()
 
-        extras.putString(TREASURE_CHEST_UUID, createTreasureChestPresenter.treasureChestId)
+        extras.putString(PARENT_UUID, createTreasureChestPresenter.treasureChestId)
 
         containerActivity.startContainer(uri, extras)
     }

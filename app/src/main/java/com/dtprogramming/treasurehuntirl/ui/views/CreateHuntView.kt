@@ -9,4 +9,6 @@ interface CreateHuntView {
 
     fun setTitle(title: String)
     fun onTreasureChestsLoaded(treasureChests: List<TreasureChest>)
+
+    fun displayClue(text: String)
 }

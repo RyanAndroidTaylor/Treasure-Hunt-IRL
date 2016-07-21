@@ -7,19 +7,19 @@ import com.dtprogramming.treasurehuntirl.database.TableColumns
 /**
  * Created by ryantaylor on 7/20/16.
  */
-data class CollectedClue(val id: Long, val uuid: String, val playingTreasureHuntUuid: String) {
+data class CollectedClue(val id: Long, val uuid: String, val parentUuid: String) {
 
     companion object {
         val TABLE = Table()
     }
 
-    constructor(uuid: String, playingTreasureHuntUuid: String): this(-1L, uuid, playingTreasureHuntUuid)
+    constructor(uuid: String, parentUuid: String): this(-1L, uuid, parentUuid)
 
     fun getContentValues(): ContentValues {
         val contentValues = ContentValues()
 
         contentValues.put(TableColumns.UUID, uuid)
-        contentValues.put(TABLE.PLAYING_TREASURE_HUNT, playingTreasureHuntUuid)
+        contentValues.put(TABLE.PARENT, parentUuid)
 
         return contentValues
     }
@@ -27,7 +27,7 @@ data class CollectedClue(val id: Long, val uuid: String, val playingTreasureHunt
     class Table {
         val NAME: String
 
-        val PLAYING_TREASURE_HUNT: String
+        val PARENT: String
 
         val CREATE: String
 
@@ -35,7 +35,7 @@ data class CollectedClue(val id: Long, val uuid: String, val playingTreasureHunt
             val quickTable = QuickTable()
 
             NAME = quickTable.openWithUuidForeignKeyRestraint("CollectedClue", Clue.TABLE.NAME)
-            PLAYING_TREASURE_HUNT = quickTable.buildTextColumn("PlayingTreasureHunt").build()
+            PARENT = quickTable.buildTextColumn("Parent").build()
 
             CREATE = quickTable.retrieveCreateString()
         }

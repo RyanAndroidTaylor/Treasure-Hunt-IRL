@@ -10,7 +10,8 @@ interface ClueConnection : Connection {
     fun insert(clue: Clue)
     fun update(clue: Clue)
 
-    fun getClueForTreasureChest(treasureChestId: String): Clue?
+    fun getClue(clueId: String): Clue
+    fun getClueForParent(parentId: String): Clue?
 
-    fun subscribeToCollectedCluesForPlayingTreasureHuntAsync(playingTreasureHuntId: String, onComplete: (List<Clue>) -> Unit)
+    fun subscribeToCollectedCluesForParentAsync(parentId: String, onComplete: (List<Clue>) -> Unit)
 }

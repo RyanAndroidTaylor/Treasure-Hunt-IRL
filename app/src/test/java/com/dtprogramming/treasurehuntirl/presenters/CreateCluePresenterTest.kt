@@ -54,17 +54,17 @@ class CreateCluePresenterTest {
         createCluePresenter.load(createClueView, treasureChestId)
 
         Mockito.verify(createClueView).setClueText("")
-        Mockito.verify(clueConnection).getClueForTreasureChest(treasureChestId)
+        Mockito.verify(clueConnection).getClueForParent(treasureChestId)
     }
 
     @Test
     fun loadExistingClue() {
-        Mockito.`when`(clueConnection.getClueForTreasureChest(treasureChestId)).thenReturn(Clue("uuid", treasureChestId, clueText))
+        Mockito.`when`(clueConnection.getClueForParent(treasureChestId)).thenReturn(Clue("uuid", treasureChestId, clueText))
 
         createCluePresenter.load(createClueView, treasureChestId)
 
         Mockito.verify(createClueView).setClueText(clueText)
-        Mockito.verify(clueConnection).getClueForTreasureChest(treasureChestId)
+        Mockito.verify(clueConnection).getClueForParent(treasureChestId)
     }
 
     @Test

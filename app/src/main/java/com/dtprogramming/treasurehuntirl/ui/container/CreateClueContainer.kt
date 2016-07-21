@@ -7,14 +7,12 @@ import android.util.Log
 import android.view.ViewGroup
 import android.widget.EditText
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.presenters.CreateCluePresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.views.CreateClueView
-import com.dtprogramming.treasurehuntirl.util.NEW
-import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
+import com.dtprogramming.treasurehuntirl.util.PARENT_UUID
 import kotlinx.android.synthetic.main.container_create_clue.view.*
 
 /**
@@ -45,8 +43,8 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
 
         clueText = parent.create_clue__container_clue_text
 
-        if (extras.containsKey(TREASURE_CHEST_UUID))
-            createCluePresenter.load(this, extras.getString(TREASURE_CHEST_UUID))
+        if (extras.containsKey(PARENT_UUID))
+            createCluePresenter.load(this, extras.getString(PARENT_UUID))
         else
             createCluePresenter.reload(this)
 

@@ -129,7 +129,7 @@ open class CreateHuntActivityTest {
 //    }
 
     protected fun loadHuntData() {
-        THApp.briteDatabase.insert(TreasureHunt.TABLE.NAME, TreasureHunt(treasureHuntUuid, createdTitle).getContentValues())
+        THApp.briteDatabase.insert(TreasureHunt.TABLE.NAME, TreasureHunt(treasureHuntUuid, createdTitle, null).getContentValues())
 
         THApp.briteDatabase.insert(TreasureChest.TABLE.NAME, TreasureChest(treasureChestUuid1, treasureHuntUuid, treasureChestTitleOne).getContentValues())
         THApp.briteDatabase.insert(TreasureChest.TABLE.NAME, TreasureChest(treasureChestUuid2, treasureHuntUuid, treasureChestTitleTwo).getContentValues())

@@ -20,13 +20,13 @@ class PlayTreasureHuntPresenter(val clueConnection: ClueConnection) : Presenter 
         this.playTreasureHuntView = playTreasureHuntView
         this.treasureHuntId = treasureHuntId
 
-        clueConnection.subscribeToCollectedCluesForPlayingTreasureHuntAsync(treasureHuntId, { playTreasureHuntView.updateInventoryList(it) })
+        clueConnection.subscribeToCollectedCluesForParentAsync(treasureHuntId, { playTreasureHuntView.updateInventoryList(it) })
     }
 
     fun reload(playTreasureHuntView: PlayTreasureHuntView) {
         this.playTreasureHuntView = playTreasureHuntView
 
-        clueConnection.subscribeToCollectedCluesForPlayingTreasureHuntAsync(treasureHuntId, { playTreasureHuntView.updateInventoryList(it) })
+        clueConnection.subscribeToCollectedCluesForParentAsync(treasureHuntId, { playTreasureHuntView.updateInventoryList(it) })
     }
 
     override fun unsubscribe() {
