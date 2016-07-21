@@ -15,6 +15,8 @@ import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.activities.PlayTreasureHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.views.ViewTreasureHuntView
 import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
+import com.dtprogramming.treasurehuntirl.util.NEW
+import com.dtprogramming.treasurehuntirl.util.PLAYING_HUNT_UUID
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
@@ -108,7 +110,7 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
     }
 
     override fun displayTreasureChestCount(count: Int) {
-        treasureChestCount.text = "Treasure Chests: $count"
+        treasureChestCount.text = "Treasure Chests Icon: $count"
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
@@ -120,7 +122,8 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
     private fun startTreasureHunt() {
         val intent = Intent(containerActivity, PlayTreasureHuntActivity::class.java)
 
-        intent.putExtra(HUNT_UUID, viewTreasureHuntPresenter.treasureHuntId)
+        intent.putExtra(PLAYING_HUNT_UUID, viewTreasureHuntPresenter.treasureHuntId)
+        intent.putExtra(NEW, true)
 
         containerActivity.startActivity(intent)
     }

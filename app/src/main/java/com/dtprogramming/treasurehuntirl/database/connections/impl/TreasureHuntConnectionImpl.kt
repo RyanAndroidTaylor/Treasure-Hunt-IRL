@@ -18,7 +18,7 @@ class TreasureHuntConnectionImpl : TreasureHuntConnection {
 
     override val connections = ArrayList<Subscription>()
 
-    val database: BriteDatabase
+    override val database: BriteDatabase
 
     init {
         database = THApp.briteDatabase
@@ -52,12 +52,7 @@ class TreasureHuntConnectionImpl : TreasureHuntConnection {
                 .observeOn(AndroidSchedulers.mainThread())
                 .first()
                 .subscribe {
-                    val treasureHunts = ArrayList<TreasureHunt>()
-
-                    for (treasure in it)
-                        treasureHunts.add(treasure)
-
-                    onComplete(treasureHunts)
+                    onComplete(it)
                 }
     }
 
@@ -66,12 +61,7 @@ class TreasureHuntConnectionImpl : TreasureHuntConnection {
                 .mapToList { TreasureHunt(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    val treasureHunts = ArrayList<TreasureHunt>()
-
-                    for (treasure in it)
-                        treasureHunts.add(treasure)
-
-                    onChange(treasureHunts)
+                    onChange(it)
                 }
 
         connections.add(connection)

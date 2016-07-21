@@ -1,6 +1,5 @@
 package com.dtprogramming.treasurehuntirl.database.connections
 
-import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 
 /**

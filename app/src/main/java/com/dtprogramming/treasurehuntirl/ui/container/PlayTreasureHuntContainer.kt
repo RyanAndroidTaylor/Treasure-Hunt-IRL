@@ -6,13 +6,16 @@ import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.CollectedClueConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.PlayingTreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.presenters.PlayTreasureHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueAdapter
 import com.dtprogramming.treasurehuntirl.ui.views.PlayTreasureHuntView
-import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
+import com.dtprogramming.treasurehuntirl.util.NEW
+import com.dtprogramming.treasurehuntirl.util.PLAYING_HUNT_UUID
 import kotlinx.android.synthetic.main.play_treasure_hunt_container.view.*
 
 /**
@@ -35,7 +38,8 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
         playTreasureHuntPresenter = if (PresenterManager.hasPresenter(PlayTreasureHuntPresenter.TAG))
             PresenterManager.getPresenter(PlayTreasureHuntPresenter.TAG) as PlayTreasureHuntPresenter
         else
-            PresenterManager.addPresenter(PlayTreasureHuntPresenter.TAG, PlayTreasureHuntPresenter(ClueConnectionImpl())) as PlayTreasureHuntPresenter
+            PresenterManager.addPresenter(PlayTreasureHuntPresenter.TAG, PlayTreasureHuntPresenter(PlayingTreasureHuntConnectionImpl(), CollectedClueConnectionImpl(), ClueConnectionImpl()
+            )) as PlayTreasureHuntPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
@@ -52,10 +56,14 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
 
         parent.play_treasure_hunt_dig.setOnClickListener { playTreasureHuntPresenter.dig() }
 
-        if (extras.containsKey(HUNT_UUID))
-            playTreasureHuntPresenter.load(this, extras.getString(HUNT_UUID))
-        else
+        if (extras.containsKey(PLAYING_HUNT_UUID)) {
+            if (extras.containsKey(NEW))
+                playTreasureHuntPresenter.start(this, extras.getString(PLAYING_HUNT_UUID))
+            else
+                playTreasureHuntPresenter.load(this, extras.getString(PLAYING_HUNT_UUID))
+        } else {
             playTreasureHuntPresenter.reload(this)
+        }
 
         return this
     }

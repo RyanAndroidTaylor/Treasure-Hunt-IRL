@@ -18,7 +18,7 @@ class ClueConnectionImpl : ClueConnection {
 
     override val connections = ArrayList<Subscription>()
 
-    private val database: BriteDatabase
+    override val database: BriteDatabase
 
     init {
         database = THApp.briteDatabase
@@ -55,17 +55,6 @@ class ClueConnectionImpl : ClueConnection {
         cursor.close()
 
         return clue
-    }
-
-    override fun subscribeToCollectedCluesForParentAsync(parentId: String, onComplete: (List<Clue>) -> Unit) {
-        val connection = database.createQuery(Clue.TABLE.NAME, "SELECT * FROM ${Clue.TABLE.NAME} LEFT JOIN ${CollectedClue.TABLE.NAME} ON ${Clue.TABLE.NAME}.${TableColumns.UUID} = ${CollectedClue.TABLE.NAME}.${TableColumns.UUID} WHERE ${CollectedClue.TABLE.PARENT}=?", parentId)
-                .mapToList { Clue(it) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    onComplete(it)
-                }
-
-        connections.add(connection)
     }
 
     override fun unsubscribe() {

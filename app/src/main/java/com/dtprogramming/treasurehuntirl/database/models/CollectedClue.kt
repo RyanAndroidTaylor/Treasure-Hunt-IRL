@@ -34,7 +34,7 @@ data class CollectedClue(val id: Long, val uuid: String, val parentUuid: String)
         init {
             val quickTable = QuickTable()
 
-            NAME = quickTable.openWithUuidForeignKeyRestraint("CollectedClue", Clue.TABLE.NAME)
+            NAME = quickTable.openWithUuidForeignKeyRestraint("CollectedClueTable", Clue.TABLE.NAME)
             PARENT = quickTable.buildTextColumn("Parent").build()
 
             CREATE = quickTable.retrieveCreateString()

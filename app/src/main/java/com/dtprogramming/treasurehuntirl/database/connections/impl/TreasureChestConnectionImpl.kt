@@ -17,7 +17,7 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
 
     override val connections = ArrayList<Subscription>()
 
-    private val database: BriteDatabase
+    override val database: BriteDatabase
 
     init {
         database = THApp.briteDatabase

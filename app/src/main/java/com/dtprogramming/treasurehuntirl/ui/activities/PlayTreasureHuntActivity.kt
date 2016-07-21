@@ -4,7 +4,8 @@ import android.os.Bundle
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.ui.container.PlayTreasureHuntContainer
-import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
+import com.dtprogramming.treasurehuntirl.util.NEW
+import com.dtprogramming.treasurehuntirl.util.PLAYING_HUNT_UUID
 import kotlinx.android.synthetic.main.activity_play_treasure_hunt.*
 
 /**
@@ -21,10 +22,13 @@ class PlayTreasureHuntActivity : ContainerActivity() {
 
         if (savedInstanceState != null && savedInstanceState.containsKey(CURRENT_URI)) {
             startContainer(savedInstanceState.getString(CURRENT_URI))
-        } else if (intent.hasExtra(HUNT_UUID)) {
+        } else if (intent.hasExtra(PLAYING_HUNT_UUID)) {
             val extras = Bundle()
 
-            extras.putString(HUNT_UUID, intent.getStringExtra(HUNT_UUID))
+            extras.putString(PLAYING_HUNT_UUID, intent.getStringExtra(PLAYING_HUNT_UUID))
+
+            if (intent.hasExtra(NEW))
+                extras.putBoolean(NEW, true)
 
             startContainer(PlayTreasureHuntContainer.URI, extras)
         }

@@ -21,9 +21,9 @@ import kotlinx.android.synthetic.main.fragment_hunt_list.view.*
 class TreasureHuntListFragment : TabFragment() {
     override val title = "HUNTS"
 
-    lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerView: RecyclerView
 
-    lateinit var adapter: TreasureHuntAdapter
+    private lateinit var adapter: TreasureHuntAdapter
 
     private val treasureHuntConnection = TreasureHuntConnectionImpl()
 

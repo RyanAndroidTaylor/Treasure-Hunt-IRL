@@ -12,6 +12,4 @@ interface ClueConnection : Connection {
 
     fun getClue(clueId: String): Clue
     fun getClueForParent(parentId: String): Clue?
-
-    fun subscribeToCollectedCluesForParentAsync(parentId: String, onComplete: (List<Clue>) -> Unit)
 }
