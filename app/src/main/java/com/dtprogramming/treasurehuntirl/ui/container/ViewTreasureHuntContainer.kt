@@ -3,8 +3,6 @@ package com.dtprogramming.treasurehuntirl.ui.container
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.view.TextureView
 import android.view.ViewGroup
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
@@ -95,8 +93,6 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
 
     override fun displayArea(lat: Double, lng: Double, radius: Double, zoom: Float) {
         googleMap?.let {
-            Log.i("ViewTHContainer", "lat: $lat, lng: $lng, radius: $radius, zoom: $zoom")
-
             val circleOptions = CircleOptions()
             circleOptions.center(LatLng(lat, lng))
             circleOptions.radius(radius)

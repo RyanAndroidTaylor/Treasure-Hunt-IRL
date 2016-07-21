@@ -11,4 +11,6 @@ interface ClueConnection : Connection {
     fun update(clue: Clue)
 
     fun getClueForTreasureChest(treasureChestId: String): Clue?
+
+    fun subscribeToCollectedCluesForPlayingTreasureHuntAsync(playingTreasureHuntId: String, onComplete: (List<Clue>) -> Unit)
 }

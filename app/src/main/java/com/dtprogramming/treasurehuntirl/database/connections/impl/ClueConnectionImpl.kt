@@ -4,6 +4,7 @@ import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
 import com.dtprogramming.treasurehuntirl.util.getString
 import com.squareup.sqlbrite.BriteDatabase
 import rx.Subscription
@@ -42,6 +43,17 @@ class ClueConnectionImpl : ClueConnection {
         cursor.close()
 
         return clue
+    }
+
+    override fun subscribeToCollectedCluesForPlayingTreasureHuntAsync(playingTreasureHuntId: String, onComplete: (List<Clue>) -> Unit) {
+        val connection = database.createQuery(Clue.TABLE.NAME, "SELECT * FROM ${Clue.TABLE.NAME} LEFT JOIN ${CollectedClue.TABLE.NAME} ON ${Clue.TABLE.NAME}.${TableColumns.UUID} = ${CollectedClue.TABLE.NAME}.${TableColumns.UUID} WHERE ${CollectedClue.TABLE.PLAYING_TREASURE_HUNT}=?", playingTreasureHuntId)
+        .mapToList { Clue(it) }
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe {
+            onComplete(it)
+        }
+
+        connections.add(connection)
     }
 
     override fun unsubscribe() {

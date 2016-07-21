@@ -4,8 +4,18 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/play_treasure_hunt_inventory_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Playing Treasure Hunt"/>
+        android:layout_height="0dp"
+        android:layout_weight="10"/>
+
+    <Button
+        android:id="@+id/play_treasure_hunt_dig"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="@dimen/margin_normal"
+        android:text="@string/dig"
+        android:background="@color/colorAccent"/>
 </LinearLayout>
