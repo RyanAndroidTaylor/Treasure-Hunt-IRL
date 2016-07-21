@@ -14,9 +14,7 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
 
     var treasureHuntTitle = "New Treasure Hunt"
 
-    lateinit var treasureHuntId: String
-        private set
-    var initialClueId: String? = null
+    lateinit var treasureHuntUuid: String
         private set
 
     private var createHuntView: CreateHuntView? = null
@@ -27,16 +25,16 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
 
     fun create(createHuntView: CreateHuntView) {
         this.createHuntView = createHuntView
-        treasureHuntId = randomUuid()
+        treasureHuntUuid = randomUuid()
 
-        treasureHuntConnection.insert(TreasureHunt(treasureHuntId, treasureHuntTitle, null))
+        treasureHuntConnection.insert(TreasureHunt(treasureHuntUuid, treasureHuntTitle))
 
         createHuntView.setTitle(treasureHuntTitle)
     }
 
-    fun load(createHuntView: CreateHuntView, treasureHuntId: String) {
+    fun load(createHuntView: CreateHuntView, treasureHuntUuid: String) {
         this.createHuntView = createHuntView
-        this.treasureHuntId = treasureHuntId
+        this.treasureHuntUuid = treasureHuntUuid
 
         requestTreasureChestsForTreasureHunt()
         loadTreasureHunt()
@@ -59,30 +57,27 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
     }
 
     override fun finish() {
-        treasureHuntConnection.update(TreasureHunt(treasureHuntId, treasureHuntTitle, initialClueId))
+        treasureHuntConnection.update(TreasureHunt(treasureHuntUuid, treasureHuntTitle))
 
         PresenterManager.removePresenter(TAG)
     }
 
     private fun loadTreasureHunt() {
-        val treasureHunt = treasureHuntConnection.getTreasureHunt(treasureHuntId)
+        val treasureHunt = treasureHuntConnection.getTreasureHunt(treasureHuntUuid)
 
         treasureHuntTitle = treasureHunt.title
-        initialClueId = treasureHunt.initialClueUuid
 
         createHuntView?.setTitle(treasureHuntTitle)
     }
 
     private fun loadClue() {
-        initialClueId?.let {
-            val clue = clueConnection.getClue(it)
+        val clue = clueConnection.getClueForParent(treasureHuntUuid)
 
-            createHuntView?.displayClue(clue.text)
-        }
+        clue?.let { createHuntView?.displayClue(clue.text) }
     }
 
     private fun requestTreasureChestsForTreasureHunt() {
-        treasureChestConnection.getTreasureChestsForTreasureHuntAsync(treasureHuntId, { createHuntView?.onTreasureChestsLoaded(it) })
+        treasureChestConnection.getTreasureChestsForTreasureHuntAsync(treasureHuntUuid, { createHuntView?.onTreasureChestsLoaded(it) })
     }
 
     fun onTitleChanged(newTitle: String) {

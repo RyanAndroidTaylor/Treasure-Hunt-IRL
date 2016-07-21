@@ -23,6 +23,7 @@ import com.dtprogramming.treasurehuntirl.ui.recycler_view.TreasureChestAdapter
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
 import com.dtprogramming.treasurehuntirl.util.NEW
+import com.dtprogramming.treasurehuntirl.util.PARENT_UUID
 import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
 import kotlinx.android.synthetic.main.container_create_hunt.view.*
 
@@ -88,7 +89,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        addClue.setOnClickListener { containerActivity.startContainer(CreateClueContainer.URI) }
+        addClue.setOnClickListener { startCreateClueContainer() }
 
         return this
     }
@@ -139,8 +140,16 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         val bundle = Bundle()
 
         bundle.putBoolean(NEW, true)
-        bundle.putString(HUNT_UUID, createHuntPresenter.treasureHuntId)
+        bundle.putString(HUNT_UUID, createHuntPresenter.treasureHuntUuid)
 
         containerActivity.startContainer(CreateTreasureChestContainer.URI, bundle)
+    }
+
+    private fun startCreateClueContainer() {
+        val extras = Bundle()
+
+        extras.putString(PARENT_UUID, createHuntPresenter.treasureHuntUuid)
+
+        containerActivity.startContainer(CreateClueContainer.URI, extras)
     }
 }
