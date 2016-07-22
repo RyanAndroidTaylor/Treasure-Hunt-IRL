@@ -1,20 +1,22 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
-import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
-import com.dtprogramming.treasurehuntirl.database.connections.CollectedClueConnection
-import com.dtprogramming.treasurehuntirl.database.connections.PlayingTreasureHuntConnection
+import android.util.Log
+import com.dtprogramming.treasurehuntirl.database.connections.*
 import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
 import com.dtprogramming.treasurehuntirl.database.models.PlayingTreasureHunt
+import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.PlayTreasureHuntView
 
 /**
  * Created by ryantaylor on 7/19/16.
  */
-class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasureHuntConnection, val connectedClueConnection: CollectedClueConnection, val clueConnection: ClueConnection) : Presenter {
+class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasureHuntConnection, val connectedClueConnection: CollectedClueConnection, val clueConnection: ClueConnection, val waypointConnection: WaypointConnection) : Presenter {
 
     private var playTreasureHuntView: PlayTreasureHuntView? = null
 
     private lateinit var playingTreasureHuntUuid: String
+
+    private var treasureChestWaypoints: List<Waypoint>? = null
 
     companion object {
         val TAG: String = PlayTreasureHuntPresenter::class.java.simpleName
@@ -27,14 +29,14 @@ class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasu
         playingTreasureHuntConnection.insert(PlayingTreasureHunt(treasureHuntUuid))
         saveInitialClueToCollectedClues()
 
-        connectedClueConnection.subscribeToCollectedCluesForParentAsync(treasureHuntUuid, { playTreasureHuntView.updateInventoryList(it) })
+        loadData()
     }
 
     fun load(playTreasureHuntView: PlayTreasureHuntView, playingTreasureHuntUuid: String) {
         this.playTreasureHuntView = playTreasureHuntView
         this.playingTreasureHuntUuid = playingTreasureHuntUuid
 
-        connectedClueConnection.subscribeToCollectedCluesForParentAsync(playingTreasureHuntUuid, { playTreasureHuntView.updateInventoryList(it) })
+        loadData()
     }
 
     fun reload(playTreasureHuntView: PlayTreasureHuntView) {
@@ -43,10 +45,18 @@ class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasu
         connectedClueConnection.subscribeToCollectedCluesForParentAsync(playingTreasureHuntUuid, { playTreasureHuntView.updateInventoryList(it) })
     }
 
+    private fun loadData() {
+        connectedClueConnection.subscribeToCollectedCluesForParentAsync(playingTreasureHuntUuid, { playTreasureHuntView?.updateInventoryList(it) })
+        waypointConnection.getWaypointsForTreasureHuntAsync(playingTreasureHuntUuid, { treasureChestWaypoints = it })
+    }
+
     override fun unsubscribe() {
         playTreasureHuntView = null
 
+        playingTreasureHuntConnection.unsubscribe()
+        clueConnection.unsubscribe()
         connectedClueConnection.unsubscribe()
+        waypointConnection.unsubscribe()
     }
 
     override fun finish() {
@@ -61,7 +71,17 @@ class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasu
         }
     }
 
-    fun dig() {
-
+    fun dig(lat: Double, lng: Double) {
+        treasureChestWaypoints?.let {
+            for (waypoint in it) {
+                Log.i("PlayTHPresenter", "waypoint lat: ${waypoint.lat}, dig lat $lat \nwaypoint lng ${waypoint.long}, dig lng $lng")
+                if ((lat > waypoint.lat - 0.000150 && lat < waypoint.lat + 0.000150)
+                        && (lng > waypoint.long - 0.000150 && lng < waypoint.long + 0.00150)) {
+                    playTreasureHuntView?.displayFoundTreasureChest("Treasure chest was found!!!")
+                } else {
+                    playTreasureHuntView?.displayFoundTreasureChest("Nothing here =(")
+                }
+            }
+        }
     }
 }

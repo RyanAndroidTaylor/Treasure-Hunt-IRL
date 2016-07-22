@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.database.connections.impl
 
+import android.util.Log
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
@@ -46,29 +47,65 @@ class WaypointConnectionImpl : WaypointConnection {
         return waypoint
     }
 
-    override fun getWaypointsForTreasureChests(treasureChests: List<TreasureChest>): List<Waypoint> {
-        val waypoints = ArrayList<Waypoint>()
+    override fun getWaypointsForTreasureHunt(treasureHuntUuid: String): List<Waypoint> {
+        val treasureChestCursor = database.query("SELECT ${TableColumns.UUID} FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntUuid)
 
-        for ((id, uuid) in treasureChests) {
-            val waypoint = getWaypointForParent(uuid)
-
-            waypoint?.let { waypoints.add(it) }
+        val treasureChestUuids = ArrayList<String>()
+        while (treasureChestCursor.moveToNext()) {
+            treasureChestUuids.add(treasureChestCursor.getString(TableColumns.UUID))
         }
+
+        treasureChestCursor.close()
+
+        val argumentCount = StringBuilder()
+        for (i in 0..treasureChestUuids.size - 1) {
+            argumentCount.append("?")
+
+            if (i != treasureChestUuids.size -1)
+                argumentCount.append(",")
+        }
+
+        val cursor = database.query("SELECT * FROM ${Waypoint.TABLE.NAME} WHERE ${Waypoint.TABLE.PARENT} IN ($argumentCount)", *treasureChestUuids.toTypedArray())
+
+        val waypoints = ArrayList<Waypoint>()
+        while (cursor.moveToNext()) {
+            waypoints.add(Waypoint(cursor))
+        }
+
+        cursor.close()
 
         return waypoints
     }
 
-    override fun getWaypointsForTreasureChestsAsync(treasureChests: List<TreasureChest>, onComplete: (List<Waypoint>) -> Unit) {
-        //TODO make this async
-        val waypoints = ArrayList<Waypoint>()
+    override fun getWaypointsForTreasureHuntAsync(treasureHuntUuid: String, onComplete: (List<Waypoint>) -> Unit) {
+        database.createQuery(TreasureChest.TABLE.NAME, "SELECT ${TableColumns.UUID} FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntUuid)
+                .mapToList { it.getString(TableColumns.UUID) }
+                .map { treasureChestUuids ->
+                    val waypoints = ArrayList<Waypoint>()
 
-        for ((id, uuid) in treasureChests) {
-            val waypoint = getWaypointForParent(uuid)
+                    val argumentCount = StringBuilder()
+                    for (i in 0..treasureChestUuids.size - 1) {
+                        argumentCount.append("?")
 
-            waypoint?.let { waypoints.add(it) }
-        }
+                        if (i != treasureChestUuids.size -1)
+                            argumentCount.append(",")
+                    }
 
-        onComplete(waypoints)
+                    val cursor = database.query("SELECT * FROM ${Waypoint.TABLE.NAME} WHERE ${Waypoint.TABLE.PARENT} IN ($argumentCount)", *treasureChestUuids.toTypedArray())
+
+                    while (cursor.moveToNext()) {
+                        waypoints.add(Waypoint(cursor))
+                    }
+
+                    cursor.close()
+
+                    waypoints
+                }
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .first()
+                .subscribe {
+                    onComplete(it)
+                }
     }
 
     override fun unsubscribe() {

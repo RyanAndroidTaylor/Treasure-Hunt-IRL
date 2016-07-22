@@ -82,8 +82,17 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
         connections.add(connection)
     }
 
-    //TODO Turn this async once we are figuring out the count of all different types of treasure chests
-    override fun getTreasureChestCountForTreasureHunt(treasureHuntId: String, onComplete: (count: Int) -> Unit) {
+    override fun getTreasureChestCountForTreasureHuntAsync(treasureHuntId: String, onComplete: (count: Int) -> Unit) {
+        database.createQuery(TreasureChest.TABLE.NAME, "SELECT COUNT(*) FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntId)
+                .mapToOne { it.getInt(0) }
+                .first()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    onComplete(it)
+                }
+    }
+
+    override fun getTreasureChestCountForTreasureHunt(treasureHuntId: String): Int {
         val cursor = database.query("SELECT COUNT(*) FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntId)
 
         cursor.moveToFirst()
@@ -92,7 +101,7 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
 
         cursor.close()
 
-        onComplete(count)
+        return count
     }
 
     override fun unsubscribe() {

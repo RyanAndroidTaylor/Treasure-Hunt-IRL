@@ -59,7 +59,7 @@ class TreasureHuntAdapter(context: Context, items: List<TreasureHunt>, val itemS
         fun bind(treasureHunt: TreasureHunt) {
             this.treasureHunt = treasureHunt
 
-            treasureChestConnection.getTreasureChestCountForTreasureHunt(treasureHunt.uuid, {count: Int ->
+            treasureChestConnection.getTreasureChestCountForTreasureHuntAsync(treasureHunt.uuid, { count: Int ->
                 if (count == 1)
                     chestCount.text = "$count Treasure Chest"
                 else

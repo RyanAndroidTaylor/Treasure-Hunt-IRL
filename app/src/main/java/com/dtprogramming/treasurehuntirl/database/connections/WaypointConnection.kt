@@ -12,6 +12,6 @@ interface WaypointConnection : Connection {
     fun update(waypoint: Waypoint)
 
     fun getWaypointForParent(parentUuid: String): Waypoint?
-    fun getWaypointsForTreasureChests(treasureChests: List<TreasureChest>): List<Waypoint>
-    fun getWaypointsForTreasureChestsAsync(treasureChests: List<TreasureChest>, onComplete: (List<Waypoint>) -> Unit)
+    fun getWaypointsForTreasureHunt(treasureHuntUuid: String): List<Waypoint>
+    fun getWaypointsForTreasureHuntAsync(treasureHuntUuid: String, onComplete: (List<Waypoint>) -> Unit)
 }

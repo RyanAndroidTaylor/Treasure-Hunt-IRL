@@ -122,7 +122,7 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
     private fun startTreasureHunt() {
         val intent = Intent(containerActivity, PlayTreasureHuntActivity::class.java)
 
-        intent.putExtra(PLAYING_HUNT_UUID, viewTreasureHuntPresenter.treasureHuntId)
+        intent.putExtra(PLAYING_HUNT_UUID, viewTreasureHuntPresenter.treasureHuntUuid)
         intent.putExtra(NEW, true)
 
         containerActivity.startActivity(intent)

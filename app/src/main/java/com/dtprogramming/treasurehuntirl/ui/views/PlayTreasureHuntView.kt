@@ -8,4 +8,6 @@ import com.dtprogramming.treasurehuntirl.database.models.Clue
 interface PlayTreasureHuntView {
 
     fun updateInventoryList(clues: List<Clue>)
+
+    fun displayFoundTreasureChest(foundTreasureChest: String)
 }

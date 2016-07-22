@@ -25,10 +25,10 @@ class ViewTreasureHuntPresenter(private val treasureHuntConnection: TreasureHunt
 
     private var viewTreasureHuntView: ViewTreasureHuntView? = null
 
-    lateinit var treasureHuntId: String
+    lateinit var treasureHuntUuid: String
         private set
     private lateinit var treasureHunt: TreasureHunt
-    private lateinit var treasureChests: List<TreasureChest>
+    private var treasureChestCount = 0
 
     private var farthestPointOne: Point? = null
     private var farthestPointTwo: Point? = null
@@ -41,7 +41,7 @@ class ViewTreasureHuntPresenter(private val treasureHuntConnection: TreasureHunt
 
     fun load(viewTreasureHuntView: ViewTreasureHuntView, treasureHuntId: String) {
         this.viewTreasureHuntView = viewTreasureHuntView
-        this.treasureHuntId = treasureHuntId
+        this.treasureHuntUuid = treasureHuntId
 
         loadData()
     }
@@ -70,21 +70,21 @@ class ViewTreasureHuntPresenter(private val treasureHuntConnection: TreasureHunt
     }
 
     private fun loadData() {
-        loadDataSubscription = getLoadDataObservable(treasureHuntId).subscribe {
+        loadDataSubscription = getLoadDataObservable(treasureHuntUuid).subscribe {
             centerPoint?.let { viewTreasureHuntView?.displayArea(it.lat, it.lng, radiusInMeters, zoom) }
 
             viewTreasureHuntView?.displayTitle(treasureHunt.title)
-            viewTreasureHuntView?.displayTreasureChestCount(treasureChests.size)
+            viewTreasureHuntView?.displayTreasureChestCount(treasureChestCount)
         }
     }
 
-    private fun getLoadDataObservable(treasureHuntId: String): Observable<String> {
-        return Observable.just(treasureHuntId)
+    private fun getLoadDataObservable(treasureHuntUuid: String): Observable<String> {
+        return Observable.just(treasureHuntUuid)
                 .first {
-                    treasureHunt = treasureHuntConnection.getTreasureHunt(treasureHuntId)
+                    treasureHunt = treasureHuntConnection.getTreasureHunt(treasureHuntUuid)
 
-                    treasureChests = treasureChestConnection.getTreasureChestsForTreasureHunt(treasureHuntId)
-                    waypoints = waypointConnection.getWaypointsForTreasureChests(treasureChests)
+                    treasureChestCount = treasureChestConnection.getTreasureChestCountForTreasureHunt(treasureHuntUuid)
+                    waypoints = waypointConnection.getWaypointsForTreasureHunt(treasureHuntUuid)
 
                     val points = calculateTwoFarthestPoints(waypoints)
                     farthestPointOne = points.first
@@ -109,13 +109,13 @@ class ViewTreasureHuntPresenter(private val treasureHuntConnection: TreasureHunt
             val waypoint = waypoints[0]
 
             pointOne = Point(waypoint.lat, waypoint.long)
-        } else if (treasureChests.size == 2) {
+        } else if (waypoints.size == 2) {
             val waypointOne = waypoints[0]
             val waypointTwo = waypoints[1]
 
             pointOne = Point(waypointOne.lat, waypointOne.long)
             pointTwo = Point(waypointTwo.lat, waypointTwo.long)
-        } else if (treasureChests.size > 2) {
+        } else if (waypoints.size > 2) {
             val biggestLatWaypoint = compareAndGetSingle(waypoints, { first, second ->
                 if (first.biggerLat(second))
                     first

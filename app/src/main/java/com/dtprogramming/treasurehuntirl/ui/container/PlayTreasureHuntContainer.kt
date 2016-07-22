@@ -1,13 +1,20 @@
 package com.dtprogramming.treasurehuntirl.ui.container
 
+import android.content.Context
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.ViewGroup
+import android.widget.Toast
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.CollectedClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.PlayingTreasureHuntConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.presenters.PlayTreasureHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
@@ -38,8 +45,7 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
         playTreasureHuntPresenter = if (PresenterManager.hasPresenter(PlayTreasureHuntPresenter.TAG))
             PresenterManager.getPresenter(PlayTreasureHuntPresenter.TAG) as PlayTreasureHuntPresenter
         else
-            PresenterManager.addPresenter(PlayTreasureHuntPresenter.TAG, PlayTreasureHuntPresenter(PlayingTreasureHuntConnectionImpl(), CollectedClueConnectionImpl(), ClueConnectionImpl()
-            )) as PlayTreasureHuntPresenter
+            PresenterManager.addPresenter(PlayTreasureHuntPresenter.TAG, PlayTreasureHuntPresenter(PlayingTreasureHuntConnectionImpl(), CollectedClueConnectionImpl(), ClueConnectionImpl(), WaypointConnectionImpl())) as PlayTreasureHuntPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
@@ -54,7 +60,7 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
 
         inventoryList.adapter = adapter
 
-        parent.play_treasure_hunt_dig.setOnClickListener { playTreasureHuntPresenter.dig() }
+        parent.play_treasure_hunt_dig.setOnClickListener { dig() }
 
         if (extras.containsKey(PLAYING_HUNT_UUID)) {
             if (extras.containsKey(NEW))
@@ -88,5 +94,41 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
 
     override fun updateInventoryList(clues: List<Clue>) {
         adapter.updateList(clues)
+    }
+
+    override fun displayFoundTreasureChest(foundTreasureChest: String) {
+        Toast.makeText(containerActivity, foundTreasureChest, Toast.LENGTH_LONG).show()
+    }
+
+    private fun dig() {
+        val locationManager = containerActivity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
+                object : DigLocationListener() {
+                    override fun onLocationChanged(location: Location?) {
+                        Log.i("PlayTHContainer", "onLocationChanged was called")
+
+                        location?.let { playTreasureHuntPresenter.dig(location.latitude, location.longitude) }
+                    }
+                }, null)
+    }
+
+    abstract class DigLocationListener : LocationListener {
+        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+            Log.i("PlayTHContainer", "onStatusChanged was called")
+        }
+
+        override fun onProviderDisabled(provider: String?) {
+            Log.i("PlayTHContainer", "onProviderDisabled was called")
+        }
+
+        override fun onLocationChanged(location: Location?) {
+
+        }
+
+        override fun onProviderEnabled(provider: String?) {
+            Log.i("PlayTHContainer", "onProviderEnabled was called")
+        }
+
     }
 }
