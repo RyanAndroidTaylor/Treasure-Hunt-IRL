@@ -43,7 +43,7 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
         createClueView = null
     }
 
-    override fun finish() {
+    override fun dispose() {
         PresenterManager.removePresenter(TAG)
     }
 

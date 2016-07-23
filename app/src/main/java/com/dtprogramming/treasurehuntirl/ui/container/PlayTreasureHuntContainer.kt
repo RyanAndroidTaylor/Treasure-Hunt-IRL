@@ -45,7 +45,7 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
         playTreasureHuntPresenter = if (PresenterManager.hasPresenter(PlayTreasureHuntPresenter.TAG))
             PresenterManager.getPresenter(PlayTreasureHuntPresenter.TAG) as PlayTreasureHuntPresenter
         else
-            PresenterManager.addPresenter(PlayTreasureHuntPresenter.TAG, PlayTreasureHuntPresenter(PlayingTreasureHuntConnectionImpl(), CollectedClueConnectionImpl(), ClueConnectionImpl(), WaypointConnectionImpl())) as PlayTreasureHuntPresenter
+            PresenterManager.addPresenter(PlayTreasureHuntPresenter.TAG, PlayTreasureHuntPresenter(PlayingTreasureHuntConnectionImpl(), CollectedClueConnectionImpl(), ClueConnectionImpl())) as PlayTreasureHuntPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
@@ -60,7 +60,7 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
 
         inventoryList.adapter = adapter
 
-        parent.play_treasure_hunt_dig.setOnClickListener { dig() }
+        parent.play_treasure_hunt_dig_mode.setOnClickListener { switchToDigMode() }
 
         if (extras.containsKey(PLAYING_HUNT_UUID)) {
             if (extras.containsKey(NEW))
@@ -89,46 +89,18 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
     override fun onFinish() {
         super.onFinish()
 
-        playTreasureHuntPresenter.finish()
+        playTreasureHuntPresenter.dispose()
     }
 
     override fun updateInventoryList(clues: List<Clue>) {
         adapter.updateList(clues)
     }
 
-    override fun displayFoundTreasureChest(foundTreasureChest: String) {
-        Toast.makeText(containerActivity, foundTreasureChest, Toast.LENGTH_LONG).show()
-    }
+    private fun switchToDigMode() {
+        val extras = Bundle()
 
-    private fun dig() {
-        val locationManager = containerActivity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        extras.putString(PLAYING_HUNT_UUID, playTreasureHuntPresenter.playingTreasureHuntUuid)
 
-        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
-                object : DigLocationListener() {
-                    override fun onLocationChanged(location: Location?) {
-                        Log.i("PlayTHContainer", "onLocationChanged was called")
-
-                        location?.let { playTreasureHuntPresenter.dig(location.latitude, location.longitude) }
-                    }
-                }, null)
-    }
-
-    abstract class DigLocationListener : LocationListener {
-        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-            Log.i("PlayTHContainer", "onStatusChanged was called")
-        }
-
-        override fun onProviderDisabled(provider: String?) {
-            Log.i("PlayTHContainer", "onProviderDisabled was called")
-        }
-
-        override fun onLocationChanged(location: Location?) {
-
-        }
-
-        override fun onProviderEnabled(provider: String?) {
-            Log.i("PlayTHContainer", "onProviderEnabled was called")
-        }
-
+        containerActivity.startContainer(DigModeContainer.URI, extras)
     }
 }

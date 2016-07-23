@@ -57,7 +57,7 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
         createWaypointView = null
     }
 
-    override fun finish() {
+    override fun dispose() {
         PresenterManager.removePresenter(TAG)
     }
 

@@ -81,7 +81,7 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
         Log.i("CreateClueContainer", "onFinish()")
         super.onFinish()
 
-        createCluePresenter.finish()
+        createCluePresenter.dispose()
     }
 
     override fun setClueText(text: String) {

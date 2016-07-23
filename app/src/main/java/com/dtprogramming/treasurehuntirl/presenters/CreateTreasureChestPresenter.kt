@@ -65,7 +65,7 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         createTreasureChestView = null
     }
 
-    override fun finish() {
+    override fun dispose() {
         treasureChestConnection.update(TreasureChest(treasureChestId, treasureHuntId, treasureChestTitle))
 
         PresenterManager.removePresenter(TAG)

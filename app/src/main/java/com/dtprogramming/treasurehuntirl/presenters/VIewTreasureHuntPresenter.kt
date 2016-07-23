@@ -59,7 +59,7 @@ class ViewTreasureHuntPresenter(private val treasureHuntConnection: TreasureHunt
         viewTreasureHuntView = null
     }
 
-    override fun finish() {
+    override fun dispose() {
         unsubscribe()
 
         PresenterManager.removePresenter(TAG)

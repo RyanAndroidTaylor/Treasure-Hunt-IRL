@@ -17,6 +17,7 @@
     <string name="save">SAVE</string>
     <string name="cancel">CANCEL</string>
     <string name="dig">Dig</string>
+    <string name="switch_dig_mode">Switch to Dig Mode</string>
     <string name="add_waypoint">Add Waypoint</string>
     <string name="title_hint">Title:</string>
     <string name="add_answer">Add Answer</string>

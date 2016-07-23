@@ -109,7 +109,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
     override fun onFinish() {
         super.onFinish()
 
-        createHuntPresenter.finish()
+        createHuntPresenter.dispose()
     }
 
     override fun setTitle(title: String) {

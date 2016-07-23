@@ -17,7 +17,6 @@ class THApp : Application() {
     companion object {
         lateinit var briteDatabase: BriteDatabase
             private set
-        lateinit var database: DatabaseOpenHelper
     }
 
     init {
@@ -29,7 +28,7 @@ class THApp : Application() {
 
         LeakCanary.install(this)
 
-        database = DatabaseOpenHelper(baseContext)
+        val database = DatabaseOpenHelper(baseContext)
         briteDatabase = SqlBrite.create().wrapDatabaseHelper(database, Schedulers.io())
     }
 }

@@ -56,7 +56,7 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
         createHuntView = null
     }
 
-    override fun finish() {
+    override fun dispose() {
         treasureHuntConnection.update(TreasureHunt(treasureHuntUuid, treasureHuntTitle))
 
         PresenterManager.removePresenter(TAG)

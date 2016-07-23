@@ -119,7 +119,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
     override fun onFinish() {
         super.onFinish()
 
-        createTreasureChestPresenter.finish()
+        createTreasureChestPresenter.dispose()
     }
 
     override fun onMapReady(map: GoogleMap?) {

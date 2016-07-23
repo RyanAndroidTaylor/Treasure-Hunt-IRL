@@ -10,13 +10,12 @@ import com.dtprogramming.treasurehuntirl.ui.views.PlayTreasureHuntView
 /**
  * Created by ryantaylor on 7/19/16.
  */
-class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasureHuntConnection, val connectedClueConnection: CollectedClueConnection, val clueConnection: ClueConnection, val waypointConnection: WaypointConnection) : Presenter {
+class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasureHuntConnection, val connectedClueConnection: CollectedClueConnection, val clueConnection: ClueConnection) : Presenter {
 
     private var playTreasureHuntView: PlayTreasureHuntView? = null
 
-    private lateinit var playingTreasureHuntUuid: String
-
-    private var treasureChestWaypoints: List<Waypoint>? = null
+    lateinit var playingTreasureHuntUuid: String
+        private set
 
     companion object {
         val TAG: String = PlayTreasureHuntPresenter::class.java.simpleName
@@ -47,7 +46,6 @@ class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasu
 
     private fun loadData() {
         connectedClueConnection.subscribeToCollectedCluesForParentAsync(playingTreasureHuntUuid, { playTreasureHuntView?.updateInventoryList(it) })
-        waypointConnection.getWaypointsForTreasureHuntAsync(playingTreasureHuntUuid, { treasureChestWaypoints = it })
     }
 
     override fun unsubscribe() {
@@ -56,10 +54,9 @@ class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasu
         playingTreasureHuntConnection.unsubscribe()
         clueConnection.unsubscribe()
         connectedClueConnection.unsubscribe()
-        waypointConnection.unsubscribe()
     }
 
-    override fun finish() {
+    override fun dispose() {
         PresenterManager.removePresenter(TAG)
     }
 
@@ -68,20 +65,6 @@ class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasu
 
         clue?.let {
             connectedClueConnection.insert(CollectedClue(clue.uuid, playingTreasureHuntUuid))
-        }
-    }
-
-    fun dig(lat: Double, lng: Double) {
-        treasureChestWaypoints?.let {
-            for (waypoint in it) {
-                Log.i("PlayTHPresenter", "waypoint lat: ${waypoint.lat}, dig lat $lat \nwaypoint lng ${waypoint.long}, dig lng $lng")
-                if ((lat > waypoint.lat - 0.000150 && lat < waypoint.lat + 0.000150)
-                        && (lng > waypoint.long - 0.000150 && lng < waypoint.long + 0.00150)) {
-                    playTreasureHuntView?.displayFoundTreasureChest("Treasure chest was found!!!")
-                } else {
-                    playTreasureHuntView?.displayFoundTreasureChest("Nothing here =(")
-                }
-            }
         }
     }
 }

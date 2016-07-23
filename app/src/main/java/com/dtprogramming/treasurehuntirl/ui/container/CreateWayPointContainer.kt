@@ -93,7 +93,7 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
     override fun onFinish() {
         super.onFinish()
 
-        createWaypointPresenter.finish()
+        createWaypointPresenter.dispose()
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {

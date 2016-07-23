@@ -86,7 +86,7 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
     }
 
     override fun onFinish() {
-        viewTreasureHuntPresenter.finish()
+        viewTreasureHuntPresenter.dispose()
     }
 
     override fun displayTitle(title: String) {

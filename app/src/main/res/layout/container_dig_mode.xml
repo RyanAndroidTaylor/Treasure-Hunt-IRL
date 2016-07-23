@@ -4,18 +4,11 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/play_treasure_hunt_inventory_list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10"/>
-
     <Button
-        android:id="@+id/play_treasure_hunt_dig_mode"
+        android:id="@+id/dig_mode_container_dig"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal"
-        android:text="@string/switch_dig_mode"
+        android:text="@string/dig"
         android:background="@color/colorAccent"/>
 </LinearLayout>
