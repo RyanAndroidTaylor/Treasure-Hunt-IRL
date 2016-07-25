@@ -7,7 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.PlayingTreasureHunt
+import kotlinx.android.synthetic.main.adapter_playing_treasure_hunt.view.*
 import kotlinx.android.synthetic.main.adapter_treasure_chest.view.*
 
 /**
@@ -31,13 +34,27 @@ class PlayingTreasureHuntAdapter(context: Context, playingTreasureHunts: List<Pl
 
     class PlayingTreasureHuntViewHolder(val view: View, val selected: (PlayingTreasureHunt) -> Unit) : RecyclerView.ViewHolder(view) {
 
-//        val title: TextView
+        val title: TextView
+        val foundChestCount: TextView
+
+        val treasureHuntConnection = TreasureHuntConnectionImpl()
+        val treasureChestConnection = TreasureChestConnectionImpl()
 
         init {
-//            title = view.adapter_treasure_chest_title
+            title = view.adapter_playing_treasure_hunt_title
+            foundChestCount = view.adapter_playing_treasure_hunt_found_chest_count
         }
 
         fun bind(playingTreasureHunt: PlayingTreasureHunt) {
+            val treasureHunt = treasureHuntConnection.getTreasureHunt(playingTreasureHunt.uuid)
+
+            title.text = treasureHunt.title
+
+            val treasureChestCount = treasureChestConnection.getTreasureChestCountForTreasureHunt(playingTreasureHunt.uuid)
+            val collectedTreasureChestCount = treasureChestConnection.getCollectedChestCountForPlayingTreasureHunt(playingTreasureHunt.uuid)
+
+            foundChestCount.text = "Treasure Chest Icon: $collectedTreasureChestCount/$treasureChestCount"
+
             view.setOnClickListener { selected(playingTreasureHunt) }
         }
     }

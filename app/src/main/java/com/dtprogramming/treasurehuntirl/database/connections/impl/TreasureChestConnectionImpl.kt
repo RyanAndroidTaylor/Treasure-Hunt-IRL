@@ -3,6 +3,7 @@ package com.dtprogramming.treasurehuntirl.database.connections.impl
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
+import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.util.getString
 import com.squareup.sqlbrite.BriteDatabase
@@ -94,6 +95,18 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
 
     override fun getTreasureChestCountForTreasureHunt(treasureHuntId: String): Int {
         val cursor = database.query("SELECT COUNT(*) FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntId)
+
+        cursor.moveToFirst()
+
+        val count = cursor.getInt(0)
+
+        cursor.close()
+
+        return count
+    }
+
+    override fun getCollectedChestCountForPlayingTreasureHunt(playingTreasureHuntUuid: String): Int {
+        val cursor = database.query("SELECT COUNT(*) FROM ${CollectedTreasureChest.TABLE.NAME} WHERE ${CollectedTreasureChest.TABLE.PLAYING_TREASURE_HUNT}=?", playingTreasureHuntUuid)
 
         cursor.moveToFirst()
 

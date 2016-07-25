@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tool="http://schemas.android.com/tools"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/playing_treasure_hunt_adapter_title"
+        android:id="@+id/adapter_playing_treasure_hunt_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_normal"
         android:gravity="center"
-        android:text="Title Of A Treasure Hunt"/>
+        tool:text="Title Of A Treasure Hunt"/>
+
+    <TextView
+        android:id="@+id/adapter_playing_treasure_hunt_found_chest_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        tool:text="Treasure Chest Icon: 13/25"/>
 </LinearLayout>
