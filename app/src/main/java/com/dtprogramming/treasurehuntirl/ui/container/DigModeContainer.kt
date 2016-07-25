@@ -21,6 +21,7 @@ import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.views.DigModeView
 import com.dtprogramming.treasurehuntirl.util.PLAYING_HUNT_UUID
+import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -141,8 +142,11 @@ class DigModeContainer : BasicContainer(), DigModeView, LocationListener, OnMapR
 
     override fun displayUnburiedTreasureChest(treasureChestUuid: String?) {
         if (treasureChestUuid != null) {
-            //TODO Start UnburiedTreasureChestContainer
-            Toast.makeText(containerActivity, treasureChestUuid, Toast.LENGTH_LONG).show()
+            val extras = Bundle()
+
+            extras.putString(TREASURE_CHEST_UUID, treasureChestUuid)
+
+            containerActivity.startContainer(UnburiedTreasureContainer.URI, extras)
         } else {
             Toast.makeText(containerActivity, "Nothing was found", Toast.LENGTH_LONG).show()
         }

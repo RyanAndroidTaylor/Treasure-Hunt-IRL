@@ -89,6 +89,7 @@ abstract class ContainerActivity : BaseActivity() {
             ViewTreasureHuntContainer.URI -> container = ViewTreasureHuntContainer()
             PlayTreasureHuntContainer.URI -> container = PlayTreasureHuntContainer()
             DigModeContainer.URI -> container = DigModeContainer()
+            UnburiedTreasureContainer.URI -> container = UnburiedTreasureContainer()
             else -> throw IllegalStateException("There was no match found for the URI: $uri")
         }
 
