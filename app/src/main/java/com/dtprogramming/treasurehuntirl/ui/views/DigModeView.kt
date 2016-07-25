@@ -5,5 +5,8 @@ package com.dtprogramming.treasurehuntirl.ui.views
  */
 interface DigModeView {
 
-    fun displayUnburiedTreasureChest(treasureChestUuid: String)
+    fun displayDiggingAnimation(duration: Int)
+    fun hideDiggingAnimation()
+    fun updateDiggingProgress(progress: Int)
+    fun displayUnburiedTreasureChest(treasureChestUuid: String?)
 }
