@@ -55,24 +55,42 @@ abstract class ContainerActivity : BaseActivity() {
     fun startContainer(uri: String, extras: Bundle) {
         container?.onPause()
 
-        loadContainer(uri, extras)
+        loadContainer(uri, extras, true)
+
+        backStack.push(uri)
+    }
+
+    fun startContaienrAsPopup(uri: String) {
+        startContainerAsPopup(uri, Bundle())
+    }
+
+    fun startContainerAsPopup(uri: String, extras: Bundle) {
+        container?.onPause()
+
+        loadContainer(uri, extras, false)
 
         backStack.push(uri)
     }
 
     private fun loadCurrentContainer() {
-        loadContainer(currentUri, Bundle())
+        loadContainer(currentUri, Bundle(), true)
     }
 
-    private fun loadContainer(uri: String?, extras: Bundle) {
+    private fun loadContainer(uri: String?, extras: Bundle, replaceContainer: Boolean) {
         if (containerMap.containsKey(uri)) {
             container = containerMap[uri]!!
+
+            if (replaceContainer && parent.childCount > 0)
+                parent.removeAllViews()
 
             container?.onReload(parent)
         } else {
             container = createContainer(uri)
 
             containerMap.put(uri!!, container!!)
+
+            if (replaceContainer && parent.childCount > 0)
+                parent.removeAllViews()
 
             container?.inflate(this, parent, extras)
         }
@@ -89,7 +107,7 @@ abstract class ContainerActivity : BaseActivity() {
             ViewTreasureHuntContainer.URI -> container = ViewTreasureHuntContainer()
             PlayTreasureHuntContainer.URI -> container = PlayTreasureHuntContainer()
             DigModeContainer.URI -> container = DigModeContainer()
-            UnburiedTreasureContainer.URI -> container = UnburiedTreasureContainer()
+            ViewTreasureChestContainer.URI -> container = ViewTreasureChestContainer()
             else -> throw IllegalStateException("There was no match found for the URI: $uri")
         }
 

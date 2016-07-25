@@ -57,6 +57,8 @@ class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasu
     }
 
     override fun dispose() {
+        unsubscribe()
+
         PresenterManager.removePresenter(TAG)
     }
 

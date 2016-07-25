@@ -23,10 +23,12 @@ abstract class BasicContainer : Container {
         this.parent = parent
         this.extras = extras
 
-        if (parent.childCount > 0)
-            parent.removeViewAt(0)
-
         rootView = LayoutInflater.from(parent.context).inflate(rootViewId, parent, false)
+
+        // Input should never go through a container so we make sure it is consumed if it is not consumed by one of it's child views
+        rootView?.setOnTouchListener { view, motionEvent ->
+            true
+        }
 
         parent.addView(rootView)
 
@@ -38,9 +40,6 @@ abstract class BasicContainer : Container {
     }
 
     override fun onReload(parent: ViewGroup) {
-        if (parent.childCount > 0)
-            parent.removeViewAt(0)
-
         if (rootView == null) {
             rootView = LayoutInflater.from(parent.context).inflate(rootViewId, parent, false)
         } else {

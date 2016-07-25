@@ -11,9 +11,7 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ProgressBar
-import android.widget.Toast
+import android.widget.*
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
 import com.dtprogramming.treasurehuntirl.presenters.DigModePresenter
@@ -87,6 +85,8 @@ class DigModeContainer : BasicContainer(), DigModeView, LocationListener, OnMapR
         digModePresenter.unsubscribe()
 
         locationManager.removeUpdates(this)
+
+
     }
 
     override fun onReload(parent: ViewGroup) {
@@ -142,11 +142,7 @@ class DigModeContainer : BasicContainer(), DigModeView, LocationListener, OnMapR
 
     override fun displayUnburiedTreasureChest(treasureChestUuid: String?) {
         if (treasureChestUuid != null) {
-            val extras = Bundle()
-
-            extras.putString(TREASURE_CHEST_UUID, treasureChestUuid)
-
-            containerActivity.startContainer(UnburiedTreasureContainer.URI, extras)
+            ViewTreasureChestContainer.start(containerActivity, treasureChestUuid)
         } else {
             Toast.makeText(containerActivity, "Nothing was found", Toast.LENGTH_LONG).show()
         }
