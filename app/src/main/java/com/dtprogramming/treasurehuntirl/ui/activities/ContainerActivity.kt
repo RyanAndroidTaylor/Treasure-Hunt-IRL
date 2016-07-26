@@ -68,8 +68,6 @@ abstract class ContainerActivity : BaseActivity() {
         container?.onPause()
 
         loadContainer(uri, extras, false)
-
-        backStack.push(uri)
     }
 
     private fun loadCurrentContainer() {
@@ -107,7 +105,7 @@ abstract class ContainerActivity : BaseActivity() {
             ViewTreasureHuntContainer.URI -> container = ViewTreasureHuntContainer()
             PlayTreasureHuntContainer.URI -> container = PlayTreasureHuntContainer()
             DigModeContainer.URI -> container = DigModeContainer()
-            ViewTreasureChestContainer.URI -> container = ViewTreasureChestContainer()
+            ViewCollectedTreasureChestContainer.URI -> container = ViewCollectedTreasureChestContainer()
             else -> throw IllegalStateException("There was no match found for the URI: $uri")
         }
 

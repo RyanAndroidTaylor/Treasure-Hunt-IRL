@@ -140,9 +140,9 @@ class DigModeContainer : BasicContainer(), DigModeView, LocationListener, OnMapR
         diggingProgressBar.progress = progress
     }
 
-    override fun displayUnburiedTreasureChest(treasureChestUuid: String?) {
+    override fun displayCollectedTreasureChest(treasureChestUuid: String?) {
         if (treasureChestUuid != null) {
-            ViewTreasureChestContainer.start(containerActivity, treasureChestUuid)
+            ViewCollectedTreasureChestContainer.start(containerActivity, treasureChestUuid)
         } else {
             Toast.makeText(containerActivity, "Nothing was found", Toast.LENGTH_LONG).show()
         }

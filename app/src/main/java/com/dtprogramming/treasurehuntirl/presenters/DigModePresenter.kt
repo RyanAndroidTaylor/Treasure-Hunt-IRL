@@ -1,7 +1,10 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
 import android.util.Log
+import com.dtprogramming.treasurehuntirl.database.connections.CollectedTreasureChestConnection
+import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
+import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.DigModeView
 import com.dtprogramming.treasurehuntirl.util.DiggingTimer
@@ -10,7 +13,7 @@ import rx.Subscription
 /**
  * Created by ryantaylor on 7/22/16.
  */
-class DigModePresenter(val waypointConnection: WaypointConnection) : Presenter {
+class DigModePresenter(val waypointConnection: WaypointConnection, val treasureChestConnection: TreasureChestConnection, val collectedTreasureChestConnection: CollectedTreasureChestConnection) : Presenter {
 
     companion object {
         val TAG: String = DigModePresenter::class.java.simpleName
@@ -110,13 +113,17 @@ class DigModePresenter(val waypointConnection: WaypointConnection) : Presenter {
                 Log.i("PlayTHPresenter", "waypoint lat: $lat1, dig lat $lat \nwaypoint lng $long, dig lng $lng, accuracy $accuracy")
 
                 if ((lat > lat1 - 0.000150 && lat < lat1 + 0.000150) && (lng > long - 0.000150 && lng < long + 0.00150)) {
-                    digModeView?.displayUnburiedTreasureChest(parentUuid)
+                    val treasureChest = treasureChestConnection.getTreasureChest(parentUuid)
+
+                    collectedTreasureChestConnection.insert(CollectedTreasureChest(treasureChest.uuid, treasureChest.title, playingTreasureHuntUuid, 0))
+
+                    digModeView?.displayCollectedTreasureChest(parentUuid)
 
                     return
                 }
             }
 
-            digModeView?.displayUnburiedTreasureChest(null)
+            digModeView?.displayCollectedTreasureChest(null)
         }
     }
 }

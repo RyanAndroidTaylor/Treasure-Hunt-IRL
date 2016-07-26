@@ -23,9 +23,9 @@ class CollectedClueConnectionImpl : CollectedClueConnection {
         database.insert(CollectedClue.TABLE.NAME, collectedClue.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
     }
 
-    override fun subscribeToCollectedCluesForParentAsync(parentId: String, onComplete: (List<Clue>) -> Unit) {
-        val connection = database.createQuery(Clue.TABLE.NAME, "SELECT * FROM ${Clue.TABLE.NAME} LEFT JOIN ${CollectedClue.TABLE.NAME} ON ${Clue.TABLE.NAME}.${TableColumns.UUID} = ${CollectedClue.TABLE.NAME}.${TableColumns.UUID} WHERE ${CollectedClue.TABLE.NAME}.${CollectedClue.TABLE.PARENT}=?", parentId)
-                .mapToList { Clue(it) }
+    override fun subscribeToCollectedCluesForParentAsync(parentUuid: String, onComplete: (List<CollectedClue>) -> Unit) {
+        val connection = database.createQuery(CollectedClue.TABLE.NAME, "SELECT * FROM ${CollectedClue.TABLE.NAME} WHERE ${CollectedClue.TABLE.PARENT}=?", parentUuid)
+                .mapToList { CollectedClue(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     onComplete(it)

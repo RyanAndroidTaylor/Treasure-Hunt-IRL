@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="500dp"
-              android:orientation="vertical">
+              android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/test_input"
+    <LinearLayout
         android:layout_width="300dp"
-        android:layout_height="200dp"
-        android:background="@color/white"
+        android:layout_height="350dp"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:text="Treasure Chest"/>
-</LinearLayout>
+        android:orientation="vertical"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/view_treasure_chest_container_image"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/closed_chest"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/view_treasure_chest_treasure_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin_normal"/>
+    </LinearLayout>
+</FrameLayout>

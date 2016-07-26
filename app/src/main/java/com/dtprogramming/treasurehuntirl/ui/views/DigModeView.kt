@@ -8,5 +8,5 @@ interface DigModeView {
     fun displayDiggingAnimation(duration: Int)
     fun hideDiggingAnimation()
     fun updateDiggingProgress(progress: Int)
-    fun displayUnburiedTreasureChest(treasureChestUuid: String?)
+    fun displayCollectedTreasureChest(treasureChestUuid: String?)
 }

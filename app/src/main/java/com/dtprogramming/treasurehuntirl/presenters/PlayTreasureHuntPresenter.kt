@@ -66,7 +66,7 @@ class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasu
         val clue = clueConnection.getClueForParent(playingTreasureHuntUuid)
 
         clue?.let {
-            connectedClueConnection.insert(CollectedClue(clue.uuid, playingTreasureHuntUuid))
+            connectedClueConnection.insert(CollectedClue(clue.uuid, playingTreasureHuntUuid, clue.text))
         }
     }
 }

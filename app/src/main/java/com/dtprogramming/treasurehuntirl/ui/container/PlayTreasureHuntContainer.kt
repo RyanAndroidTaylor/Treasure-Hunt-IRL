@@ -9,6 +9,7 @@ import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectio
 import com.dtprogramming.treasurehuntirl.database.connections.impl.CollectedClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.PlayingTreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
 import com.dtprogramming.treasurehuntirl.presenters.PlayTreasureHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
@@ -85,7 +86,7 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
         playTreasureHuntPresenter.dispose()
     }
 
-    override fun updateInventoryList(clues: List<Clue>) {
+    override fun updateInventoryList(clues: List<CollectedClue>) {
         adapter.updateList(clues)
     }
 
