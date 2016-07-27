@@ -23,6 +23,18 @@ class CollectedClueConnectionImpl : CollectedClueConnection {
         database.insert(CollectedClue.TABLE.NAME, collectedClue.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
     }
 
+    override fun getCollectedClue(collectedClueUuid: String): CollectedClue {
+        val cursor = database.query("SELECT * FROM ${CollectedClue.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", collectedClueUuid)
+
+        cursor.moveToFirst()
+
+        val collectedClue = CollectedClue(cursor)
+
+        cursor.close()
+
+        return collectedClue
+    }
+
     override fun subscribeToCollectedCluesForParentAsync(parentUuid: String, onComplete: (List<CollectedClue>) -> Unit) {
         val connection = database.createQuery(CollectedClue.TABLE.NAME, "SELECT * FROM ${CollectedClue.TABLE.NAME} WHERE ${CollectedClue.TABLE.PARENT}=?", parentUuid)
                 .mapToList { CollectedClue(it) }

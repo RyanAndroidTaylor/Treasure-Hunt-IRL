@@ -2,8 +2,10 @@ package com.dtprogramming.treasurehuntirl.database.models
 
 import android.content.ContentValues
 import android.database.Cursor
+import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.QuickTable
 import com.dtprogramming.treasurehuntirl.database.TableColumns
+import com.dtprogramming.treasurehuntirl.util.CLUE
 import com.dtprogramming.treasurehuntirl.util.getLong
 import com.dtprogramming.treasurehuntirl.util.getString
 

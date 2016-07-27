@@ -13,6 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.database.connections.impl.CollectedTreasureChestConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
 import com.dtprogramming.treasurehuntirl.presenters.DigModePresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
@@ -49,7 +51,7 @@ class DigModeContainer : BasicContainer(), DigModeView, LocationListener, OnMapR
         digModePresenter = if (PresenterManager.hasPresenter(DigModePresenter.TAG))
             PresenterManager.getPresenter(DigModePresenter.TAG) as DigModePresenter
         else
-            PresenterManager.addPresenter(DigModePresenter.TAG, DigModePresenter(WaypointConnectionImpl())) as DigModePresenter
+            PresenterManager.addPresenter(DigModePresenter.TAG, DigModePresenter(WaypointConnectionImpl(), TreasureChestConnectionImpl(), CollectedTreasureChestConnectionImpl())) as DigModePresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {

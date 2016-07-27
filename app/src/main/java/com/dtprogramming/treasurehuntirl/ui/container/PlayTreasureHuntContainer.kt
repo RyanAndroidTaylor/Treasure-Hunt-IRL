@@ -10,10 +10,12 @@ import com.dtprogramming.treasurehuntirl.database.connections.impl.CollectedClue
 import com.dtprogramming.treasurehuntirl.database.connections.impl.PlayingTreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
+import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 import com.dtprogramming.treasurehuntirl.presenters.PlayTreasureHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueAdapter
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.ClueAdapter
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.InventoryAdapter
 import com.dtprogramming.treasurehuntirl.ui.views.PlayTreasureHuntView
 import com.dtprogramming.treasurehuntirl.util.NEW
 import com.dtprogramming.treasurehuntirl.util.PLAYING_HUNT_UUID
@@ -33,7 +35,7 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
     private var playTreasureHuntPresenter: PlayTreasureHuntPresenter
 
     private lateinit var inventoryList: RecyclerView
-    private lateinit var adapter: ClueAdapter
+    private lateinit var adapter: InventoryAdapter
 
     init {
         playTreasureHuntPresenter = if (PresenterManager.hasPresenter(PlayTreasureHuntPresenter.TAG))
@@ -50,7 +52,7 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
 
         inventoryList.layoutManager = LinearLayoutManager(containerActivity)
 
-        adapter = ClueAdapter(containerActivity, listOf())
+        adapter = InventoryAdapter(containerActivity, listOf(), { /*item selected*/ })
 
         inventoryList.adapter = adapter
 
@@ -86,7 +88,7 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
         playTreasureHuntPresenter.dispose()
     }
 
-    override fun updateInventoryList(clues: List<CollectedClue>) {
+    override fun updateInventoryList(clues: List<InventoryItem>) {
         adapter.updateList(clues)
     }
 

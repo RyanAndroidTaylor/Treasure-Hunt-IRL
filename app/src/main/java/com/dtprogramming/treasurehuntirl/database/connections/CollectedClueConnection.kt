@@ -10,5 +10,7 @@ interface CollectedClueConnection : Connection {
 
     fun insert(collectedClue: CollectedClue)
 
+    fun getCollectedClue(collectedClueUuid: String): CollectedClue
+
     fun subscribeToCollectedCluesForParentAsync(parentUuid: String, onComplete: (List<CollectedClue>) -> Unit)
 }

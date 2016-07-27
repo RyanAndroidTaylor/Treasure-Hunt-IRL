@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.ui.activities.PlayTreasureHuntActivity
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.PlayingTreasureHuntAdapter
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.PlayingTreasureHuntAdapter
 import com.dtprogramming.treasurehuntirl.database.connections.impl.PlayingTreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.PlayingTreasureHunt
 import com.dtprogramming.treasurehuntirl.util.PLAYING_HUNT_UUID

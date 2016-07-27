@@ -1,8 +1,12 @@
 package com.dtprogramming.treasurehuntirl.database.models
 
 import android.content.ContentValues
+import android.database.Cursor
 import com.dtprogramming.treasurehuntirl.database.QuickTable
 import com.dtprogramming.treasurehuntirl.database.TableColumns
+import com.dtprogramming.treasurehuntirl.util.getInt
+import com.dtprogramming.treasurehuntirl.util.getLong
+import com.dtprogramming.treasurehuntirl.util.getString
 
 /**
  * Created by ryantaylor on 7/20/16.
@@ -17,6 +21,8 @@ data class CollectedTreasureChest(val id: Long, val uuid: String, val title: Str
     }
 
     constructor(uuid: String, title: String, playingTreasureHuntUuid: String, state: Int): this(-1L, uuid, title, playingTreasureHuntUuid, state)
+
+    constructor(cursor: Cursor): this(cursor.getLong(TableColumns.ID), cursor.getString(TableColumns.UUID), cursor.getString(TABLE.TITLE), cursor.getString(TABLE.PLAYING_TREASURE_HUNT), cursor.getInt(TABLE.STATE))
 
     fun getContentValues(): ContentValues {
         val contentValues = ContentValues()

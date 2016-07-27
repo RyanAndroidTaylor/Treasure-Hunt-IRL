@@ -1,4 +1,4 @@
-package com.dtprogramming.treasurehuntirl.ui.recycler_view
+package com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -16,6 +16,7 @@ import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.ListRecyclerViewSectionAdapter
 import kotlinx.android.synthetic.main.view_holder_treasure_hunt.view.*
 
 /**

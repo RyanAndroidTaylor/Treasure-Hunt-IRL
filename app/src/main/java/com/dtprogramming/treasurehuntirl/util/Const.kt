@@ -10,3 +10,7 @@ val TREASURE_CHEST_UUID = "TreasureChestUuid"
 val CLUE_UUID = "ClueUuid"
 
 val NEW = "New"
+
+// Inventory item types
+val CLUE = 0
+val WAYPOINT = 1

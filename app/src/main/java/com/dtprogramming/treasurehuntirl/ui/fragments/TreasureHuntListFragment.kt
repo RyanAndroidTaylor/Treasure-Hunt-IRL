@@ -11,7 +11,7 @@ import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.activities.ViewTreasureHuntActivity
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.TreasureHuntAdapter
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureHuntAdapter
 import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
 import kotlinx.android.synthetic.main.fragment_hunt_list.view.*
 

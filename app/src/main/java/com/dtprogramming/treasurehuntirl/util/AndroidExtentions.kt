@@ -30,4 +30,8 @@ fun Cursor.getLong(columnName: String): Long {
     return getLong(getColumnIndex(columnName))
 }
 
+fun Cursor.getInt(columnName: String): Int {
+    return getInt(getColumnIndex(columnName))
+}
+
 fun Double.format(digits: Int) = java.lang.String.format("%.${digits}f", this)

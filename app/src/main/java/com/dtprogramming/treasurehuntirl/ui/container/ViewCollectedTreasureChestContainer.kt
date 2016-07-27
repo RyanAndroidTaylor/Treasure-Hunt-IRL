@@ -4,14 +4,19 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.database.connections.impl.CollectedTreasureChestConnectionImpl
+import com.dtprogramming.treasurehuntirl.presenters.Presenter
+import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
+import com.dtprogramming.treasurehuntirl.presenters.ViewCollectedTreasureChestPresenter
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
+import com.dtprogramming.treasurehuntirl.ui.views.ViewCollectedTreasureChestView
 import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
 import kotlinx.android.synthetic.main.container_view_treasure_chest.view.*
 
 /**
  * Created by ryantaylor on 7/25/16.
  */
-class ViewCollectedTreasureChestContainer : BasicContainer() {
+class ViewCollectedTreasureChestContainer : BasicContainer(), ViewCollectedTreasureChestView {
 
     companion object {
         val URI: String = ViewCollectedTreasureChestContainer::class.java.simpleName
@@ -25,9 +30,18 @@ class ViewCollectedTreasureChestContainer : BasicContainer() {
         }
     }
 
+    private val viewCollectedTreasureChestPresenter: ViewCollectedTreasureChestPresenter
+
     private lateinit var treasureChestImage: ImageView
 
     override var rootViewId = R.layout.container_view_treasure_chest
+
+    init {
+        viewCollectedTreasureChestPresenter = if (PresenterManager.hasPresenter(ViewCollectedTreasureChestPresenter.TAG))
+            PresenterManager.getPresenter(ViewCollectedTreasureChestPresenter.TAG) as ViewCollectedTreasureChestPresenter
+        else
+            PresenterManager.addPresenter(ViewCollectedTreasureChestPresenter.TAG, ViewCollectedTreasureChestPresenter(CollectedTreasureChestConnectionImpl())) as ViewCollectedTreasureChestPresenter
+    }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
@@ -35,6 +49,11 @@ class ViewCollectedTreasureChestContainer : BasicContainer() {
         treasureChestImage = parent.view_treasure_chest_container_image
 
         treasureChestImage.setOnClickListener { openTreasureChest() }
+
+        if (extras.containsKey(TREASURE_CHEST_UUID))
+            viewCollectedTreasureChestPresenter.load(this, extras.getString(TREASURE_CHEST_UUID))
+        else
+            viewCollectedTreasureChestPresenter.reload(this)
 
         return this
     }
@@ -51,7 +70,11 @@ class ViewCollectedTreasureChestContainer : BasicContainer() {
         super.onFinish()
     }
 
-    private fun openTreasureChest() {
+    override fun displayOpenedTreasureChest() {
         treasureChestImage.setImageDrawable(containerActivity.resources.getDrawable(R.drawable.open_chest))
+    }
+
+    private fun openTreasureChest() {
+        viewCollectedTreasureChestPresenter.openTreasureChest()
     }
 }

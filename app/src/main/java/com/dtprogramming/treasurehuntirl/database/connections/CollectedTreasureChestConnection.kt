@@ -8,4 +8,9 @@ import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 interface CollectedTreasureChestConnection : Connection {
 
     fun insert(collectedTreasureChest: CollectedTreasureChest)
+    fun update(collectedTreasureChest: CollectedTreasureChest)
+
+    fun openCollectedTreasureChest(collectedTreasureChest: CollectedTreasureChest): CollectedTreasureChest
+
+    fun getCollectedTreasureChest(collectedTreasureChestUuid: String): CollectedTreasureChest
 }

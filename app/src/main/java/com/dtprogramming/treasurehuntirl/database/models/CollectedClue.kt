@@ -2,19 +2,24 @@ package com.dtprogramming.treasurehuntirl.database.models
 
 import android.content.ContentValues
 import android.database.Cursor
+import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.QuickTable
 import com.dtprogramming.treasurehuntirl.database.TableColumns
+import com.dtprogramming.treasurehuntirl.util.CLUE
 import com.dtprogramming.treasurehuntirl.util.getLong
 import com.dtprogramming.treasurehuntirl.util.getString
 
 /**
  * Created by ryantaylor on 7/20/16.
  */
-data class CollectedClue(val id: Long, val uuid: String, val parentUuid: String, val text: String) {
+data class CollectedClue(val id: Long, override val uuid: String, val parentUuid: String, val text: String) : InventoryItem {
 
     companion object {
         val TABLE = Table()
     }
+
+    override val type = CLUE
+    override val iconDrawable = R.drawable.clue_icon_24dp
 
     constructor(uuid: String, parentUuid: String, text: String): this(-1L, uuid, parentUuid, text)
 

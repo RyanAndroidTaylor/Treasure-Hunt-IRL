@@ -19,7 +19,7 @@ import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.TreasureChestAdapter
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureChestAdapter
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
 import com.dtprogramming.treasurehuntirl.util.NEW

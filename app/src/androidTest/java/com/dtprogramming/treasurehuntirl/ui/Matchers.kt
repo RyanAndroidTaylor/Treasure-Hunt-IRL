@@ -2,9 +2,9 @@ package com.dtprogramming.treasurehuntirl.ui
 
 import android.util.Log
 import android.view.View
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueAdapter
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.TreasureChestAdapter
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.TreasureHuntAdapter
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.ClueAdapter
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureChestAdapter
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureHuntAdapter
 import com.dtprogramming.treasurehuntirl.ui.views.AdjustableValueView
 import org.hamcrest.Description
 import org.hamcrest.Matcher

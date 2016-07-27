@@ -27,7 +27,7 @@ import com.dtprogramming.treasurehuntirl.presenters.CreateTreasureChestPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueAdapter
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.ClueAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
 import com.dtprogramming.treasurehuntirl.ui.views.CreateTreasureChestView

@@ -4,6 +4,15 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="@dimen/margin_normal"
+        android:paddingBottom="@dimen/margin_small"
+        android:background="@color/divider_background"
+        android:text="INVENTORY"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/play_treasure_hunt_inventory_list"
         android:layout_width="match_parent"
