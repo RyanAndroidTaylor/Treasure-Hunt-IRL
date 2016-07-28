@@ -17,19 +17,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
-import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateTreasureChestPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
-import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.ClueAdapter
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
 import com.dtprogramming.treasurehuntirl.ui.views.CreateTreasureChestView
 import com.dtprogramming.treasurehuntirl.util.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -93,9 +88,9 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
             override fun afterTextChanged(s: Editable?) { }
         })
 
-        addClue.setOnClickListener { moveToContainer(CreateClueContainer.URI) }
+        addClue.setOnClickListener { moveToContainer(CreateTextClueContainer.URI) }
 
-        clueContainer.setOnClickListener { moveToContainer(CreateClueContainer.URI) }
+        clueContainer.setOnClickListener { moveToContainer(CreateTextClueContainer.URI) }
 
         addWaypoint.setOnClickListener { moveToContainer(CreateWayPointContainer.URI) }
 
@@ -143,7 +138,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         mapFragment.getMapAsync(this)
     }
 
-    override fun displayClue(clue: Clue) {
+    override fun displayClue(clue: TextClue) {
         addClue.visibility = View.GONE
         clueContainer.visibility = View.VISIBLE
 

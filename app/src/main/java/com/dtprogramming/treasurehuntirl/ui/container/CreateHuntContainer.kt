@@ -1,21 +1,18 @@
 package com.dtprogramming.treasurehuntirl.ui.container
 
 import android.os.Bundle
-import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
-import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
+import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
@@ -23,7 +20,6 @@ import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.ClueAdapter
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.InventoryAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureChestAdapter
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import com.dtprogramming.treasurehuntirl.util.*
@@ -48,7 +44,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
     private lateinit var treasureChestAdapter: TreasureChestAdapter
 
     private lateinit var initialClueList: RecyclerView
-    private lateinit var initialClueAdapter: InventoryAdapter
+    private lateinit var initialClueAdapter: ClueAdapter
 
     private lateinit var addClue: TextView
 
@@ -75,7 +71,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         initialClueList = parent.create_hunt_container_initial_clues
         initialClueList.layoutManager = CustomLinearLayoutManager(containerActivity)
         initialClueList.addOnScrollListener(ClueScrollListener())
-        initialClueAdapter = InventoryAdapter(containerActivity, listOf(), { /*inventory item clicked*/ })
+        initialClueAdapter = ClueAdapter(containerActivity, listOf(), { /*inventory item clicked*/ })
         initialClueList.adapter = initialClueAdapter
 
         if (extras.containsKey(HUNT_UUID))
@@ -124,7 +120,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         treasureChestAdapter.updateList(treasureChests)
     }
 
-    override fun displayClue(initialClues: List<InventoryItem>) {
+    override fun displayClues(initialClues: List<Clue>) {
         initialClueAdapter.updateList(initialClues)
     }
 
@@ -149,8 +145,8 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
     private fun startCreateClueContainer() {
         val extras = Bundle()
 
-        extras.putString(PARENT_UUID, createHuntPresenter.treasureHuntUuid)
+        extras.putString(PARENT_UUID, createHuntPresenter.initialTreasureChestUuid)
 
-        containerActivity.startContainer(CreateClueContainer.URI, extras)
+        containerActivity.startContainer(CreateTextClueContainer.URI, extras)
     }
 }

@@ -6,13 +6,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.*
-import com.dtprogramming.treasurehuntirl.database.models.Clue
-import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
 import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 import com.dtprogramming.treasurehuntirl.presenters.PlayTreasureHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.ClueAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.InventoryAdapter
 import com.dtprogramming.treasurehuntirl.ui.views.PlayTreasureHuntView
 import com.dtprogramming.treasurehuntirl.util.NEW

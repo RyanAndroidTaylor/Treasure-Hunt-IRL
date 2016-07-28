@@ -99,7 +99,7 @@ abstract class ContainerActivity : BaseActivity() {
 
         when (uri) {
             CreateHuntContainer.URI -> container = CreateHuntContainer()
-            CreateClueContainer.URI -> container = CreateClueContainer()
+            CreateTextClueContainer.URI -> container = CreateTextClueContainer()
             CreateWayPointContainer.URI -> container = CreateWayPointContainer()
             CreateTreasureChestContainer.URI -> container = CreateTreasureChestContainer()
             ViewTreasureHuntContainer.URI -> container = ViewTreasureHuntContainer()

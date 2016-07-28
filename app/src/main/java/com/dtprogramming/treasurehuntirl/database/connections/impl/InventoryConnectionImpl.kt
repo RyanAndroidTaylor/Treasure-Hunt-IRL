@@ -6,8 +6,8 @@ import android.support.design.widget.TabLayout
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.InventoryConnection
-import com.dtprogramming.treasurehuntirl.database.models.Clue
-import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
+import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 import com.dtprogramming.treasurehuntirl.util.getString
@@ -40,13 +40,13 @@ class InventoryConnectionImpl : InventoryConnection {
     }
 
     private fun collectCluesForTreasureChest(treasureChestUuid: String) {
-        val cursor = database.query("SELECT * FROM ${Clue.TABLE.NAME} WHERE ${Clue.TABLE.PARENT}=?", treasureChestUuid)
+        val cursor = database.query("SELECT * FROM ${TextClue.TABLE.NAME} WHERE ${TextClue.TABLE.PARENT}=?", treasureChestUuid)
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                val collectedClue = CollectedClue(cursor.getString(TableColumns.UUID), cursor.getString(CollectedClue.TABLE.PARENT), cursor.getString(CollectedClue.TABLE.TEXT))
+                val collectedClue = CollectedTextClue(cursor.getString(TableColumns.UUID), cursor.getString(CollectedTextClue.TABLE.PARENT), cursor.getString(CollectedTextClue.TABLE.TEXT))
 
-                database.insert(CollectedClue.TABLE.NAME, collectedClue.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
+                database.insert(CollectedTextClue.TABLE.NAME, collectedClue.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
             }
 
             cursor.close()
@@ -101,13 +101,13 @@ class InventoryConnectionImpl : InventoryConnection {
     }
 
     private fun getCollectedClues(treasureChestUuid: String): List<InventoryItem> {
-        val cursor = database.query("SELECT * FROM ${CollectedClue.TABLE.NAME} WHERE ${CollectedClue.TABLE.PARENT}=?", treasureChestUuid)
+        val cursor = database.query("SELECT * FROM ${CollectedTextClue.TABLE.NAME} WHERE ${CollectedTextClue.TABLE.PARENT}=?", treasureChestUuid)
 
-        val clues = ArrayList<CollectedClue>()
+        val clues = ArrayList<CollectedTextClue>()
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                clues.add(CollectedClue(cursor))
+                clues.add(CollectedTextClue(cursor))
             }
 
             cursor.close()

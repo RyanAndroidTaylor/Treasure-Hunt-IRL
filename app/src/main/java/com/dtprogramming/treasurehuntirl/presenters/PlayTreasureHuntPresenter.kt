@@ -2,7 +2,7 @@ package com.dtprogramming.treasurehuntirl.presenters
 
 import android.util.Log
 import com.dtprogramming.treasurehuntirl.database.connections.*
-import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
+import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.PlayingTreasureHunt
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint

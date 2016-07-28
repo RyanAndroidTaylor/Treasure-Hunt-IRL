@@ -18,10 +18,10 @@ import kotlinx.android.synthetic.main.container_create_clue.view.*
 /**
  * Created by ryantaylor on 6/20/16.
  */
-class CreateClueContainer() : BasicContainer(), CreateClueView {
+class CreateTextClueContainer() : BasicContainer(), CreateClueView {
 
     companion object {
-        val URI: String = CreateClueContainer::class.java.simpleName
+        val URI: String = CreateTextClueContainer::class.java.simpleName
     }
 
     override var rootViewId = R.layout.container_create_clue
@@ -65,7 +65,7 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
     }
 
     override fun onPause() {
-        Log.i("CreateClueContainer", "onPause()")
+        Log.i("CreateTextClueContainer", "onPause()")
         super.onPause()
 
         createCluePresenter.unsubscribe()
@@ -78,7 +78,7 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
     }
 
     override fun onFinish() {
-        Log.i("CreateClueContainer", "onFinish()")
+        Log.i("CreateTextClueContainer", "onFinish()")
         super.onFinish()
 
         createCluePresenter.dispose()

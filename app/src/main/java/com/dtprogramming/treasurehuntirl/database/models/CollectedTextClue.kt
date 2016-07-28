@@ -12,7 +12,7 @@ import com.dtprogramming.treasurehuntirl.util.getString
 /**
  * Created by ryantaylor on 7/20/16.
  */
-data class CollectedClue(val id: Long, override val uuid: String, val parentUuid: String, val text: String) : InventoryItem {
+data class CollectedTextClue(val id: Long, override val uuid: String, val parentUuid: String, val text: String) : Clue {
 
     companion object {
         val TABLE = Table()
@@ -46,7 +46,7 @@ data class CollectedClue(val id: Long, override val uuid: String, val parentUuid
         init {
             val quickTable = QuickTable()
 
-            NAME = quickTable.openWithUuidForeignKeyRestraint("CollectedClueTable", Clue.TABLE.NAME)
+            NAME = quickTable.openWithUuidForeignKeyRestraint("CollectedClueTable", TextClue.TABLE.NAME)
             PARENT = quickTable.buildTextColumn("Parent").build()
             TEXT = quickTable.buildTextColumn("Text").build()
 

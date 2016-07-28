@@ -4,8 +4,8 @@ import android.database.sqlite.SQLiteDatabase
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.CollectedClueConnection
-import com.dtprogramming.treasurehuntirl.database.models.Clue
-import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
+import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
 import rx.Observable
 import rx.Subscriber
 import rx.Subscription
@@ -21,25 +21,25 @@ class CollectedClueConnectionImpl : CollectedClueConnection {
 
     override val connections = ArrayList<Subscription>()
 
-    override fun insert(collectedClue: CollectedClue) {
-        database.insert(CollectedClue.TABLE.NAME, collectedClue.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
+    override fun insert(collectedTextClue: CollectedTextClue) {
+        database.insert(CollectedTextClue.TABLE.NAME, collectedTextClue.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
     }
 
-    override fun getCollectedClue(collectedClueUuid: String): CollectedClue {
-        val cursor = database.query("SELECT * FROM ${CollectedClue.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", collectedClueUuid)
+    override fun getCollectedClue(collectedClueUuid: String): CollectedTextClue {
+        val cursor = database.query("SELECT * FROM ${CollectedTextClue.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", collectedClueUuid)
 
         cursor.moveToFirst()
 
-        val collectedClue = CollectedClue(cursor)
+        val collectedClue = CollectedTextClue(cursor)
 
         cursor.close()
 
         return collectedClue
     }
 
-    override fun subscribeToCollectedCluesForTreasureHuntAsync(parentUuid: String, onComplete: (List<CollectedClue>) -> Unit) {
-        val connection = database.createQuery(CollectedClue.TABLE.NAME, "SELECT * FROM ${CollectedClue.TABLE.NAME} WHERE ${CollectedClue.TABLE.PARENT}=?", parentUuid)
-                .mapToList { CollectedClue(it) }
+    override fun subscribeToCollectedCluesForTreasureHuntAsync(parentUuid: String, onComplete: (List<CollectedTextClue>) -> Unit) {
+        val connection = database.createQuery(CollectedTextClue.TABLE.NAME, "SELECT * FROM ${CollectedTextClue.TABLE.NAME} WHERE ${CollectedTextClue.TABLE.PARENT}=?", parentUuid)
+                .mapToList { CollectedTextClue(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     onComplete(it)

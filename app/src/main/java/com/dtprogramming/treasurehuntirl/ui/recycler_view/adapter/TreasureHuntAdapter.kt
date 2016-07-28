@@ -12,7 +12,7 @@ import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConne
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
-import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity

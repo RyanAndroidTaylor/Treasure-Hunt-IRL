@@ -9,7 +9,7 @@ import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.THApp
-import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
@@ -41,7 +41,7 @@ open class CreateHuntActivityTest {
     val treasureChestTitleBad = "Treasure chest title bad"
 
     val clueUuid = "ClueUuid"
-    val clueText = "Clue text"
+    val clueText = "TextClue text"
 
     val waypointUuid = "WaypointUuid"
     val lat = 10.1
@@ -52,7 +52,7 @@ open class CreateHuntActivityTest {
 
     @Before
     open fun setUp() {
-        THApp.briteDatabase.delete(Clue.TABLE.NAME, null)
+        THApp.briteDatabase.delete(TextClue.TABLE.NAME, null)
         THApp.briteDatabase.delete(TreasureHunt.TABLE.NAME, null)
         THApp.briteDatabase.delete(TreasureChest.TABLE.NAME, null)
         THApp.briteDatabase.delete(Waypoint.TABLE.NAME, null)
@@ -60,7 +60,7 @@ open class CreateHuntActivityTest {
 
     @After
     open fun tearDown() {
-        THApp.briteDatabase.delete(Clue.TABLE.NAME, null)
+        THApp.briteDatabase.delete(TextClue.TABLE.NAME, null)
         THApp.briteDatabase.delete(TreasureHunt.TABLE.NAME, null)
         THApp.briteDatabase.delete(TreasureChest.TABLE.NAME, null)
         THApp.briteDatabase.delete(Waypoint.TABLE.NAME, null)
@@ -138,7 +138,7 @@ open class CreateHuntActivityTest {
         THApp.briteDatabase.insert(TreasureChest.TABLE.NAME, TreasureChest(treasureChestUuidBad, "Not this hunts uuid", treasureChestTitleBad).getContentValues())
 
 
-        THApp.briteDatabase.insert(Clue.TABLE.NAME, Clue(clueUuid, treasureChestUuid1, clueText).getContentValues())
+        THApp.briteDatabase.insert(TextClue.TABLE.NAME, TextClue(clueUuid, treasureChestUuid1, clueText).getContentValues())
 
         THApp.briteDatabase.insert(Waypoint.TABLE.NAME, Waypoint(waypointUuid, treasureChestUuid1, lat, lng).getContentValues())
     }

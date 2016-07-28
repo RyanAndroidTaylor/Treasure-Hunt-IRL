@@ -19,12 +19,12 @@ class DatabaseOpenHelper(context: Context) : SQLiteOpenHelper(context, "THApp", 
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(TreasureHunt.TABLE.CREATE)
-        db?.execSQL(Clue.TABLE.CREATE)
+        db?.execSQL(TextClue.TABLE.CREATE)
         db?.execSQL(Waypoint.TABLE.CREATE)
         db?.execSQL(TreasureChest.TABLE.CREATE)
 
         db?.execSQL(PlayingTreasureHunt.TABLE.CREATE)
         db?.execSQL(CollectedTreasureChest.TABLE.CREATE)
-        db?.execSQL(CollectedClue.TABLE.CREATE)
+        db?.execSQL(CollectedTextClue.TABLE.CREATE)
     }
 }

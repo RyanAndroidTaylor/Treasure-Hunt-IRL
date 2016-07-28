@@ -11,7 +11,7 @@ import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.THApp
-import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
@@ -54,7 +54,7 @@ class CreateHuntTabFragmentTest {
 
     @After
     fun tearDown() {
-        THApp.briteDatabase.delete(Clue.TABLE.NAME, null)
+        THApp.briteDatabase.delete(TextClue.TABLE.NAME, null)
         THApp.briteDatabase.delete(TreasureHunt.TABLE.NAME, null)
         THApp.briteDatabase.delete(TreasureChest.TABLE.NAME, null)
         THApp.briteDatabase.delete(Waypoint.TABLE.NAME, null)

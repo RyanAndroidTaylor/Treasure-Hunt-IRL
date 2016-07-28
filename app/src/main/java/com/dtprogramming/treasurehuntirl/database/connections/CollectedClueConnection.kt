@@ -1,16 +1,16 @@
 package com.dtprogramming.treasurehuntirl.database.connections
 
-import com.dtprogramming.treasurehuntirl.database.models.Clue
-import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
+import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
 
 /**
  * Created by ryantaylor on 7/21/16.
  */
 interface CollectedClueConnection : Connection {
 
-    fun insert(collectedClue: CollectedClue)
+    fun insert(collectedTextClue: CollectedTextClue)
 
-    fun getCollectedClue(collectedClueUuid: String): CollectedClue
+    fun getCollectedClue(collectedClueUuid: String): CollectedTextClue
 
-    fun subscribeToCollectedCluesForTreasureHuntAsync(parentUuid: String, onComplete: (List<CollectedClue>) -> Unit)
+    fun subscribeToCollectedCluesForTreasureHuntAsync(parentUuid: String, onComplete: (List<CollectedTextClue>) -> Unit)
 }

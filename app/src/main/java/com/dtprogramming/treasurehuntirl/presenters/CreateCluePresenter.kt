@@ -1,7 +1,7 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
-import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.ui.views.CreateClueView
 import com.dtprogramming.treasurehuntirl.util.randomUuid
 
@@ -48,7 +48,7 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
     }
 
     private fun loadClue(parentUuid: String) {
-        val clue = clueConnection.getClueForParent(parentUuid)
+        val clue = clueConnection.getTextClueForParent(parentUuid)
 
         if (clue != null) {
             clueUuid = clue.uuid
@@ -65,9 +65,9 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
 
     fun save() {
         if (new)
-            clueConnection.insert(Clue(clueUuid, parentUuid, clueText))
+            clueConnection.insert(TextClue(clueUuid, parentUuid, clueText))
         else
-            clueConnection.update(Clue(clueUuid, parentUuid, clueText))
+            clueConnection.update(TextClue(clueUuid, parentUuid, clueText))
 
         PresenterManager.removePresenter(TAG)
 

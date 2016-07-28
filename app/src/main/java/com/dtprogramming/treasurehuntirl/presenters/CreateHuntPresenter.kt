@@ -42,6 +42,7 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
 
         requestTreasureChestsForTreasureHunt()
         loadTreasureHunt()
+        loadInitialTreasureChest()
         loadInitialClues()
     }
 
@@ -50,6 +51,7 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
 
         requestTreasureChestsForTreasureHunt()
         loadTreasureHunt()
+        loadInitialTreasureChest()
         loadInitialClues()
     }
 
@@ -74,8 +76,14 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
         createHuntView?.setTitle(treasureHuntTitle)
     }
 
-    private fun loadInitialClues() {
+    private fun loadInitialTreasureChest() {
+        val initialTreasureChest = treasureChestConnection.getInitialTreasureChest(treasureHuntUuid)
 
+        initialTreasureChestUuid = initialTreasureChest.uuid
+    }
+
+    private fun loadInitialClues() {
+        clueConnection.getCluesForParentAsync(initialTreasureChestUuid, { createHuntView?.displayClues(it) })
     }
 
     private fun requestTreasureChestsForTreasureHunt() {

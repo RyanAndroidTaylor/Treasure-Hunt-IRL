@@ -1,6 +1,6 @@
 package com.dtprogramming.treasurehuntirl.ui.views
 
-import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
+import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
 import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 
 /**

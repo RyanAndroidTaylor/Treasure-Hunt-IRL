@@ -5,11 +5,14 @@ import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.models.Clue
-import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
+import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
 import com.dtprogramming.treasurehuntirl.util.getString
 import com.squareup.sqlbrite.BriteDatabase
+import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import java.util.*
 
 /**
@@ -25,37 +28,56 @@ class ClueConnectionImpl : ClueConnection {
         database = THApp.briteDatabase
     }
 
-    override fun insert(clue: Clue) {
-        database.insert(Clue.TABLE.NAME, clue.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
+    override fun insert(textClue: TextClue) {
+        database.insert(TextClue.TABLE.NAME, textClue.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
     }
 
-    override fun update(clue: Clue) {
-        database.update(Clue.TABLE.NAME, clue.getContentValues(), TableColumns.WHERE_UUID_EQUALS, clue.uuid)
+    override fun update(textClue: TextClue) {
+        database.update(TextClue.TABLE.NAME, textClue.getContentValues(), TableColumns.WHERE_UUID_EQUALS, textClue.uuid)
     }
 
-    override fun getClue(clueId: String): Clue {
-        val cursor = database.query("SELECT * FROM ${Clue.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", clueId)
+    override fun getTextClue(textClueUuid: String): TextClue {
+        val cursor = database.query("SELECT * FROM ${TextClue.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", textClueUuid)
 
         cursor.moveToFirst()
 
-        val clue = Clue(cursor)
+        val clue = TextClue(cursor)
 
         cursor.close()
 
         return clue
     }
 
-    override fun getClueForParent(parentId: String): Clue? {
-        val cursor = database.query("SELECT * FROM ${Clue.TABLE.NAME} WHERE ${Clue.TABLE.PARENT}=?", parentId)
+    override fun getTextClueForParent(parentUuid: String): TextClue? {
+        val cursor = database.query("SELECT * FROM ${TextClue.TABLE.NAME} WHERE ${TextClue.TABLE.PARENT}=?", parentUuid)
 
-        var clue: Clue? = null
+        var clue: TextClue? = null
 
         if (cursor != null && cursor.moveToFirst())
-            clue = Clue(cursor)
+            clue = TextClue(cursor)
 
         cursor.close()
 
         return clue
+    }
+
+    override fun getCluesForParentAsync(parentUuid: String, onComplete: (List<Clue>) -> Unit) {
+        Observable.just(parentUuid)
+        .map {
+            val clues = ArrayList<Clue>()
+
+            val textClues = getTextCluesForParent(parentUuid)
+
+            textClues?.let {
+                for (textClue in textClues)
+                    clues.add(textClue)
+            }
+
+            clues
+        }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { onComplete(it) }
     }
 
     override fun unsubscribe() {
@@ -65,5 +87,23 @@ class ClueConnectionImpl : ClueConnection {
         }
 
         connections.clear()
+    }
+
+    private fun getTextCluesForParent(parentUuid: String): List<TextClue>? {
+        val cursor = database.query("SELECT * FROM ${TextClue.TABLE.NAME} WHERE ${TextClue.TABLE.PARENT}=?", parentUuid)
+
+        if (cursor != null) {
+            val textClues = ArrayList<TextClue>()
+
+            while (cursor.moveToNext()) {
+                textClues.add(TextClue(cursor))
+            }
+
+            cursor.close()
+
+            return textClues
+        }
+
+        return null
     }
 }

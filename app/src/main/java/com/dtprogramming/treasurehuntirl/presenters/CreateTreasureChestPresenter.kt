@@ -82,7 +82,7 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     }
 
     private fun loadClue() {
-        val clue = clueConnection.getClueForParent(treasureChestId)
+        val clue = clueConnection.getTextClueForParent(treasureChestId)
 
         clue?.let { createTreasureChestView?.displayClue(it) }
     }
