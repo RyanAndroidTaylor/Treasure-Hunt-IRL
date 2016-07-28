@@ -40,8 +40,8 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
         database.delete(TreasureChest.TABLE.NAME, TableColumns.WHERE_UUID_EQUALS, treasureChestId)
     }
 
-    override fun getTreasureChest(treasureChestId: String): TreasureChest {
-        val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", treasureChestId)
+    override fun getTreasureChest(treasureChestUuid: String): TreasureChest {
+        val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", treasureChestUuid)
 
         cursor.moveToFirst()
 
@@ -52,10 +52,22 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
         return treasureChest
     }
 
-    override fun getTreasureChestsForTreasureHunt(treasureHuntId: String): List<TreasureChest> {
+    override fun getInitialTreasureChest(treasureHuntUuid: String): TreasureChest {
+        val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.INITIAL_CHEST}=?", treasureHuntUuid, "1")
+
+        cursor.moveToFirst()
+
+        val treasureChest = TreasureChest(cursor)
+
+        cursor.close()
+
+        return treasureChest
+    }
+
+    override fun getTreasureChestsForTreasureHunt(treasureHuntUuid: String): List<TreasureChest> {
         val treasureChests = ArrayList<TreasureChest>()
 
-        val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntId)
+        val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntUuid)
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
@@ -68,9 +80,9 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
         return treasureChests
     }
 
-    override fun getTreasureChestsForTreasureHuntAsync(treasureHuntId: String, onComplete: (List<TreasureChest>) -> Unit) {
-        val connection = database.createQuery(TreasureChest.TABLE.NAME, "SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntId)
-                .mapToList { TreasureChest(it.getString(TableColumns.UUID), it.getString(TreasureChest.TABLE.TREASURE_HUNT), it.getString(TreasureChest.TABLE.TITLE)) }
+    override fun getTreasureChestsForTreasureHuntAsync(treasureHuntUuid: String, onComplete: (List<TreasureChest>) -> Unit) {
+        val connection = database.createQuery(TreasureChest.TABLE.NAME, "SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntUuid)
+                .mapToList { TreasureChest(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .first()
                 .subscribe {
@@ -85,8 +97,8 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
         connections.add(connection)
     }
 
-    override fun getTreasureChestCountForTreasureHuntAsync(treasureHuntId: String, onComplete: (count: Int) -> Unit) {
-        database.createQuery(TreasureChest.TABLE.NAME, "SELECT COUNT(*) FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntId)
+    override fun getTreasureChestCountForTreasureHuntAsync(treasureHuntUuid: String, onComplete: (count: Int) -> Unit) {
+        database.createQuery(TreasureChest.TABLE.NAME, "SELECT COUNT(*) FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntUuid)
                 .mapToOne { it.getInt(0) }
                 .first()
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -95,8 +107,8 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
                 }
     }
 
-    override fun getTreasureChestCountForTreasureHunt(treasureHuntId: String): Int {
-        val cursor = database.query("SELECT COUNT(*) FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntId)
+    override fun getTreasureChestCountForTreasureHunt(treasureHuntUuid: String): Int {
+        val cursor = database.query("SELECT COUNT(*) FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntUuid)
 
         cursor.moveToFirst()
 

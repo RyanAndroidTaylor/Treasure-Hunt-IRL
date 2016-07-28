@@ -91,7 +91,6 @@ class ViewCollectedTreasureChestContainer : BasicContainer(), ViewCollectedTreas
     }
 
     override fun displayCollectedItems(collectedItems: List<InventoryItem>) {
-        Log.i("ViewCTCContainer", "Displaying items from treasure chest")
         adapter?.updateList(collectedItems)
     }
 

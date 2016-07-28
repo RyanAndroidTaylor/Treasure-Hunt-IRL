@@ -6,6 +6,8 @@ import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.CollectedClueConnection
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
+import rx.Observable
+import rx.Subscriber
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import java.util.*
@@ -35,7 +37,7 @@ class CollectedClueConnectionImpl : CollectedClueConnection {
         return collectedClue
     }
 
-    override fun subscribeToCollectedCluesForParentAsync(parentUuid: String, onComplete: (List<CollectedClue>) -> Unit) {
+    override fun subscribeToCollectedCluesForTreasureHuntAsync(parentUuid: String, onComplete: (List<CollectedClue>) -> Unit) {
         val connection = database.createQuery(CollectedClue.TABLE.NAME, "SELECT * FROM ${CollectedClue.TABLE.NAME} WHERE ${CollectedClue.TABLE.PARENT}=?", parentUuid)
                 .mapToList { CollectedClue(it) }
                 .observeOn(AndroidSchedulers.mainThread())

@@ -171,8 +171,10 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
     private fun loadPresenter(extras: Bundle) {
         if (extras.containsKey(TREASURE_CHEST_UUID))
             createTreasureChestPresenter.load(extras.getString(TREASURE_CHEST_UUID), extras.getString(HUNT_UUID), this)
-        else if (extras.containsKey(NEW))
-            createTreasureChestPresenter.create(extras.getString(HUNT_UUID), this)
+        else if (extras.containsKey(NEW)) {
+            val initialTreasureChest = extras.getBoolean(INITIAL_CHEST, false)
+            createTreasureChestPresenter.create(extras.getString(HUNT_UUID), this, initialTreasureChest)
+        }
         else
             createTreasureChestPresenter.reload(this)
     }

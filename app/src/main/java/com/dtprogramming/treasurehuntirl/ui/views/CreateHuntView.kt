@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.ui.views
 
+import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 
 /**
@@ -10,5 +11,5 @@ interface CreateHuntView {
     fun setTitle(title: String)
     fun onTreasureChestsLoaded(treasureChests: List<TreasureChest>)
 
-    fun displayClue(text: String)
+    fun displayClue(initialClues: List<InventoryItem>)
 }

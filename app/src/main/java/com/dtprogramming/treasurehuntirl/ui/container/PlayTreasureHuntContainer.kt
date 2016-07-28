@@ -5,9 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
-import com.dtprogramming.treasurehuntirl.database.connections.impl.CollectedClueConnectionImpl
-import com.dtprogramming.treasurehuntirl.database.connections.impl.PlayingTreasureHuntConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.*
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
 import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
@@ -41,7 +39,7 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
         playTreasureHuntPresenter = if (PresenterManager.hasPresenter(PlayTreasureHuntPresenter.TAG))
             PresenterManager.getPresenter(PlayTreasureHuntPresenter.TAG) as PlayTreasureHuntPresenter
         else
-            PresenterManager.addPresenter(PlayTreasureHuntPresenter.TAG, PlayTreasureHuntPresenter(PlayingTreasureHuntConnectionImpl(), CollectedClueConnectionImpl(), ClueConnectionImpl())) as PlayTreasureHuntPresenter
+            PresenterManager.addPresenter(PlayTreasureHuntPresenter.TAG, PlayTreasureHuntPresenter(PlayingTreasureHuntConnectionImpl(), InventoryConnectionImpl(), TreasureChestConnectionImpl(), CollectedTreasureChestConnectionImpl())) as PlayTreasureHuntPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
@@ -52,7 +50,7 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
 
         inventoryList.layoutManager = LinearLayoutManager(containerActivity)
 
-        adapter = InventoryAdapter(containerActivity, listOf(), { /*item selected*/ })
+        adapter = InventoryAdapter(containerActivity, listOf(), { inventoryItemSelected(it) })
 
         inventoryList.adapter = adapter
 
@@ -98,5 +96,9 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
         extras.putString(PLAYING_HUNT_UUID, playTreasureHuntPresenter.playingTreasureHuntUuid)
 
         containerActivity.startContainer(DigModeContainer.URI, extras)
+    }
+
+    private fun inventoryItemSelected(inventoryItem: InventoryItem) {
+
     }
 }

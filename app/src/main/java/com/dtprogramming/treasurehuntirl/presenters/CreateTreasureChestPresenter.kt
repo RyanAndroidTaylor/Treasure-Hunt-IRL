@@ -26,13 +26,16 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     lateinit var treasureChestId: String
         private set
 
-    fun create(treasureHuntId: String, createTreasureChestView: CreateTreasureChestView) {
+    private var initialTreasureChest = false
+
+    fun create(treasureHuntId: String, createTreasureChestView: CreateTreasureChestView, initialTreasureChest: Boolean = false) {
         this.createTreasureChestView = createTreasureChestView
         this.treasureHuntId = treasureHuntId
+        this.initialTreasureChest = initialTreasureChest
 
         treasureChestId = randomUuid()
 
-        treasureChestConnection.insert(TreasureChest(treasureChestId, treasureHuntId, treasureChestTitle))
+        treasureChestConnection.insert(TreasureChest(treasureChestId, treasureHuntId, treasureChestTitle, initialTreasureChest))
 
         createTreasureChestView.setTitle(treasureChestTitle)
     }
@@ -66,7 +69,7 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     }
 
     override fun dispose() {
-        treasureChestConnection.update(TreasureChest(treasureChestId, treasureHuntId, treasureChestTitle))
+        treasureChestConnection.update(TreasureChest(treasureChestId, treasureHuntId, treasureChestTitle, initialTreasureChest))
 
         PresenterManager.removePresenter(TAG)
     }

@@ -15,16 +15,18 @@ import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.ClueAdapter
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.InventoryAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureChestAdapter
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
-import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
-import com.dtprogramming.treasurehuntirl.util.NEW
-import com.dtprogramming.treasurehuntirl.util.PARENT_UUID
-import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
+import com.dtprogramming.treasurehuntirl.util.*
 import kotlinx.android.synthetic.main.container_create_hunt.view.*
 
 /**
@@ -43,11 +45,12 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
     private lateinit var treasureHuntTitle: EditText
 
     private lateinit var treasureChestList: RecyclerView
-    private lateinit var adapter: TreasureChestAdapter
+    private lateinit var treasureChestAdapter: TreasureChestAdapter
 
-    private lateinit var clueContainer: CardView
-    private lateinit var clueText: TextView
-    private lateinit var addClue: Button
+    private lateinit var initialClueList: RecyclerView
+    private lateinit var initialClueAdapter: InventoryAdapter
+
+    private lateinit var addClue: TextView
 
     init {
         createHuntPresenter = if (PresenterManager.hasPresenter(CreateHuntPresenter.TAG))
@@ -60,19 +63,20 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         super.inflate(containerActivity, parent, extras)
 
         treasureHuntTitle = parent.create_hunt_container_title
-        clueContainer = parent.create_hunt_container_clue_container
-        clueText = parent.create_hunt_container_clue_text
         addClue = parent.create_hunt_container_add_clue
 
         parent.create_hunt_container_add_chest.setOnClickListener { loadCreateTreasureChestContainer() }
 
         treasureChestList = parent.create_hunt_container_chest_list
-
         treasureChestList.layoutManager = LinearLayoutManager(containerActivity)
+        treasureChestAdapter = TreasureChestAdapter(treasureChestSelectedListener, containerActivity, listOf())
+        treasureChestList.adapter = treasureChestAdapter
 
-        adapter = TreasureChestAdapter(treasureChestSelectedListener, containerActivity, listOf())
-
-        treasureChestList.adapter = adapter
+        initialClueList = parent.create_hunt_container_initial_clues
+        initialClueList.layoutManager = CustomLinearLayoutManager(containerActivity)
+        initialClueList.addOnScrollListener(ClueScrollListener())
+        initialClueAdapter = InventoryAdapter(containerActivity, listOf(), { /*inventory item clicked*/ })
+        initialClueList.adapter = initialClueAdapter
 
         if (extras.containsKey(HUNT_UUID))
             createHuntPresenter.load(this, extras.getString(HUNT_UUID))
@@ -117,14 +121,11 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
     }
 
     override fun onTreasureChestsLoaded(treasureChests: List<TreasureChest>) {
-        adapter.updateList(treasureChests)
+        treasureChestAdapter.updateList(treasureChests)
     }
 
-    override fun displayClue(text: String) {
-        clueContainer.visibility = View.VISIBLE
-        clueText.text = text
-
-        addClue.visibility = View.GONE
+    override fun displayClue(initialClues: List<InventoryItem>) {
+        initialClueAdapter.updateList(initialClues)
     }
 
     val treasureChestSelectedListener: (treasureChest: TreasureChest) -> Unit = {

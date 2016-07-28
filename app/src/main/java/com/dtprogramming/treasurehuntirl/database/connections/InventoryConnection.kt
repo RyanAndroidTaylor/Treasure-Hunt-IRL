@@ -9,5 +9,6 @@ interface InventoryConnection : Connection {
 
     fun collectItemsForTreasureChestAsync(treasureChestUuid: String, onComplete: () -> Unit)
 
+    fun getCollectedItemsForTreasureHuntAsync(treasureHuntUuid: String, onComplete: (List<InventoryItem>) -> Unit)
     fun getCollectedItemsForTreasureChestAsync(treasureChestUuid: String, onComplete: (List<InventoryItem>) -> Unit)
 }

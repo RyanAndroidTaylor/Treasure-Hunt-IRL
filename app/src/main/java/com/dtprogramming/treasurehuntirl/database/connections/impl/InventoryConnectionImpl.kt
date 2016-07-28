@@ -2,11 +2,13 @@ package com.dtprogramming.treasurehuntirl.database.connections.impl
 
 import android.database.sqlite.SQLiteAbortException
 import android.database.sqlite.SQLiteDatabase
+import android.support.design.widget.TabLayout
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.InventoryConnection
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.CollectedClue
+import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 import com.dtprogramming.treasurehuntirl.util.getString
 import rx.Observable
@@ -25,16 +27,16 @@ class InventoryConnectionImpl : InventoryConnection {
 
     override fun collectItemsForTreasureChestAsync(treasureChestUuid: String, onComplete: () -> Unit) {
         Observable.just(treasureChestUuid)
-        .single {
-            collectCluesForTreasureChest(treasureChestUuid)
+                .single {
+                    collectCluesForTreasureChest(treasureChestUuid)
 
-            true
-        }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
-            onComplete()
-        }
+                    true
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    onComplete()
+                }
     }
 
     private fun collectCluesForTreasureChest(treasureChestUuid: String) {
@@ -51,23 +53,46 @@ class InventoryConnectionImpl : InventoryConnection {
         }
     }
 
-    override fun getCollectedItemsForTreasureChestAsync(treasureChestUuid: String, onComplete: (List<InventoryItem>) -> Unit) {
-        Observable.just(treasureChestUuid)
-        .map{
+    override fun getCollectedItemsForTreasureHuntAsync(treasureHuntUuid: String, onComplete: (List<InventoryItem>) -> Unit) {
+        Observable.just(treasureHuntUuid)
+        .map {
             val inventoryItems = ArrayList<InventoryItem>()
 
-            val clues = getCollectedClues(treasureChestUuid)
+            val openTreasureChestCursor = database.query("SELECT ${TableColumns.UUID} FROM ${CollectedTreasureChest.TABLE.NAME} WHERE ${CollectedTreasureChest.TABLE.PLAYING_TREASURE_HUNT}=? AND ${CollectedTreasureChest.TABLE.STATE}=?", treasureHuntUuid, CollectedTreasureChest.OPEN.toString())
 
-            for (clue in clues)
-                inventoryItems.add(clue)
+            while (openTreasureChestCursor.moveToNext()) {
+                val clues = getCollectedClues(openTreasureChestCursor.getString(TableColumns.UUID))
+
+                for (clue in clues)
+                    inventoryItems.add(clue)
+            }
+
+            openTreasureChestCursor.close()
 
             inventoryItems
         }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
-            onComplete(it)
-        }
+        .subscribe { onComplete(it) }
+    }
+
+    override fun getCollectedItemsForTreasureChestAsync(treasureChestUuid: String, onComplete: (List<InventoryItem>) -> Unit) {
+        Observable.just(treasureChestUuid)
+                .map {
+                    val inventoryItems = ArrayList<InventoryItem>()
+
+                    val clues = getCollectedClues(treasureChestUuid)
+
+                    for (clue in clues)
+                        inventoryItems.add(clue)
+
+                    inventoryItems
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    onComplete(it)
+                }
     }
 
     override fun unsubscribe() {
@@ -75,7 +100,7 @@ class InventoryConnectionImpl : InventoryConnection {
             connection.unsubscribe()
     }
 
-    private fun getCollectedClues(treasureChestUuid: String): List<CollectedClue> {
+    private fun getCollectedClues(treasureChestUuid: String): List<InventoryItem> {
         val cursor = database.query("SELECT * FROM ${CollectedClue.TABLE.NAME} WHERE ${CollectedClue.TABLE.PARENT}=?", treasureChestUuid)
 
         val clues = ArrayList<CollectedClue>()

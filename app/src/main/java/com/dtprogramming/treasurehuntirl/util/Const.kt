@@ -8,6 +8,7 @@ val PLAYING_HUNT_UUID = "PlayingHuntUuid"
 val PARENT_UUID = "ParentUuid"
 val TREASURE_CHEST_UUID = "TreasureChestUuid"
 val CLUE_UUID = "ClueUuid"
+val INITIAL_CHEST = "InitialTreasureChest"
 
 val NEW = "New"
 

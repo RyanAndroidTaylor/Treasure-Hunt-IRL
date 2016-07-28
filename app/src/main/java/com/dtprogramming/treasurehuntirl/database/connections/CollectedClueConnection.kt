@@ -12,5 +12,5 @@ interface CollectedClueConnection : Connection {
 
     fun getCollectedClue(collectedClueUuid: String): CollectedClue
 
-    fun subscribeToCollectedCluesForParentAsync(parentUuid: String, onComplete: (List<CollectedClue>) -> Unit)
+    fun subscribeToCollectedCluesForTreasureHuntAsync(parentUuid: String, onComplete: (List<CollectedClue>) -> Unit)
 }

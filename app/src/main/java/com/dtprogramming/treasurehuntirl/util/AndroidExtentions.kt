@@ -34,4 +34,8 @@ fun Cursor.getInt(columnName: String): Int {
     return getInt(getColumnIndex(columnName))
 }
 
+fun Cursor.getBoolean(columnName: String): Boolean {
+    return getInt(getColumnIndex(columnName)) == 1
+}
+
 fun Double.format(digits: Int) = java.lang.String.format("%.${digits}f", this)
