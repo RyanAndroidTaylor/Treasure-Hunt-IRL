@@ -115,7 +115,7 @@ class DigModePresenter(val waypointConnection: WaypointConnection, val treasureC
                 if ((lat > lat1 - 0.000150 && lat < lat1 + 0.000150) && (lng > long - 0.000150 && lng < long + 0.00150)) {
                     val treasureChest = treasureChestConnection.getTreasureChest(parentUuid)
 
-                    collectedTreasureChestConnection.insert(CollectedTreasureChest(treasureChest.uuid, treasureChest.title, playingTreasureHuntUuid, 0))
+                    collectedTreasureChestConnection.insert(CollectedTreasureChest(treasureChest.uuid, treasureChest.title, playingTreasureHuntUuid, CollectedTreasureChest.CLOSED))
 
                     digModeView?.displayCollectedTreasureChest(parentUuid)
 

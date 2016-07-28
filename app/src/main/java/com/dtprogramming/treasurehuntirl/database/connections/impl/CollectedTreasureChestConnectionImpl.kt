@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.database.connections.impl
 
+import android.database.sqlite.SQLiteDatabase
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.CollectedTreasureChestConnection
@@ -16,7 +17,7 @@ class CollectedTreasureChestConnectionImpl : CollectedTreasureChestConnection {
     override val connections = ArrayList<Subscription>()
 
     override fun insert(collectedTreasureChest: CollectedTreasureChest) {
-        database.insert(CollectedTreasureChest.TABLE.NAME, collectedTreasureChest.getContentValues())
+        database.insert(CollectedTreasureChest.TABLE.NAME, collectedTreasureChest.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
     }
 
     override fun update(collectedTreasureChest: CollectedTreasureChest) {

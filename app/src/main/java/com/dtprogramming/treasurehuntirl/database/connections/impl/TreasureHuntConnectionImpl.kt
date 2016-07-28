@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.database.connections.impl
 
+import android.database.sqlite.SQLiteDatabase
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
@@ -25,7 +26,7 @@ class TreasureHuntConnectionImpl : TreasureHuntConnection {
     }
 
     override fun insert(treasureHunt: TreasureHunt) {
-        database.insert(TreasureHunt.TABLE.NAME, treasureHunt.getContentValues())
+        database.insert(TreasureHunt.TABLE.NAME, treasureHunt.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
     }
 
     override fun update(treasureHunt: TreasureHunt) {

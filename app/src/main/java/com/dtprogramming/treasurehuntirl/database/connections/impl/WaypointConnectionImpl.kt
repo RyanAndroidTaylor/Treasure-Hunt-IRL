@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.database.connections.impl
 
+import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
@@ -27,7 +28,7 @@ class WaypointConnectionImpl : WaypointConnection {
     }
 
     override fun insert(waypoint: Waypoint) {
-        database.insert(Waypoint.TABLE.NAME, waypoint.getContentValues())
+        database.insert(Waypoint.TABLE.NAME, waypoint.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
     }
 
     override fun update(waypoint: Waypoint) {

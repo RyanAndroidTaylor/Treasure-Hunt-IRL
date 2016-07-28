@@ -87,8 +87,6 @@ class DigModeContainer : BasicContainer(), DigModeView, LocationListener, OnMapR
         digModePresenter.unsubscribe()
 
         locationManager.removeUpdates(this)
-
-
     }
 
     override fun onReload(parent: ViewGroup) {

@@ -47,6 +47,8 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
 
         val treasureChest = TreasureChest(cursor)
 
+        cursor.close()
+
         return treasureChest
     }
 

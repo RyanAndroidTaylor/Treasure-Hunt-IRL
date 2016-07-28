@@ -1,13 +1,14 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
 import com.dtprogramming.treasurehuntirl.database.connections.CollectedTreasureChestConnection
+import com.dtprogramming.treasurehuntirl.database.connections.InventoryConnection
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.ui.views.ViewCollectedTreasureChestView
 
 /**
  * Created by ryantaylor on 7/26/16.
  */
-class ViewCollectedTreasureChestPresenter(val collectedTreasureChestConnection: CollectedTreasureChestConnection) : Presenter {
+class ViewCollectedTreasureChestPresenter(val collectedTreasureChestConnection: CollectedTreasureChestConnection, val inventoryConnection: InventoryConnection) : Presenter {
 
     companion object {
         val TAG: String = ViewCollectedTreasureChestPresenter::class.java.simpleName
@@ -26,18 +27,18 @@ class ViewCollectedTreasureChestPresenter(val collectedTreasureChestConnection: 
 
         collectedTreasureChest = collectedTreasureChestConnection.getCollectedTreasureChest(collectedTreasureChestUuid)
 
-        if (!isTreasureChestClosed()) {
+        if (isTreasureChestOpen()) {
             viewCollectedTreasureChestView.displayOpenedTreasureChest()
-            subscribeToCollectedItems()
+            getAndDisplayCollectedItems()
         }
     }
 
     fun reload(viewCollectedTreasureChestView: ViewCollectedTreasureChestView) {
         this.viewCollectedTreasureChestView = viewCollectedTreasureChestView
 
-        if (!isTreasureChestClosed()) {
+        if (isTreasureChestOpen()) {
             viewCollectedTreasureChestView.displayOpenedTreasureChest()
-            subscribeToCollectedItems()
+            getAndDisplayCollectedItems()
         }
     }
 
@@ -54,25 +55,24 @@ class ViewCollectedTreasureChestPresenter(val collectedTreasureChestConnection: 
     }
 
     fun openTreasureChest() {
-        if (isTreasureChestClosed()) {
+        if (!isTreasureChestOpen()) {
             viewCollectedTreasureChestView?.displayOpenedTreasureChest()
 
             collectedTreasureChest = collectedTreasureChestConnection.openCollectedTreasureChest(collectedTreasureChest)
 
             collectItems()
-            subscribeToCollectedItems()
         }
     }
 
     private fun collectItems() {
-
+        inventoryConnection.collectItemsForTreasureChestAsync(collectedTreasureChestUuid, { getAndDisplayCollectedItems() })
     }
 
-    private fun subscribeToCollectedItems() {
-
+    private fun getAndDisplayCollectedItems() {
+        inventoryConnection.getCollectedItemsForTreasureChestAsync(collectedTreasureChestUuid, { viewCollectedTreasureChestView?.displayCollectedItems(it) })
     }
 
-    private fun isTreasureChestClosed(): Boolean {
-        return collectedTreasureChest.state == CollectedTreasureChest.CLOSED
+    private fun isTreasureChestOpen(): Boolean {
+        return collectedTreasureChest.state == CollectedTreasureChest.OPEN
     }
 }

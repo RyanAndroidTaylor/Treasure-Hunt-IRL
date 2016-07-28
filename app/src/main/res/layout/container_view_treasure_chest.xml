@@ -19,7 +19,7 @@
             android:src="@drawable/closed_chest"/>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/view_treasure_chest_treasure_list"
+            android:id="@+id/view_treasure_chest_treasure_items"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/margin_normal"/>
