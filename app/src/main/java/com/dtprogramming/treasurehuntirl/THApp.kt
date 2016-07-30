@@ -12,15 +12,9 @@ import rx.schedulers.Schedulers
  */
 class THApp : Application() {
 
-    val test = ""
-
     companion object {
         lateinit var briteDatabase: BriteDatabase
             private set
-    }
-
-    init {
-
     }
 
     override fun onCreate() {

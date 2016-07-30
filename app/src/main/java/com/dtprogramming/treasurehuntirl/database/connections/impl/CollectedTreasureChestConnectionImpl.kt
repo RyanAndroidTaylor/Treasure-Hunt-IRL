@@ -4,8 +4,15 @@ import android.database.sqlite.SQLiteDatabase
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.CollectedTreasureChestConnection
+import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
+import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
+import com.dtprogramming.treasurehuntirl.util.getString
+import rx.Observable
 import rx.Subscription
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import java.util.*
 
 /**
@@ -24,10 +31,20 @@ class CollectedTreasureChestConnectionImpl : CollectedTreasureChestConnection {
         database.update(CollectedTreasureChest.TABLE.NAME, collectedTreasureChest.getContentValues(), TableColumns.WHERE_UUID_EQUALS, collectedTreasureChest.uuid)
     }
 
-    override fun openCollectedTreasureChest(collectedTreasureChest: CollectedTreasureChest): CollectedTreasureChest {
+    override fun openCollectedTreasureChest(collectedTreasureChest: CollectedTreasureChest, itemsCollected: (List<InventoryItem>) -> Unit): CollectedTreasureChest {
         val openedTreasureChest = CollectedTreasureChest(collectedTreasureChest.uuid, collectedTreasureChest.title, collectedTreasureChest.playingTreasureHuntUuid, CollectedTreasureChest.OPEN)
 
         update(openedTreasureChest)
+
+        Observable.just(collectedTreasureChest)
+                .map {
+                    collectItemsForOpenedTreasureChest(openedTreasureChest.uuid)
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    itemsCollected(it)
+                }
 
         return openedTreasureChest
     }
@@ -47,5 +64,25 @@ class CollectedTreasureChestConnectionImpl : CollectedTreasureChestConnection {
     override fun unsubscribe() {
         for (connection in connections)
             connection.unsubscribe()
+    }
+
+    private fun collectItemsForOpenedTreasureChest(treasureChestUuid: String): List<InventoryItem> {
+        val inventoryItems = ArrayList<InventoryItem>()
+
+        val cursor = database.query("SELECT * FROM ${TextClue.TABLE.NAME} WHERE ${TextClue.TABLE.PARENT}=?", treasureChestUuid)
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                val collectedClue = CollectedTextClue(cursor.getString(TableColumns.UUID), cursor.getString(CollectedTextClue.TABLE.PARENT), cursor.getString(CollectedTextClue.TABLE.TEXT))
+
+                database.insert(CollectedTextClue.TABLE.NAME, collectedClue.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
+
+                inventoryItems.add(collectedClue)
+            }
+
+            cursor.close()
+        }
+
+        return inventoryItems
     }
 }

@@ -1,11 +1,8 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
-import android.util.Log
 import com.dtprogramming.treasurehuntirl.database.connections.*
-import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.PlayingTreasureHunt
-import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.PlayTreasureHuntView
 
 /**
@@ -27,9 +24,7 @@ class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasu
         this.playingTreasureHuntUuid = treasureHuntUuid
 
         playingTreasureHuntConnection.insert(PlayingTreasureHunt(treasureHuntUuid))
-        openAndCollectInitialTreasureChest()
-
-        loadData()
+        collectAndOpenInitialTreasureChest()
     }
 
     fun load(playTreasureHuntView: PlayTreasureHuntView, playingTreasureHuntUuid: String) {
@@ -62,9 +57,13 @@ class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasu
         PresenterManager.removePresenter(TAG)
     }
 
-    private fun openAndCollectInitialTreasureChest() {
+    private fun collectAndOpenInitialTreasureChest() {
         val treasureChest = treasureChestConnection.getInitialTreasureChest(playingTreasureHuntUuid)
 
-        collectedTreasureChestConnection.insert(CollectedTreasureChest(treasureChest.uuid, treasureChest.title, playingTreasureHuntUuid, CollectedTreasureChest.OPEN))
+        val collectedTreasureChest = CollectedTreasureChest(treasureChest.uuid, treasureChest.title, playingTreasureHuntUuid, CollectedTreasureChest.CLOSED)
+
+        collectedTreasureChestConnection.insert(collectedTreasureChest)
+
+        collectedTreasureChestConnection.openCollectedTreasureChest(collectedTreasureChest, { playTreasureHuntView?.updateInventoryList(it) })
     }
 }

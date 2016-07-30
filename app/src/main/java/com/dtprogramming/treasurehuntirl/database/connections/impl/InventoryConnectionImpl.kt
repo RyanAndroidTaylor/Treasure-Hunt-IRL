@@ -25,34 +25,6 @@ class InventoryConnectionImpl : InventoryConnection {
 
     override val connections = ArrayList<Subscription>()
 
-    override fun collectItemsForTreasureChestAsync(treasureChestUuid: String, onComplete: () -> Unit) {
-        Observable.just(treasureChestUuid)
-                .single {
-                    collectCluesForTreasureChest(treasureChestUuid)
-
-                    true
-                }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    onComplete()
-                }
-    }
-
-    private fun collectCluesForTreasureChest(treasureChestUuid: String) {
-        val cursor = database.query("SELECT * FROM ${TextClue.TABLE.NAME} WHERE ${TextClue.TABLE.PARENT}=?", treasureChestUuid)
-
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                val collectedClue = CollectedTextClue(cursor.getString(TableColumns.UUID), cursor.getString(CollectedTextClue.TABLE.PARENT), cursor.getString(CollectedTextClue.TABLE.TEXT))
-
-                database.insert(CollectedTextClue.TABLE.NAME, collectedClue.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
-            }
-
-            cursor.close()
-        }
-    }
-
     override fun getCollectedItemsForTreasureHuntAsync(treasureHuntUuid: String, onComplete: (List<InventoryItem>) -> Unit) {
         Observable.just(treasureHuntUuid)
         .map {

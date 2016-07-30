@@ -3,6 +3,9 @@ package com.dtprogramming.treasurehuntirl.util
 /**
  * Created by ryantaylor on 7/12/16.
  */
+val TRUE = "1"
+val FALSE = "0"
+
 val HUNT_UUID = "HuntUuid"
 val PLAYING_HUNT_UUID = "PlayingHuntUuid"
 val PARENT_UUID = "ParentUuid"

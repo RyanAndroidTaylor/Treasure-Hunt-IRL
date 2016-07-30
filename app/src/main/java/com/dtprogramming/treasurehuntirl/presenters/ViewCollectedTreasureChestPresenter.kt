@@ -58,14 +58,8 @@ class ViewCollectedTreasureChestPresenter(val collectedTreasureChestConnection: 
         if (!isTreasureChestOpen()) {
             viewCollectedTreasureChestView?.displayOpenedTreasureChest()
 
-            collectedTreasureChest = collectedTreasureChestConnection.openCollectedTreasureChest(collectedTreasureChest)
-
-            collectItems()
+            collectedTreasureChest = collectedTreasureChestConnection.openCollectedTreasureChest(collectedTreasureChest, { getAndDisplayCollectedItems() })
         }
-    }
-
-    private fun collectItems() {
-        inventoryConnection.collectItemsForTreasureChestAsync(collectedTreasureChestUuid, { getAndDisplayCollectedItems() })
     }
 
     private fun getAndDisplayCollectedItems() {

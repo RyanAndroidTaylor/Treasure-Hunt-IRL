@@ -5,6 +5,7 @@ import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
+import com.dtprogramming.treasurehuntirl.util.FALSE
 import com.dtprogramming.treasurehuntirl.util.getString
 import com.squareup.sqlbrite.BriteDatabase
 import rx.Subscription
@@ -67,7 +68,7 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
     override fun getTreasureChestsForTreasureHunt(treasureHuntUuid: String): List<TreasureChest> {
         val treasureChests = ArrayList<TreasureChest>()
 
-        val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntUuid)
+        val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.INITIAL_CHEST}=?", treasureHuntUuid, FALSE)
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
@@ -81,7 +82,7 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
     }
 
     override fun getTreasureChestsForTreasureHuntAsync(treasureHuntUuid: String, onComplete: (List<TreasureChest>) -> Unit) {
-        val connection = database.createQuery(TreasureChest.TABLE.NAME, "SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntUuid)
+        val connection = database.createQuery(TreasureChest.TABLE.NAME, "SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.INITIAL_CHEST}=?", treasureHuntUuid, FALSE)
                 .mapToList { TreasureChest(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .first()
