@@ -21,33 +21,33 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     private var treasureChestTitle = "New Treasure Chest"
         private set
 
-    lateinit var treasureHuntId: String
+    lateinit var treasureHuntUuid: String
         private set
-    lateinit var treasureChestId: String
+    lateinit var treasureChestUuid: String
         private set
 
     private var initialTreasureChest = false
 
     fun create(treasureHuntId: String, createTreasureChestView: CreateTreasureChestView, initialTreasureChest: Boolean = false) {
         this.createTreasureChestView = createTreasureChestView
-        this.treasureHuntId = treasureHuntId
+        this.treasureHuntUuid = treasureHuntId
         this.initialTreasureChest = initialTreasureChest
 
-        treasureChestId = randomUuid()
+        treasureChestUuid = randomUuid()
 
-        treasureChestConnection.insert(TreasureChest(treasureChestId, treasureHuntId, treasureChestTitle, initialTreasureChest))
+        treasureChestConnection.insert(TreasureChest(treasureChestUuid, treasureHuntId, treasureChestTitle, initialTreasureChest))
 
         createTreasureChestView.setTitle(treasureChestTitle)
     }
 
     fun load(treasureChestId: String, treasureHuntId: String, createTreasureChestView: CreateTreasureChestView) {
         this.createTreasureChestView = createTreasureChestView
-        this.treasureChestId = treasureChestId
-        this.treasureHuntId = treasureHuntId
+        this.treasureChestUuid = treasureChestId
+        this.treasureHuntUuid = treasureHuntId
 
 
         loadTreasureChest()
-        loadClue()
+        loadClues()
         loadWaypoint()
     }
 
@@ -56,7 +56,7 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
 
         createTreasureChestView.setTitle(treasureChestTitle)
 
-        loadClue()
+        loadClues()
         loadWaypoint()
     }
 
@@ -69,26 +69,24 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     }
 
     override fun dispose() {
-        treasureChestConnection.update(TreasureChest(treasureChestId, treasureHuntId, treasureChestTitle, initialTreasureChest))
+        treasureChestConnection.update(TreasureChest(treasureChestUuid, treasureHuntUuid, treasureChestTitle, initialTreasureChest))
 
         PresenterManager.removePresenter(TAG)
     }
 
     private fun loadTreasureChest() {
-        val treasureChest = treasureChestConnection.getTreasureChest(treasureChestId)
+        val treasureChest = treasureChestConnection.getTreasureChest(treasureChestUuid)
 
         treasureChestTitle = treasureChest.title
         createTreasureChestView?.setTitle(treasureChestTitle)
     }
 
-    private fun loadClue() {
-        val clue = clueConnection.getTextClueForParent(treasureChestId)
-
-        clue?.let { createTreasureChestView?.displayClue(it) }
+    private fun loadClues() {
+        clueConnection.getCluesForParentAsync(treasureChestUuid, { createTreasureChestView?.updateClueList(it) })
     }
 
     private fun loadWaypoint() {
-        val waypoint = waypointConnection.getWaypointForParent(treasureChestId)
+        val waypoint = waypointConnection.getWaypointForParent(treasureChestUuid)
 
         if (waypoint != null)
             createTreasureChestView?.loadMap()
@@ -99,7 +97,7 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     }
 
     fun mapLoaded() {
-        val waypoint = waypointConnection.getWaypointForParent(treasureChestId)
+        val waypoint = waypointConnection.getWaypointForParent(treasureChestUuid)
 
         waypoint?.let { createTreasureChestView?.displayWaypoint(it) }
     }

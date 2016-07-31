@@ -5,7 +5,7 @@ import android.database.Cursor
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.QuickTable
 import com.dtprogramming.treasurehuntirl.database.TableColumns
-import com.dtprogramming.treasurehuntirl.util.CLUE
+import com.dtprogramming.treasurehuntirl.util.TEXT_CLUE
 import com.dtprogramming.treasurehuntirl.util.getLong
 import com.dtprogramming.treasurehuntirl.util.getString
 
@@ -18,7 +18,7 @@ data class CollectedTextClue(val id: Long, override val uuid: String, val parent
         val TABLE = Table()
     }
 
-    override val type = CLUE
+    override val type = TEXT_CLUE
     override val iconDrawable = R.drawable.clue_icon_24dp
 
     constructor(uuid: String, parentUuid: String, text: String): this(-1L, uuid, parentUuid, text)

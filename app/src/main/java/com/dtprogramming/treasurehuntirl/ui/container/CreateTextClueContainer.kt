@@ -12,6 +12,7 @@ import com.dtprogramming.treasurehuntirl.presenters.CreateCluePresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.views.CreateClueView
+import com.dtprogramming.treasurehuntirl.util.CLUE_UUID
 import com.dtprogramming.treasurehuntirl.util.PARENT_UUID
 import kotlinx.android.synthetic.main.container_create_clue.view.*
 
@@ -22,6 +23,23 @@ class CreateTextClueContainer() : BasicContainer(), CreateClueView {
 
     companion object {
         val URI: String = CreateTextClueContainer::class.java.simpleName
+
+        fun startNewContainer(containerActivity: ContainerActivity, parentUuid: String) {
+            val extras = Bundle()
+
+            extras.putString(PARENT_UUID, parentUuid)
+
+            containerActivity.startContainer(URI, extras)
+        }
+
+        fun loadContainer(containerActivity: ContainerActivity, parentUuid: String, clueUuid: String) {
+            val extras = Bundle()
+
+            extras.putString(PARENT_UUID, parentUuid)
+            extras.putString(CLUE_UUID, clueUuid)
+
+            containerActivity.startContainer(URI, extras)
+        }
     }
 
     override var rootViewId = R.layout.container_create_clue
@@ -43,8 +61,10 @@ class CreateTextClueContainer() : BasicContainer(), CreateClueView {
 
         clueText = parent.create_clue__container_clue_text
 
-        if (extras.containsKey(PARENT_UUID))
-            createCluePresenter.load(this, extras.getString(PARENT_UUID))
+        if (extras.containsKey(CLUE_UUID))
+            createCluePresenter.load(this, extras.getString(PARENT_UUID), extras.getString(CLUE_UUID))
+        else if (extras.containsKey(PARENT_UUID))
+            createCluePresenter.create(this, extras.getString(PARENT_UUID))
         else
             createCluePresenter.reload(this)
 

@@ -10,7 +10,7 @@ import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.CollectedClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ListRecyclerViewSectionAdapter
-import com.dtprogramming.treasurehuntirl.util.CLUE
+import com.dtprogramming.treasurehuntirl.util.TEXT_CLUE
 import com.dtprogramming.treasurehuntirl.util.WAYPOINT
 import kotlinx.android.synthetic.main.adapter_inventory_item.view.*
 
@@ -49,7 +49,7 @@ class InventoryAdapter(context: Context, items: List<InventoryItem>, val itemSel
                 itemInfo.setCompoundDrawablesWithIntrinsicBounds(item.iconDrawable, 0, 0, 0)
 
                 when (item.type) {
-                    CLUE ->  {
+                    TEXT_CLUE ->  {
                         val clue = collectedClueConnection.getCollectedClue(item.uuid)
 
                         itemInfo.text = clue.text

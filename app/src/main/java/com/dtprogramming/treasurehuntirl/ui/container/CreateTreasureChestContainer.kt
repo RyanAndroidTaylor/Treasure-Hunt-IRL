@@ -20,11 +20,16 @@ import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateTreasureChestPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.ClueAdapter
 import com.dtprogramming.treasurehuntirl.ui.views.CreateTreasureChestView
 import com.dtprogramming.treasurehuntirl.util.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -50,9 +55,10 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
 
     private lateinit var editTitle: EditText
 
-    private lateinit var addClue: Button
-    private lateinit var clueContainer: CardView
-    private lateinit var clueText: TextView
+    private lateinit var clueList: RecyclerView
+    private lateinit var adapter: ClueAdapter
+
+    private lateinit var addClue: TextView
 
     private lateinit var addWaypoint: Button
 
@@ -65,6 +71,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
             PresenterManager.addPresenter(CreateTreasureChestPresenter.TAG, CreateTreasureChestPresenter(TreasureChestConnectionImpl(), ClueConnectionImpl(), WaypointConnectionImpl())) as CreateTreasureChestPresenter
     }
 
+    //TODO Need to add RecyclerView to hold clues. And make it so multiple clues can be added
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
         containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.treasure_chest_action_bar_title))
@@ -76,8 +83,14 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         addWaypoint = parent.create_chest_container_add_waypoint
 
         addClue = parent.create_chest_container_add_clue
-        clueContainer = parent.create_chest_container_clue_container
-        clueText = parent.create_chest_container_clue_text
+
+        clueList = parent.create_treasure_chest_clue_list
+
+        adapter = ClueAdapter(containerActivity, listOf(), { loadCreateClueContainer(it) })
+
+        clueList.layoutManager = CustomLinearLayoutManager(containerActivity)
+        clueList.addOnScrollListener(ClueScrollListener())
+        clueList.adapter = adapter
 
         parent.create_chest_container_title.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -88,9 +101,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
             override fun afterTextChanged(s: Editable?) { }
         })
 
-        addClue.setOnClickListener { moveToContainer(CreateTextClueContainer.URI) }
-
-        clueContainer.setOnClickListener { moveToContainer(CreateTextClueContainer.URI) }
+        addClue.setOnClickListener { loadNewCreateClueContainer() }
 
         addWaypoint.setOnClickListener { moveToContainer(CreateWayPointContainer.URI) }
 
@@ -138,11 +149,8 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         mapFragment.getMapAsync(this)
     }
 
-    override fun displayClue(clue: TextClue) {
-        addClue.visibility = View.GONE
-        clueContainer.visibility = View.VISIBLE
-
-        clueText.text = clue.text
+    override fun updateClueList(clues: List<Clue>) {
+        adapter.updateList(clues)
     }
 
     override fun displayWaypoint(waypoint: Waypoint) {
@@ -183,8 +191,22 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
     private fun moveToContainer(uri: String) {
         val extras = Bundle()
 
-        extras.putString(PARENT_UUID, createTreasureChestPresenter.treasureChestId)
+        extras.putString(PARENT_UUID, createTreasureChestPresenter.treasureChestUuid)
 
         containerActivity.startContainer(uri, extras)
+    }
+
+    private fun loadNewCreateClueContainer() {
+        CreateTextClueContainer.startNewContainer(containerActivity, createTreasureChestPresenter.treasureChestUuid)
+    }
+
+    private fun loadCreateClueContainer(item: InventoryItem) {
+        when (item.type) {
+            TEXT_CLUE -> {
+                val textClue = item as TextClue
+
+                CreateTextClueContainer.loadContainer(containerActivity, textClue.parentUuid, textClue.uuid)
+            }
+        }
     }
 }

@@ -19,11 +19,20 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
     private lateinit var clueUuid: String
     private lateinit var parentUuid: String
 
-    private var new = false
     private var clueText = ""
 
-    fun load(createClueView: CreateClueView, parentUuid: String) {
+    fun create(createClueView: CreateClueView, parentUuid: String) {
         this.createClueView = createClueView
+        this.parentUuid = parentUuid
+
+        clueUuid = randomUuid()
+
+        clueConnection.insert(TextClue(clueUuid, parentUuid, ""))
+    }
+
+    fun load(createClueView: CreateClueView, clueUuid: String, parentUuid: String) {
+        this.createClueView = createClueView
+        this.clueUuid = clueUuid
         this.parentUuid = parentUuid
 
         loadClue(parentUuid)
@@ -47,16 +56,12 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
         PresenterManager.removePresenter(TAG)
     }
 
-    private fun loadClue(parentUuid: String) {
-        val clue = clueConnection.getTextClueForParent(parentUuid)
+    private fun loadClue(clueUUid: String) {
+        val clue = clueConnection.getTextClue(clueUuid)
 
-        if (clue != null) {
-            clueUuid = clue.uuid
-            clueText = clue.text
-        } else {
-            new = true
-            clueUuid = randomUuid()
-        }
+        clueText = clue.text
+
+        createClueView?.setClueText(clueText)
     }
 
     fun onTextChanged(clueText: String) {
@@ -64,10 +69,7 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
     }
 
     fun save() {
-        if (new)
-            clueConnection.insert(TextClue(clueUuid, parentUuid, clueText))
-        else
-            clueConnection.update(TextClue(clueUuid, parentUuid, clueText))
+        clueConnection.update(TextClue(clueUuid, parentUuid, clueText))
 
         PresenterManager.removePresenter(TAG)
 

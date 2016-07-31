@@ -13,6 +13,8 @@ import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectio
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
@@ -71,7 +73,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         initialClueList = parent.create_hunt_container_initial_clues
         initialClueList.layoutManager = CustomLinearLayoutManager(containerActivity)
         initialClueList.addOnScrollListener(ClueScrollListener())
-        initialClueAdapter = ClueAdapter(containerActivity, listOf(), { /*inventory item clicked*/ })
+        initialClueAdapter = ClueAdapter(containerActivity, listOf(), { loadClueContainer(it) })
         initialClueList.adapter = initialClueAdapter
 
         if (extras.containsKey(HUNT_UUID))
@@ -143,10 +145,16 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
     }
 
     private fun startCreateClueContainer() {
-        val extras = Bundle()
+        CreateTextClueContainer.startNewContainer(containerActivity, createHuntPresenter.initialTreasureChestUuid)
+    }
 
-        extras.putString(PARENT_UUID, createHuntPresenter.initialTreasureChestUuid)
+    private fun loadClueContainer(item: InventoryItem) {
+        when (item.type) {
+            TEXT_CLUE -> {
+                val textClue = item as TextClue
 
-        containerActivity.startContainer(CreateTextClueContainer.URI, extras)
+                CreateTextClueContainer.loadContainer(containerActivity, textClue.parentUuid, textClue.uuid)
+            }
+        }
     }
 }

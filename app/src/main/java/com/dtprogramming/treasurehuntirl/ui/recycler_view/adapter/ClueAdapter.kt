@@ -11,7 +11,7 @@ import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
 import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ListRecyclerViewSectionAdapter
-import com.dtprogramming.treasurehuntirl.util.CLUE
+import com.dtprogramming.treasurehuntirl.util.TEXT_CLUE
 import kotlinx.android.synthetic.main.view_holder_clue.view.*
 
 /**
@@ -50,7 +50,7 @@ class ClueAdapter(context: Context, clues: List<Clue>, val itemSelected: (Clue) 
                 view.setOnClickListener { itemSelected(clue) }
 
                 when (clue.type) {
-                    CLUE -> {
+                    TEXT_CLUE -> {
                         val textClue = clue as TextClue
 
                         clueText.text = textClue.text

@@ -16,5 +16,5 @@ val INITIAL_CHEST = "InitialTreasureChest"
 val NEW = "New"
 
 // Inventory item types
-val CLUE = 0
+val TEXT_CLUE = 0
 val WAYPOINT = 1
