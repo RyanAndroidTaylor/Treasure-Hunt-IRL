@@ -56,7 +56,7 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
         PresenterManager.removePresenter(TAG)
     }
 
-    private fun loadClue(clueUUid: String) {
+    private fun loadClue(clueUuid: String) {
         val clue = clueConnection.getTextClue(clueUuid)
 
         clueText = clue.text

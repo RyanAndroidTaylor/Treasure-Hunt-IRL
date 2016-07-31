@@ -91,7 +91,7 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
     }
 
     private fun createInitialTreasureChest() {
-        val initialTreasureChest = TreasureChest(randomUuid(), treasureHuntUuid, "Initial Treasure Chest", true)
+        val initialTreasureChest = TreasureChest(randomUuid(), treasureHuntUuid, "Initial Treasure Chest", -1)
 
         treasureChestConnection.insert(initialTreasureChest)
 

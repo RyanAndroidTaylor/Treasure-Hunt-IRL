@@ -5,8 +5,7 @@ import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
-import com.dtprogramming.treasurehuntirl.util.FALSE
-import com.dtprogramming.treasurehuntirl.util.getString
+import com.dtprogramming.treasurehuntirl.util.INITIAL_TREASURE_CHEST
 import com.squareup.sqlbrite.BriteDatabase
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -41,6 +40,20 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
         database.delete(TreasureChest.TABLE.NAME, TableColumns.WHERE_UUID_EQUALS, treasureChestId)
     }
 
+    override fun getNextTreasureChestOrder(treasureHuntUuid: String): Int {
+        var treasureChestCount = 0
+
+        val cursor = database.query("SELECT COUNT(*) FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.ORDER}!=?", treasureHuntUuid, "-1")
+
+        if (cursor != null && cursor.moveToFirst()) {
+            treasureChestCount = cursor.getInt(0)
+
+            cursor.close()
+        }
+
+        return treasureChestCount
+    }
+
     override fun getTreasureChest(treasureChestUuid: String): TreasureChest {
         val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", treasureChestUuid)
 
@@ -54,7 +67,7 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
     }
 
     override fun getInitialTreasureChest(treasureHuntUuid: String): TreasureChest {
-        val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.INITIAL_CHEST}=?", treasureHuntUuid, "1")
+        val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.ORDER}=?", treasureHuntUuid, INITIAL_TREASURE_CHEST)
 
         cursor.moveToFirst()
 
@@ -68,7 +81,7 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
     override fun getTreasureChestsForTreasureHunt(treasureHuntUuid: String): List<TreasureChest> {
         val treasureChests = ArrayList<TreasureChest>()
 
-        val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.INITIAL_CHEST}=?", treasureHuntUuid, FALSE)
+        val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.ORDER}!=? ORDER BY ${TreasureChest.TABLE.ORDER} ASC", treasureHuntUuid, INITIAL_TREASURE_CHEST)
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
@@ -82,7 +95,7 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
     }
 
     override fun getTreasureChestsForTreasureHuntAsync(treasureHuntUuid: String, onComplete: (List<TreasureChest>) -> Unit) {
-        val connection = database.createQuery(TreasureChest.TABLE.NAME, "SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.INITIAL_CHEST}=?", treasureHuntUuid, FALSE)
+        val connection = database.createQuery(TreasureChest.TABLE.NAME, "SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.ORDER}!=? ORDER BY ${TreasureChest.TABLE.ORDER} ASC", treasureHuntUuid, INITIAL_TREASURE_CHEST)
                 .mapToList { TreasureChest(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .first()

@@ -9,15 +9,15 @@ import com.dtprogramming.treasurehuntirl.util.*
 /**
  * Created by ryantaylor on 7/11/16.
  */
-data class TreasureChest(val id: Long, val uuid: String, val treasureHuntUuid: String, val title: String, val initialChest: Boolean) {
+data class TreasureChest(val id: Long, val uuid: String, val treasureHuntUuid: String, val title: String, val order: Int) {
 
     companion object {
         val TABLE = Table()
     }
 
-    constructor(uuid: String, treasureHuntUuid: String, title: String, initialChest: Boolean): this(-1L, uuid, treasureHuntUuid, title, initialChest)
+    constructor(uuid: String, treasureHuntUuid: String, title: String, order: Int): this(-1L, uuid, treasureHuntUuid, title, order)
 
-    constructor(cursor: Cursor): this(cursor.getLong(TableColumns.ID), cursor.getString(TableColumns.UUID), cursor.getString(TreasureChest.TABLE.TREASURE_HUNT), cursor.getString(TABLE.TITLE), cursor.getBoolean(TABLE.INITIAL_CHEST))
+    constructor(cursor: Cursor): this(cursor.getLong(TableColumns.ID), cursor.getString(TableColumns.UUID), cursor.getString(TreasureChest.TABLE.TREASURE_HUNT), cursor.getString(TABLE.TITLE), cursor.getInt(TABLE.ORDER))
 
     fun getContentValues(): ContentValues {
         val contentValues = ContentValues()
@@ -25,7 +25,7 @@ data class TreasureChest(val id: Long, val uuid: String, val treasureHuntUuid: S
         contentValues.put(TABLE.TITLE, title)
         contentValues.put(TableColumns.UUID, uuid)
         contentValues.put(TABLE.TREASURE_HUNT, treasureHuntUuid)
-        contentValues.put(TABLE.INITIAL_CHEST, if (initialChest) 1 else 0)
+        contentValues.put(TABLE.ORDER, order)
 
         return contentValues
     }
@@ -35,7 +35,7 @@ data class TreasureChest(val id: Long, val uuid: String, val treasureHuntUuid: S
 
         val TITLE: String
         val TREASURE_HUNT: String
-        val INITIAL_CHEST: String
+        val ORDER: String
 
         val CREATE: String
 
@@ -46,7 +46,7 @@ data class TreasureChest(val id: Long, val uuid: String, val treasureHuntUuid: S
 
             TITLE = quickTable.buildTextColumn("Title").build()
             TREASURE_HUNT = quickTable.buildTextColumn("TreasureHunt").build()
-            INITIAL_CHEST = quickTable.buildIntColumn("InitialChest").build()
+            ORDER = quickTable.buildIntColumn("TreasureChestOrder").build()
 
             CREATE = quickTable.retrieveCreateString()
         }
