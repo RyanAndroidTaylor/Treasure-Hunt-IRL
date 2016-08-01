@@ -54,6 +54,30 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
         return treasureChestCount
     }
 
+    override fun getCurrentTreasureChest(treasureHuntUuid: String): TreasureChest? {
+        var count = 0
+
+        val cursor = database.query("SELECT COUNT(*) FROM ${CollectedTreasureChest.TABLE.NAME} WHERE ${CollectedTreasureChest.TABLE.PLAYING_TREASURE_HUNT}=?", treasureHuntUuid)
+
+        if (cursor != null && cursor.moveToFirst()) {
+            count = cursor.getInt(0) - 1 //Don't count the initial treasure chest
+
+            cursor.close()
+        }
+
+        val treasureChestCursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.ORDER}=?", treasureHuntUuid, count.toString())
+
+        if (treasureChestCursor != null && treasureChestCursor.moveToFirst()) {
+            val treasureChest = TreasureChest(treasureChestCursor)
+
+            treasureChestCursor.close()
+
+            return treasureChest
+        }
+
+        return null
+    }
+
     override fun getTreasureChest(treasureChestUuid: String): TreasureChest {
         val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", treasureChestUuid)
 

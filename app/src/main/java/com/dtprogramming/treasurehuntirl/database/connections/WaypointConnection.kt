@@ -1,6 +1,5 @@
 package com.dtprogramming.treasurehuntirl.database.connections
 
-import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 
 /**

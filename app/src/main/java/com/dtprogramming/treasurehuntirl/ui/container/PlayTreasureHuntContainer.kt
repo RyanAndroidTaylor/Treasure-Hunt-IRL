@@ -88,6 +88,7 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
     }
 
     private fun switchToDigMode() {
+
         val extras = Bundle()
 
         extras.putString(PLAYING_HUNT_UUID, playTreasureHuntPresenter.playingTreasureHuntUuid)

@@ -5,6 +5,7 @@ import com.dtprogramming.treasurehuntirl.database.connections.CollectedTreasureC
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
+import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.DigModeView
 import com.dtprogramming.treasurehuntirl.util.DiggingTimer
@@ -29,7 +30,8 @@ class DigModePresenter(val waypointConnection: WaypointConnection, val treasureC
 
     private lateinit var playingTreasureHuntUuid: String
 
-    private var treasureChestWaypoints: List<Waypoint>? = null
+    private lateinit var currentTreasureChest: TreasureChest
+    private lateinit var currentTreasureChestLocation: Waypoint
 
     private var diggingTimer = DiggingTimer()
     private var diggingSubscription: Subscription? = null
@@ -42,13 +44,19 @@ class DigModePresenter(val waypointConnection: WaypointConnection, val treasureC
         this.digModeView = digModeView
         this.playingTreasureHuntUuid = playingTreasureHuntUuid
 
-        waypointConnection.getWaypointsForTreasureHuntAsync(playingTreasureHuntUuid, { treasureChestWaypoints = it })
+        val treasureChest = treasureChestConnection.getCurrentTreasureChest(playingTreasureHuntUuid)
+
+        if (treasureChest != null) {
+            currentTreasureChest = treasureChest
+            currentTreasureChestLocation = waypointConnection.getWaypointForParent(currentTreasureChest.uuid)!!
+        } else {
+            //TODO This should never happen but if it does we need to warn the user that there are no more buried treasure chests then close the container
+            Log.e("DigModePresenter", "Tried to switch to dig mode when there was no more buried treasure chests")
+        }
     }
 
     fun reload(digModeView: DigModeView) {
         this.digModeView = digModeView
-
-        waypointConnection.getWaypointsForTreasureHuntAsync(playingTreasureHuntUuid, { treasureChestWaypoints = it })
     }
 
     override fun unsubscribe() {
@@ -107,22 +115,13 @@ class DigModePresenter(val waypointConnection: WaypointConnection, val treasureC
     }
 
     private fun displayFindings() {
-        //TODO I think I want to restrict digging to only the current treasure chest. This way you can't get lucky and dig up some random treasure chest
-        treasureChestWaypoints?.let {
-            for ((id, uuid, parentUuid, lat1, long) in it) {
-                Log.i("PlayTHPresenter", "waypoint lat: $lat1, dig lat $lat \nwaypoint lng $long, dig lng $lng, accuracy $accuracy")
+        val (id, uuid, parentUuid, lat, long) = currentTreasureChestLocation
 
-                if ((lat > lat1 - 0.000150 && lat < lat1 + 0.000150) && (lng > long - 0.000150 && lng < long + 0.00150)) {
-                    val treasureChest = treasureChestConnection.getTreasureChest(parentUuid)
+        if ((lat > lat - 0.000150 && lat < lat + 0.000150) && (lng > long - 0.000150 && lng < long + 0.00150)) {
+            collectedTreasureChestConnection.insert(CollectedTreasureChest(currentTreasureChest.uuid, currentTreasureChest.title, playingTreasureHuntUuid, CollectedTreasureChest.CLOSED))
 
-                    collectedTreasureChestConnection.insert(CollectedTreasureChest(treasureChest.uuid, treasureChest.title, playingTreasureHuntUuid, CollectedTreasureChest.CLOSED))
-
-                    digModeView?.displayCollectedTreasureChest(parentUuid)
-
-                    return
-                }
-            }
-
+            digModeView?.displayCollectedTreasureChest(currentTreasureChest.uuid)
+        } else {
             digModeView?.displayCollectedTreasureChest(null)
         }
     }
