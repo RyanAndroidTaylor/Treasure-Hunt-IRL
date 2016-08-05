@@ -5,17 +5,12 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v7.widget.CardView
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
@@ -32,18 +27,12 @@ import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutMana
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.ClueAdapter
 import com.dtprogramming.treasurehuntirl.ui.views.CreateTreasureChestView
 import com.dtprogramming.treasurehuntirl.util.*
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapFragment
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.container_create_treasure_chest.view.*
 
 /**
  * Created by ryantaylor on 7/11/16.
  */
-class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, OnMapReadyCallback {
+class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView {
 
     companion object {
         val URI: String = CreateTreasureChestContainer::class.java.simpleName
@@ -72,14 +61,20 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
 
     private lateinit var editTitle: EditText
 
+    private lateinit var stateGroup: RadioGroup
+
     private lateinit var clueList: RecyclerView
     private lateinit var adapter: ClueAdapter
 
     private lateinit var addClue: TextView
 
-    private lateinit var addWaypoint: Button
+    private lateinit var waypointContainer: FrameLayout
+    private lateinit var editWaypoint: TextView
+    private lateinit var waypointLat: TextView
+    private lateinit var waypointLng: TextView
 
-    private var googleMap: GoogleMap? = null
+    private lateinit var passPhraseContainer: FrameLayout
+    private lateinit var editPassPhrase: EditText
 
     init {
         createTreasureChestPresenter = if (PresenterManager.hasPresenter(CreateTreasureChestPresenter.TAG))
@@ -96,7 +91,15 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
 
         editTitle = parent.create_chest_container_title
 
-        addWaypoint = parent.create_chest_container_add_waypoint
+        stateGroup = parent.create_chest_container_state_group
+
+        waypointContainer = parent.create_chest_container_waypoint_container
+        editWaypoint = parent.create_chest_container_edit_waypoint
+        waypointLat = parent.create_chest_container_lat
+        waypointLng = parent.create_chest_container_lng
+
+        passPhraseContainer = parent.create_chest_container_pass_phrase_container
+        editPassPhrase = parent.create_chest_container_pass_phrase
 
         addClue = parent.create_chest_container_add_clue
 
@@ -113,13 +116,24 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
                 createTreasureChestPresenter.titleChanged(s.toString())
             }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun afterTextChanged(s: Editable?) { }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
         })
+
+        stateGroup.setOnCheckedChangeListener { radioGroup, buttonId ->
+            when (buttonId) {
+                R.id.create_chest_container_state_buried -> createTreasureChestPresenter.stateChanged(BURIED)
+                R.id.create_chest_container_state_locked -> createTreasureChestPresenter.stateChanged(LOCKED)
+                R.id.create_chest_container_state_both -> createTreasureChestPresenter.stateChanged(BURIED_LOCKED)
+            }
+        }
 
         addClue.setOnClickListener { loadNewCreateClueContainer() }
 
-        addWaypoint.setOnClickListener { moveToContainer(CreateWayPointContainer.URI) }
+        editWaypoint.setOnClickListener { moveToContainer(CreateWayPointContainer.URI) }
 
         loadPresenter(extras)
 
@@ -144,43 +158,47 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         createTreasureChestPresenter.dispose()
     }
 
-    override fun onMapReady(map: GoogleMap?) {
-        this.googleMap = map
-
-        this.googleMap?.setOnMarkerClickListener {
-            moveToContainer(CreateWayPointContainer.URI)
-
-            true
-        }
-
-        createTreasureChestPresenter.mapLoaded()
-    }
-
-    override fun loadMap() {
-        addWaypoint.visibility = View.GONE
-
-        val mapFragment = MapFragment()
-        containerActivity.fragmentManager.beginTransaction().replace(R.id.create_chest_container_map_container, mapFragment).commit()
-
-        mapFragment.getMapAsync(this)
-    }
-
     override fun updateClueList(clues: List<Clue>) {
         adapter.updateList(clues)
     }
 
-    override fun displayWaypoint(waypoint: Waypoint) {
-        val latLng = LatLng(waypoint.lat, waypoint.long)
+    override fun displayWaypointInfo(waypoint: Waypoint?) {
+        waypointContainer.visibility = View.VISIBLE
 
-        googleMap?.addMarker(MarkerOptions().title("Waypoint").position(latLng))
+        if (waypoint != null) {
+            waypointLat.text = "${waypoint.lat.format(6)}"
+            waypointLng.text = "${waypoint.long.format(6)}"
 
-        val cameraPosition = CameraUpdateFactory.newLatLngZoom(latLng, 12.0f)
+            editWaypoint.text = "Edit waypoint"
+        } else {
+            editWaypoint.text = "Add waypoint"
+        }
+    }
 
-        googleMap?.moveCamera(cameraPosition)
+    override fun hideWaypointInfo() {
+        waypointContainer.visibility = View.GONE
+    }
+
+    override fun displayPassPhraseInfo(passPhrase: String) {
+        editPassPhrase.setText(passPhrase)
+
+        passPhraseContainer.visibility = View.VISIBLE
+    }
+
+    override fun hidePassPhraseInfo() {
+        passPhraseContainer.visibility = View.GONE
     }
 
     override fun setTitle(title: String) {
         editTitle.setText(title)
+    }
+
+    override fun setState(state: Int) {
+        when (state) {
+            BURIED -> stateGroup.check(R.id.create_chest_container_state_buried)
+            LOCKED -> stateGroup.check(R.id.create_chest_container_state_locked)
+            BURIED_LOCKED -> stateGroup.check(R.id.create_chest_container_state_both)
+        }
     }
 
     private fun loadPresenter(extras: Bundle) {
@@ -188,8 +206,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
             createTreasureChestPresenter.load(extras.getString(TREASURE_CHEST_UUID), this)
         else if (extras.containsKey(NEW)) {
             createTreasureChestPresenter.create(extras.getString(HUNT_UUID), this)
-        }
-        else
+        } else
             createTreasureChestPresenter.reload(this)
     }
 

@@ -6,6 +6,8 @@ import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.ui.views.CreateTreasureChestView
 import com.dtprogramming.treasurehuntirl.util.BURIED
+import com.dtprogramming.treasurehuntirl.util.BURIED_LOCKED
+import com.dtprogramming.treasurehuntirl.util.LOCKED
 import com.dtprogramming.treasurehuntirl.util.randomUuid
 
 /**
@@ -28,6 +30,7 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         private set
 
     private var treasureChestOrder = 0
+    private var treasureChestState = BURIED
 
     fun create(treasureHuntUuid: String, createTreasureChestView: CreateTreasureChestView) {
         this.createTreasureChestView = createTreasureChestView
@@ -71,7 +74,7 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     override fun dispose() {
         unsubscribe()
 
-        treasureChestConnection.update(TreasureChest(treasureChestUuid, treasureHuntUuid, treasureChestTitle, treasureChestOrder, BURIED))
+        treasureChestConnection.update(TreasureChest(treasureChestUuid, treasureHuntUuid, treasureChestTitle, treasureChestOrder, treasureChestState))
 
         PresenterManager.removePresenter(TAG)
     }
@@ -82,8 +85,10 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         treasureHuntUuid = treasureChest.treasureHuntUuid
         treasureChestTitle = treasureChest.title
         treasureChestOrder = treasureChest.order
+        treasureChestState = treasureChest.state
 
         createTreasureChestView?.setTitle(treasureChestTitle)
+        createTreasureChestView?.setState(treasureChestState)
     }
 
     private fun loadClues() {
@@ -93,17 +98,35 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     private fun loadWaypoint() {
         val waypoint = waypointConnection.getWaypointForParent(treasureChestUuid)
 
-        if (waypoint != null)
-            createTreasureChestView?.loadMap()
+        createTreasureChestView?.displayWaypointInfo(waypoint)
+    }
+
+    private fun loadPassPhrase() {
+        createTreasureChestView?.displayPassPhraseInfo("Need to set this up")
     }
 
     fun titleChanged(newTitle: String) {
         treasureChestTitle = newTitle
     }
 
-    fun mapLoaded() {
-        val waypoint = waypointConnection.getWaypointForParent(treasureChestUuid)
+    fun stateChanged(newState: Int) {
+        treasureChestState = newState
 
-        waypoint?.let { createTreasureChestView?.displayWaypoint(it) }
+        when (newState) {
+            BURIED -> {
+                loadWaypoint()
+
+                createTreasureChestView?.hidePassPhraseInfo()
+            }
+            LOCKED -> {
+                loadPassPhrase()
+
+                createTreasureChestView?.hideWaypointInfo()
+            }
+            BURIED_LOCKED -> {
+                loadWaypoint()
+                loadPassPhrase()
+            }
+        }
     }
 }

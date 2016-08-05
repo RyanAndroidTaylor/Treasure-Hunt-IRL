@@ -20,6 +20,36 @@
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_normal"
             android:hint="Title"/>
+
+        <RadioGroup
+            android:id="@+id/create_chest_container_state_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/create_chest_container_state_locked"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/locked"/>
+
+            <RadioButton
+                android:id="@+id/create_chest_container_state_buried"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/buried"/>
+
+            <RadioButton
+                android:id="@+id/create_chest_container_state_both"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/both"/>
+        </RadioGroup>
     </FrameLayout>
 
     <android.support.v7.widget.RecyclerView
@@ -42,17 +72,65 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/create_chest_container_map_container"
+        android:id="@+id/create_chest_container_waypoint_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_normal">
 
-        <Button
-            android:id="@+id/create_chest_container_add_waypoint"
-            style="@style/Widget.AppCompat.Button.Borderless"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/add_waypoint"
-            android:textColor="@color/colorAccent"/>
+            android:layout_gravity="center_vertical"
+            android:text="@string/location"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/create_chest_container_lat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Latitude 12.150142"/>
+
+            <TextView
+                android:id="@+id/create_chest_container_lng"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Longitude 54.140222"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/create_chest_container_edit_waypoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:textColor="@color/colorAccent"
+            tools:text="edit"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/create_chest_container_pass_phrase_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_normal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/pass_phrase"/>
+
+        <EditText
+            android:id="@+id/create_chest_container_pass_phrase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="90dp"/>
     </FrameLayout>
 </LinearLayout>

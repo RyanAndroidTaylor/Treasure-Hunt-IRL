@@ -22,4 +22,5 @@ val WAYPOINT = 1
 val OPEN = 0 // Only collected chests can be open
 val CLOSED = 1 // Can change to open. Only collected chests can be opened
 val LOCKED = 2 // Can change to open. Only collected chests can be opened
-val BURIED = 3 // Can change to closed or locked
+val BURIED = 3 // Can change to closed
+val BURIED_LOCKED = 4 // Can change to locked
