@@ -1,6 +1,5 @@
 package com.dtprogramming.treasurehuntirl.ui.views
 
-import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
 import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 
 /**
@@ -8,5 +7,11 @@ import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
  */
 interface PlayTreasureHuntView {
 
-    fun updateInventoryList(clues: List<InventoryItem>)
+    fun hideTreasureChestAction()
+    fun displayBuriedTreasureChestAction()
+    fun displayLockedTreasureChestAction()
+    fun updateInventoryList(items: List<InventoryItem>)
+
+    fun switchToDigMode()
+    fun viewCollectedTreasureChest(treasureChestUuid: String)
 }

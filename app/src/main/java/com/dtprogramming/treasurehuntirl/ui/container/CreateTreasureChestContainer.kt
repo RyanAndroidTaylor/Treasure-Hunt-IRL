@@ -169,9 +169,9 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView {
             waypointLat.text = "${waypoint.lat.format(6)}"
             waypointLng.text = "${waypoint.long.format(6)}"
 
-            editWaypoint.text = "Edit waypoint"
+            editWaypoint.text = containerActivity.stringFrom(R.string.edit_waypoint)
         } else {
-            editWaypoint.text = "Add waypoint"
+            editWaypoint.text = containerActivity.stringFrom(R.string.add_waypoint)
         }
     }
 

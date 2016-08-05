@@ -70,6 +70,8 @@ abstract class ContainerActivity : BaseActivity() {
         container?.onPause()
 
         loadContainer(uri, extras, false)
+
+        backStack.push(uri)
     }
 
     private fun loadCurrentContainer() {

@@ -49,6 +49,20 @@ class CollectedTreasureChestConnectionImpl : CollectedTreasureChestConnection {
         return openedTreasureChest
     }
 
+    override fun treasureChestIsCollected(treasureChestUuid: String): Boolean {
+        val cursor = database.query("SELECT COUNT(*) FROM ${CollectedTreasureChest.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", treasureChestUuid)
+
+        var isCollected = false
+
+        if (cursor != null && cursor.moveToFirst()) {
+            isCollected = cursor.getInt(0) > 0
+
+            cursor.close()
+        }
+
+        return isCollected
+    }
+
     override fun getCollectedTreasureChest(collectedTreasureChestUuid: String): CollectedTreasureChest {
         val cursor = database.query("SELECT * FROM ${CollectedTreasureChest.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", collectedTreasureChestUuid)
 

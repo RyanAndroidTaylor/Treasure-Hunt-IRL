@@ -1,6 +1,5 @@
 package com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -8,10 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.CollectedClueConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ListRecyclerViewSectionAdapter
-import com.dtprogramming.treasurehuntirl.util.TEXT_CLUE
-import com.dtprogramming.treasurehuntirl.util.WAYPOINT
+import com.dtprogramming.treasurehuntirl.util.*
 import kotlinx.android.synthetic.main.adapter_inventory_item.view.*
 
 /**
@@ -56,6 +55,15 @@ class InventoryAdapter(items: List<InventoryItem>, val itemSelected: (item: Inve
                     }
                     WAYPOINT -> {
                         itemInfo.text = "WAYPOINT"
+                    }
+                    TREASURE_CHEST -> {
+                        val chest = item as CollectedTreasureChest
+
+                        if (chest.state == LOCKED) {
+                            itemInfo.text = "Locked Treasure Chest"
+                        } else if (chest.state == CLOSED) {
+                            itemInfo.text = "Closed Treasure Chest"
+                        }
                     }
                 }
             }

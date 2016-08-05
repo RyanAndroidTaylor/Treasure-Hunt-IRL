@@ -3,7 +3,9 @@ package com.dtprogramming.treasurehuntirl.ui.container
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.*
 import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
@@ -32,6 +34,8 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
     private lateinit var inventoryList: RecyclerView
     private lateinit var adapter: InventoryAdapter
 
+    private lateinit var currentTreasureChestAction: Button
+
     init {
         playTreasureHuntPresenter = if (PresenterManager.hasPresenter(PlayTreasureHuntPresenter.TAG))
             PresenterManager.getPresenter(PlayTreasureHuntPresenter.TAG) as PlayTreasureHuntPresenter
@@ -47,11 +51,11 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
 
         inventoryList.layoutManager = LinearLayoutManager(containerActivity)
 
-        adapter = InventoryAdapter(listOf(), { inventoryItemSelected(it) })
+        adapter = InventoryAdapter(mutableListOf(), { inventoryItemSelected(it) })
 
         inventoryList.adapter = adapter
 
-        parent.play_treasure_hunt_dig_mode.setOnClickListener { switchToDigMode() }
+        currentTreasureChestAction = parent.play_treasure_hunt_chest_action
 
         if (extras.containsKey(PLAYING_HUNT_UUID)) {
             if (extras.containsKey(NEW))
@@ -61,6 +65,8 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
         } else {
             playTreasureHuntPresenter.reload(this)
         }
+
+        currentTreasureChestAction.setOnClickListener { playTreasureHuntPresenter.performTreasureChestAction() }
 
         return this
     }
@@ -83,17 +89,30 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
         playTreasureHuntPresenter.dispose()
     }
 
-    override fun updateInventoryList(clues: List<InventoryItem>) {
-        adapter.updateList(clues)
+    override fun hideTreasureChestAction() {
+        currentTreasureChestAction.visibility = View.GONE
     }
 
-    private fun switchToDigMode() {
+    override fun displayBuriedTreasureChestAction() {
+        currentTreasureChestAction.visibility = View.VISIBLE
+        currentTreasureChestAction.text = "Dig"
+    }
 
-        val extras = Bundle()
+    override fun displayLockedTreasureChestAction() {
+        currentTreasureChestAction.visibility = View.VISIBLE
+        currentTreasureChestAction.text = "Unlock"
+    }
 
-        extras.putString(PLAYING_HUNT_UUID, playTreasureHuntPresenter.playingTreasureHuntUuid)
+    override fun updateInventoryList(items: List<InventoryItem>) {
+        adapter.updateList(items)
+    }
 
-        containerActivity.startContainer(DigModeContainer.URI, extras)
+    override fun switchToDigMode() {
+        DigModeContainer.start(containerActivity, playTreasureHuntPresenter.playingTreasureHuntUuid)
+    }
+
+    override fun viewCollectedTreasureChest(treasureChestUuid: String) {
+        ViewCollectedTreasureChestContainer.start(containerActivity, treasureChestUuid)
     }
 
     private fun inventoryItemSelected(inventoryItem: InventoryItem) {

@@ -14,6 +14,7 @@ interface TreasureChestConnection : Connection {
 
     fun getNextTreasureChestPosition(treasureHuntUuid: String): Int
     fun getCurrentTreasureChest(treasureHuntUuid: String): TreasureChest?
+    fun getCurrentTreasureChestState(treasureHuntUuid: String): Int
 
     fun getTreasureChest(treasureChestUuid: String): TreasureChest
     fun getInitialTreasureChest(treasureHuntUuid: String): TreasureChest

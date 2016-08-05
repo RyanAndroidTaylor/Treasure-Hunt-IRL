@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingTop="@dimen/margin_normal"
-        android:paddingBottom="@dimen/margin_small"
         android:background="@color/divider_background"
+        android:gravity="center"
+        android:paddingBottom="@dimen/margin_small"
+        android:paddingTop="@dimen/margin_normal"
         android:text="INVENTORY"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/play_treasure_hunt_inventory_list"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10"/>
+        android:layout_height="match_parent"
+        android:layout_marginBottom="75dp"
+        android:layout_marginTop="50dp"/>
 
     <Button
-        android:id="@+id/play_treasure_hunt_dig_mode"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_margin="@dimen/margin_normal"
-        android:text="@string/switch_dig_mode"
-        android:background="@color/colorAccent"/>
-</LinearLayout>
+        android:id="@+id/play_treasure_hunt_chest_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:background="@drawable/chest_icon"
+        android:textColor="@color/colorAccent"/>
+</FrameLayout>

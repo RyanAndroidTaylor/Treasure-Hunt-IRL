@@ -13,5 +13,6 @@ interface CollectedTreasureChestConnection : Connection {
 
     fun openCollectedTreasureChest(collectedTreasureChest: CollectedTreasureChest, itemsCollected: (List<InventoryItem>) -> Unit): CollectedTreasureChest
 
+    fun treasureChestIsCollected(treasureChestUuid: String): Boolean
     fun getCollectedTreasureChest(collectedTreasureChestUuid: String): CollectedTreasureChest
 }

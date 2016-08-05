@@ -15,8 +15,9 @@ val CHEST_ORDER = "TreasureChestOrder"
 val NEW = "New"
 
 // Inventory item types
-val TEXT_CLUE = 0
-val WAYPOINT = 1
+val TREASURE_CHEST = 0
+val TEXT_CLUE = 1
+val WAYPOINT = 2
 
 // Treasure chest states
 val OPEN = 0 // Only collected chests can be open

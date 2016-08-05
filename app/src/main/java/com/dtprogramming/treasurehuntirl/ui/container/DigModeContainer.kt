@@ -34,6 +34,14 @@ class DigModeContainer : BasicContainer(), DigModeView, LocationListener, OnMapR
 
     companion object {
         val URI: String = DigModeContainer::class.java.simpleName
+
+        fun start(containerActivity: ContainerActivity, playingHuntUuid: String) {
+            val extras = Bundle()
+
+            extras.putString(PLAYING_HUNT_UUID, playingHuntUuid)
+
+            containerActivity.startContainer(URI, extras)
+        }
     }
 
     override var rootViewId = R.layout.container_dig_mode

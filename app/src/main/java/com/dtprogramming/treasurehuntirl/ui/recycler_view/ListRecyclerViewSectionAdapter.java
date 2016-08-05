@@ -23,12 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.MotionEvent;
-import android.view.View;
 
 public abstract class ListRecyclerViewSectionAdapter<VH extends RecyclerView.ViewHolder, T> extends RecyclerViewSectionAdapter<VH, T> implements SectionHandler<VH, T>, FooterHandler<VH> {
 

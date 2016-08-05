@@ -6,6 +6,8 @@ import com.dtprogramming.treasurehuntirl.database.connections.InventoryConnectio
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
+import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
+import com.dtprogramming.treasurehuntirl.util.LOCKED
 import com.dtprogramming.treasurehuntirl.util.OPEN
 import com.dtprogramming.treasurehuntirl.util.getString
 import rx.Observable
@@ -78,5 +80,29 @@ class InventoryConnectionImpl : InventoryConnection {
         }
 
         return clues
+    }
+
+    private fun getCurrentTreasureChest(treasureHuntUuid: String): TreasureChest? {
+        var count = 0
+
+        val cursor = database.query("SELECT COUNT(*) FROM ${CollectedTreasureChest.TABLE.NAME} WHERE ${CollectedTreasureChest.TABLE.PLAYING_TREASURE_HUNT}=? AND ${CollectedTreasureChest.TABLE.STATE}=?", treasureHuntUuid, OPEN.toString())
+
+        if (cursor != null && cursor.moveToFirst()) {
+            count = cursor.getInt(0) - 1 //Don't count the initial treasure chest
+
+            cursor.close()
+        }
+
+        val treasureChestCursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.ORDER}=?", treasureHuntUuid, count.toString())
+
+        if (treasureChestCursor != null && treasureChestCursor.moveToFirst()) {
+            val treasureChest = TreasureChest(treasureChestCursor)
+
+            treasureChestCursor.close()
+
+            return treasureChest
+        }
+
+        return null
     }
 }

@@ -7,6 +7,8 @@ import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConne
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.util.INITIAL_TREASURE_CHEST
+import com.dtprogramming.treasurehuntirl.util.OPEN
+import com.dtprogramming.treasurehuntirl.util.getInt
 import com.squareup.sqlbrite.BriteDatabase
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -58,7 +60,7 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
     override fun getCurrentTreasureChest(treasureHuntUuid: String): TreasureChest? {
         var count = 0
 
-        val cursor = database.query("SELECT COUNT(*) FROM ${CollectedTreasureChest.TABLE.NAME} WHERE ${CollectedTreasureChest.TABLE.PLAYING_TREASURE_HUNT}=?", treasureHuntUuid)
+        val cursor = database.query("SELECT COUNT(*) FROM ${CollectedTreasureChest.TABLE.NAME} WHERE ${CollectedTreasureChest.TABLE.PLAYING_TREASURE_HUNT}=? AND ${CollectedTreasureChest.TABLE.STATE}=?", treasureHuntUuid, OPEN.toString())
 
         if (cursor != null && cursor.moveToFirst()) {
             count = cursor.getInt(0) - 1 //Don't count the initial treasure chest
@@ -77,6 +79,30 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
         }
 
         return null
+    }
+
+    override fun getCurrentTreasureChestState(treasureHuntUuid: String): Int {
+        var count = 0
+
+        val cursor = database.query("SELECT COUNT(*) FROM ${CollectedTreasureChest.TABLE.NAME} WHERE ${CollectedTreasureChest.TABLE.PLAYING_TREASURE_HUNT}=?", treasureHuntUuid)
+
+        if (cursor != null && cursor.moveToFirst()) {
+            count = cursor.getInt(0) - 1 //Don't count the initial treasure chest
+
+            cursor.close()
+        }
+
+        val treasureChestCursor = database.query("SELECT ${TreasureChest.TABLE.STATE} FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.ORDER}=?", treasureHuntUuid, count.toString())
+
+        var state = -1
+
+        if (treasureChestCursor != null && treasureChestCursor.moveToFirst()) {
+            state = treasureChestCursor.getInt(TreasureChest.TABLE.STATE)
+
+            treasureChestCursor.close()
+        }
+
+        return state
     }
 
     override fun getTreasureChest(treasureChestUuid: String): TreasureChest {

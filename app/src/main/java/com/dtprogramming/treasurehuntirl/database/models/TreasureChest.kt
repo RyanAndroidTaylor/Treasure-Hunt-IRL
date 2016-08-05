@@ -19,6 +19,15 @@ data class TreasureChest(val id: Long, val uuid: String, val treasureHuntUuid: S
 
     constructor(cursor: Cursor): this(cursor.getLong(TableColumns.ID), cursor.getString(TableColumns.UUID), cursor.getString(TreasureChest.TABLE.TREASURE_HUNT), cursor.getString(TABLE.TITLE), cursor.getInt(TABLE.ORDER), cursor.getInt(TABLE.STATE))
 
+    fun collectTreasureChest(): CollectedTreasureChest {
+        val newState = if (state == BURIED)
+            CLOSED
+        else
+            LOCKED
+
+        return CollectedTreasureChest(uuid, title, treasureHuntUuid, newState)
+    }
+
     fun getContentValues(): ContentValues {
         val contentValues = ContentValues()
 
