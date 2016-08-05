@@ -1,6 +1,7 @@
 package com.dtprogramming.treasurehuntirl.ui.activities
 
 import android.os.Bundle
+import android.support.v4.util.ArrayMap
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.ui.container.*
 import java.util.*
@@ -18,8 +19,9 @@ abstract class ContainerActivity : BaseActivity() {
             return backStack.peek()
         }
 
+    //TODO Back stack not being saved if activity is destroyed
     private val backStack = Stack<String>()
-    private val containerMap = HashMap<String, Container>()
+    private val containerMap = ArrayMap<String, Container>()
 
     abstract var parent: ViewGroup
 
@@ -40,8 +42,8 @@ abstract class ContainerActivity : BaseActivity() {
         super.onDestroy()
 
         if (isFinishing) {
-            for (container in containerMap.values) {
-                container.onFinish()
+            for (i in 0..containerMap.size -1) {
+                containerMap.valueAt(i).onFinish()
             }
         }
     }

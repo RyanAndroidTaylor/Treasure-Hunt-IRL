@@ -22,7 +22,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ViewGroup;
 
-public abstract class RecyclerViewSectionAdapter<VH extends RecyclerView.ViewHolder, T> extends RecyclerView.Adapter<VH> implements SectionAdapter<VH, T>, SectionHandler<VH, T>, FooterHandler<VH>, RecyclerView.OnItemTouchListener {
+public abstract class RecyclerViewSectionAdapter<VH extends RecyclerView.ViewHolder, T> extends RecyclerView.Adapter<VH> implements SectionAdapter<VH, T>, SectionHandler<VH, T>, FooterHandler<VH> {
 
     protected int FOOTER_COUNT = 1;
     protected int NO_ITEMS = 0;

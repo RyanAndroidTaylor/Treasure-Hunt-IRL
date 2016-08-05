@@ -85,7 +85,6 @@ class CreateTextClueContainer() : BasicContainer(), CreateClueView {
     }
 
     override fun onPause() {
-        Log.i("CreateTextClueContainer", "onPause()")
         super.onPause()
 
         createCluePresenter.unsubscribe()
@@ -98,7 +97,6 @@ class CreateTextClueContainer() : BasicContainer(), CreateClueView {
     }
 
     override fun onFinish() {
-        Log.i("CreateTextClueContainer", "onFinish()")
         super.onFinish()
 
         createCluePresenter.dispose()

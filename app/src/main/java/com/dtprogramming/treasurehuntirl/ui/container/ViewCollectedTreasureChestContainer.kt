@@ -61,7 +61,7 @@ class ViewCollectedTreasureChestContainer : BasicContainer(), ViewCollectedTreas
         treasureChestItems = parent.view_treasure_chest_treasure_items
 
         treasureChestItems.layoutManager = LinearLayoutManager(containerActivity)
-        adapter = InventoryAdapter(containerActivity, listOf(), { inventoryItemSelected(it) })
+        adapter = InventoryAdapter(listOf(), { inventoryItemSelected(it) })
         treasureChestItems.adapter = adapter
 
         treasureChestImage.setOnClickListener { openTreasureChest() }

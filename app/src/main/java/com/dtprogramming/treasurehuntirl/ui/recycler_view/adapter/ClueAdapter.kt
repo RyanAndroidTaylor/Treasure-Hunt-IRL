@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.view_holder_clue.view.*
 /**
  * Created by ryantaylor on 6/16/16.
  */
-class ClueAdapter(context: Context, clues: List<Clue>, val itemSelected: (Clue) -> Unit) : ListRecyclerViewSectionAdapter<ClueAdapter.ClueViewHolder, Clue>(context, clues) {
+class ClueAdapter(clues: List<Clue>, val itemSelected: (Clue) -> Unit) : ListRecyclerViewSectionAdapter<ClueAdapter.ClueViewHolder, Clue>(clues) {
 
     override fun needsSectionBefore(item: Clue?): Boolean {
         return false

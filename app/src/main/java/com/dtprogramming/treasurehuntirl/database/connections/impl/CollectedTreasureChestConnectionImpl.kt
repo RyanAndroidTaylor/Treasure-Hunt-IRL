@@ -21,7 +21,7 @@ import java.util.*
 class CollectedTreasureChestConnectionImpl : CollectedTreasureChestConnection {
 
     override val database = THApp.briteDatabase
-    override val connections = ArrayList<Subscription>()
+    override val subscriptions = ArrayList<Subscription>()
 
     override fun insert(collectedTreasureChest: CollectedTreasureChest) {
         database.insert(CollectedTreasureChest.TABLE.NAME, collectedTreasureChest.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
@@ -32,7 +32,7 @@ class CollectedTreasureChestConnectionImpl : CollectedTreasureChestConnection {
     }
 
     override fun openCollectedTreasureChest(collectedTreasureChest: CollectedTreasureChest, itemsCollected: (List<InventoryItem>) -> Unit): CollectedTreasureChest {
-        val openedTreasureChest = CollectedTreasureChest(collectedTreasureChest.uuid, collectedTreasureChest.title, collectedTreasureChest.playingTreasureHuntUuid, CollectedTreasureChest.OPEN)
+        val openedTreasureChest = collectedTreasureChest.open()
 
         update(openedTreasureChest)
 
@@ -62,14 +62,14 @@ class CollectedTreasureChestConnectionImpl : CollectedTreasureChestConnection {
     }
 
     override fun unsubscribe() {
-        for (connection in connections)
+        for (connection in subscriptions)
             connection.unsubscribe()
     }
 
     private fun collectItemsForOpenedTreasureChest(treasureChestUuid: String): List<InventoryItem> {
-        val inventoryItems = ArrayList<InventoryItem>()
-
         val cursor = database.query("SELECT * FROM ${TextClue.TABLE.NAME} WHERE ${TextClue.TABLE.PARENT}=?", treasureChestUuid)
+
+        val inventoryItems = ArrayList<InventoryItem>(cursor.count)
 
         if (cursor != null) {
             while (cursor.moveToNext()) {

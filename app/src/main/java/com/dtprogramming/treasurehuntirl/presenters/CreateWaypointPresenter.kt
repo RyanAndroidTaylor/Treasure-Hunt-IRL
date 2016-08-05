@@ -12,8 +12,8 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
     val BASE_NUDGE_DISTANCE = 1.0
 
     private var createWaypointView: CreateWaypointView? = null
-    private lateinit var parentUuid: String
 
+    private lateinit var parentUuid: String
     private lateinit var waypointUuid: String
 
     private var lat: Double = 0.0
@@ -58,6 +58,8 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
     }
 
     override fun dispose() {
+        unsubscribe()
+
         PresenterManager.removePresenter(TAG)
     }
 

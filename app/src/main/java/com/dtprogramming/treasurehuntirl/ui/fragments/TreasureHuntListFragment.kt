@@ -35,7 +35,7 @@ class TreasureHuntListFragment : TabFragment() {
 
             recyclerView.layoutManager = LinearLayoutManager(context)
 
-            adapter = TreasureHuntAdapter(context, listOf(), { launchTreasureHuntActivity(it) })
+            adapter = TreasureHuntAdapter(listOf(), { launchTreasureHuntActivity(it) })
 
             recyclerView.adapter = adapter
         }

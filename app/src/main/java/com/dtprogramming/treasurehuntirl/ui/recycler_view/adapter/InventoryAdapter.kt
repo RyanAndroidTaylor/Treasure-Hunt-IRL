@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.adapter_inventory_item.view.*
 /**
  * Created by ryantaylor on 7/26/16.
  */
-class InventoryAdapter(context: Context, items: List<InventoryItem>, val itemSelected: (item: InventoryItem) -> Unit) : ListRecyclerViewSectionAdapter<InventoryAdapter.InventoryViewHolder, InventoryItem>(context, items) {
+class InventoryAdapter(items: List<InventoryItem>, val itemSelected: (item: InventoryItem) -> Unit) : ListRecyclerViewSectionAdapter<InventoryAdapter.InventoryViewHolder, InventoryItem>(items) {
 
     override fun needsSectionBefore(item: InventoryItem?): Boolean {
         return false

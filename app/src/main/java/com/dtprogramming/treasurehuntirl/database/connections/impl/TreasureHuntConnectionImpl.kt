@@ -17,7 +17,7 @@ import java.util.*
  */
 class TreasureHuntConnectionImpl : TreasureHuntConnection {
 
-    override val connections = ArrayList<Subscription>()
+    override val subscriptions = ArrayList<Subscription>()
 
     override val database: BriteDatabase
 
@@ -48,32 +48,34 @@ class TreasureHuntConnectionImpl : TreasureHuntConnection {
     }
 
     override fun getTreasureHuntsAsync(onComplete: (List<TreasureHunt>) -> Unit) {
-        THApp.briteDatabase.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
+        val subscription = THApp.briteDatabase.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
                 .mapToList { TreasureHunt(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .first()
                 .subscribe {
                     onComplete(it)
                 }
+
+        subscriptions.add(subscription)
     }
 
     override fun subscribeToTreasureHunts(onChange: (List<TreasureHunt>) -> Unit) {
-        val connection = THApp.briteDatabase.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
+        val subscription = THApp.briteDatabase.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
                 .mapToList { TreasureHunt(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     onChange(it)
                 }
 
-        connections.add(connection)
+        subscriptions.add(subscription)
     }
 
     override fun unsubscribe() {
-        for (connection in connections) {
+        for (connection in subscriptions) {
             if (!connection.isUnsubscribed)
                 connection.unsubscribe()
         }
 
-        connections.clear()
+        subscriptions.clear()
     }
 }

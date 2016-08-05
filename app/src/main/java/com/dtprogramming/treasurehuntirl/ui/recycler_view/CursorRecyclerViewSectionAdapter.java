@@ -44,9 +44,6 @@ public abstract class CursorRecyclerViewSectionAdapter<VH extends RecyclerView.V
 
     private DataSetObserver dataSetObserver;
 
-    protected OnListItemClickedListener listItemClickedListener;
-    protected GestureDetector gestureDetector;
-
     public CursorRecyclerViewSectionAdapter(Cursor cursor) {
         this.cursor = cursor;
         dataValid = cursor != null;
@@ -163,49 +160,4 @@ public abstract class CursorRecyclerViewSectionAdapter<VH extends RecyclerView.V
     }
 
     public abstract void onBindViewHolder(VH viewHolder, Cursor cursor);
-
-    public void setOnListItemClickListener(OnListItemClickedListener listItemClickListener) {
-        this.listItemClickedListener = listItemClickListener;
-
-        if (gestureDetector == null)
-            gestureDetector = new GestureDetector(new SimpleTouchListener());
-    }
-
-    public interface OnListItemClickedListener {
-        void onItemClicked(long itemID);
-    }
-
-    private class SimpleTouchListener extends SimpleOnGestureListener {
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            return true;
-        }
-    }
-
-    @Override
-    public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-        View childView = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
-
-        if (listItemClickedListener != null && childView != null && gestureDetector.onTouchEvent(motionEvent)) {
-            int position = recyclerView.getChildLayoutPosition(childView);
-
-            if (isNormalView(position)) {
-                listItemClickedListener.onItemClicked(getItemId(getAdjustedPositionForSections(position)));
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-
-    }
-
-    @Override
-    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-    }
 }

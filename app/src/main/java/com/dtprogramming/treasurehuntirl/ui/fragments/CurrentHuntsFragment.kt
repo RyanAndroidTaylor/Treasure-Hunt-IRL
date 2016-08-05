@@ -35,7 +35,7 @@ class CurrentHuntsFragment : TabFragment() {
 
             recyclerView.layoutManager = LinearLayoutManager(context)
 
-            adapter = PlayingTreasureHuntAdapter(context, listOf(), { launchTreasureHuntActivity(it) })
+            adapter = PlayingTreasureHuntAdapter(listOf(), { launchTreasureHuntActivity(it) })
 
             recyclerView.adapter = adapter
         }

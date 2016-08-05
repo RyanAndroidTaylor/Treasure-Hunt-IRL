@@ -10,7 +10,7 @@ interface Connection {
 
     val database: BriteDatabase
 
-    val connections: List<Subscription>
+    val subscriptions: List<Subscription>
 
     fun unsubscribe()
 }

@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.adapter_treasure_chest.view.*
 /**
  * Created by ryantaylor on 7/11/16.
  */
-class TreasureChestAdapter(val onItemClickListener: (TreasureChest) -> Unit, context: Context, treasureChest: List<TreasureChest>): ListRecyclerViewSectionAdapter<TreasureChestAdapter.TreasureChestViewHolder, TreasureChest>(context, treasureChest) {
+class TreasureChestAdapter(val onItemClickListener: (TreasureChest) -> Unit, treasureChest: List<TreasureChest>): ListRecyclerViewSectionAdapter<TreasureChestAdapter.TreasureChestViewHolder, TreasureChest>(treasureChest) {
     override fun onBindViewHolder(viewHolder: TreasureChestViewHolder?, item: TreasureChest?) {
         viewHolder?.bind(item)
     }

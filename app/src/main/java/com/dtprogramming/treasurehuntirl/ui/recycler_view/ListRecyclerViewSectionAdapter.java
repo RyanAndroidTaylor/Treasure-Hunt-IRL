@@ -33,13 +33,9 @@ import android.view.View;
 public abstract class ListRecyclerViewSectionAdapter<VH extends RecyclerView.ViewHolder, T> extends RecyclerViewSectionAdapter<VH, T> implements SectionHandler<VH, T>, FooterHandler<VH> {
 
     protected List<T> items;
-    protected OnListItemClickedListener<T> itemClickedListener;
-    protected GestureDetector gestureDetector;
 
-    public ListRecyclerViewSectionAdapter(Context context, List<T> items) {
+    public ListRecyclerViewSectionAdapter(List<T> items) {
         this.items = items;
-
-        gestureDetector = new GestureDetector(context, new SimpleTouchListener());
 
         setViewTypes();
     }
@@ -92,42 +88,4 @@ public abstract class ListRecyclerViewSectionAdapter<VH extends RecyclerView.Vie
     }
 
     public abstract void onBindViewHolder(VH viewHolder, T item);
-
-    public void setOnListItemClickListener(OnListItemClickedListener<T> itemClickListener) {
-        this.itemClickedListener = itemClickListener;
-    }
-
-    public interface OnListItemClickedListener<T> {
-        void onItemClicked(T item);
-    }
-
-    private class SimpleTouchListener extends SimpleOnGestureListener {
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            return true;
-        }
-    }
-
-    @Override
-    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-        View childView = rv.findChildViewUnder(e.getX(), e.getY());
-
-        if (itemClickedListener != null && childView != null && gestureDetector.onTouchEvent(e)) {
-            int position = rv.getChildLayoutPosition(childView);
-
-            if (getItemViewType(position) == DEFAULT_VIEW_TYPE)
-                itemClickedListener.onItemClicked(items.get(getAdjustedPositionForSections(position)));
-        }
-
-        return false;
-    }
-
-    @Override
-    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-    }
-
-    @Override
-    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-    }
 }

@@ -5,6 +5,7 @@ import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConne
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.ui.views.CreateTreasureChestView
+import com.dtprogramming.treasurehuntirl.util.BURIED
 import com.dtprogramming.treasurehuntirl.util.randomUuid
 
 /**
@@ -28,22 +29,21 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
 
     private var treasureChestOrder = 0
 
-    fun create(treasureHuntId: String, createTreasureChestView: CreateTreasureChestView) {
+    fun create(treasureHuntUuid: String, createTreasureChestView: CreateTreasureChestView) {
         this.createTreasureChestView = createTreasureChestView
-        this.treasureHuntUuid = treasureHuntId
+        this.treasureHuntUuid = treasureHuntUuid
 
         treasureChestUuid = randomUuid()
-        treasureChestOrder = treasureChestConnection.getNextTreasureChestOrder(treasureHuntUuid)
+        treasureChestOrder = treasureChestConnection.getNextTreasureChestPosition(this.treasureHuntUuid)
 
-        treasureChestConnection.insert(TreasureChest(treasureChestUuid, treasureHuntId, treasureChestTitle, treasureChestOrder))
+        treasureChestConnection.insert(TreasureChest(treasureChestUuid, treasureHuntUuid, treasureChestTitle, treasureChestOrder, BURIED))
 
         createTreasureChestView.setTitle(treasureChestTitle)
     }
 
-    fun load(treasureChestId: String, treasureHuntId: String, createTreasureChestView: CreateTreasureChestView) {
+    fun load(treasureChestId: String, createTreasureChestView: CreateTreasureChestView) {
         this.createTreasureChestView = createTreasureChestView
         this.treasureChestUuid = treasureChestId
-        this.treasureHuntUuid = treasureHuntId
 
 
         loadTreasureChest()
@@ -69,7 +69,9 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     }
 
     override fun dispose() {
-        treasureChestConnection.update(TreasureChest(treasureChestUuid, treasureHuntUuid, treasureChestTitle, treasureChestOrder))
+        unsubscribe()
+
+        treasureChestConnection.update(TreasureChest(treasureChestUuid, treasureHuntUuid, treasureChestTitle, treasureChestOrder, BURIED))
 
         PresenterManager.removePresenter(TAG)
     }
@@ -77,8 +79,10 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     private fun loadTreasureChest() {
         val treasureChest = treasureChestConnection.getTreasureChest(treasureChestUuid)
 
+        treasureHuntUuid = treasureChest.treasureHuntUuid
         treasureChestTitle = treasureChest.title
         treasureChestOrder = treasureChest.order
+
         createTreasureChestView?.setTitle(treasureChestTitle)
     }
 

@@ -34,6 +34,22 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
 
     companion object {
         val URI: String = CreateHuntContainer::class.java.simpleName
+
+        fun createNewHunt(containerActivity: ContainerActivity) {
+            val extras = Bundle()
+
+            extras.putBoolean(NEW, true)
+
+            containerActivity.startContainer(URI, extras)
+        }
+
+        fun loadExistingHunt(containerActivity: ContainerActivity, treasureHuntUuid: String) {
+            val extras = Bundle()
+
+            extras.putString(HUNT_UUID, treasureHuntUuid)
+
+            containerActivity.startContainer(URI, extras)
+        }
     }
 
     override var rootViewId = R.layout.container_create_hunt
@@ -63,17 +79,15 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         treasureHuntTitle = parent.create_hunt_container_title
         addClue = parent.create_hunt_container_add_clue
 
-        parent.create_hunt_container_add_chest.setOnClickListener { loadCreateTreasureChestContainer() }
-
         treasureChestList = parent.create_hunt_container_chest_list
         treasureChestList.layoutManager = LinearLayoutManager(containerActivity)
-        treasureChestAdapter = TreasureChestAdapter(treasureChestSelectedListener, containerActivity, listOf())
+        treasureChestAdapter = TreasureChestAdapter({ treasureChestSelected(it) }, listOf())
         treasureChestList.adapter = treasureChestAdapter
 
         initialClueList = parent.create_hunt_container_initial_clues
         initialClueList.layoutManager = CustomLinearLayoutManager(containerActivity)
         initialClueList.addOnScrollListener(ClueScrollListener())
-        initialClueAdapter = ClueAdapter(containerActivity, listOf(), { loadClueContainer(it) })
+        initialClueAdapter = ClueAdapter(listOf(), { loadClueContainer(it) })
         initialClueList.adapter = initialClueAdapter
 
         if (extras.containsKey(HUNT_UUID))
@@ -92,6 +106,8 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         })
 
         addClue.setOnClickListener { startCreateClueContainer() }
+
+        parent.create_hunt_container_add_chest.setOnClickListener { loadCreateTreasureChestContainer() }
 
         return this
     }
@@ -126,22 +142,12 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         initialClueAdapter.updateList(initialClues)
     }
 
-    val treasureChestSelectedListener: (treasureChest: TreasureChest) -> Unit = {
-        val extras = Bundle()
-
-        extras.putString(TREASURE_CHEST_UUID, it.uuid)
-        extras.putString(HUNT_UUID, it.treasureHuntUuid)
-
-        containerActivity.startContainer(CreateTreasureChestContainer.URI, extras)
+    fun treasureChestSelected(treasureChest: TreasureChest) {
+        CreateTreasureChestContainer.loadTreasureChest(containerActivity, treasureChest.uuid)
     }
 
     fun loadCreateTreasureChestContainer() {
-        val bundle = Bundle()
-
-        bundle.putBoolean(NEW, true)
-        bundle.putString(HUNT_UUID, createHuntPresenter.treasureHuntUuid)
-
-        containerActivity.startContainer(CreateTreasureChestContainer.URI, bundle)
+        CreateTreasureChestContainer.createTreasureChest(containerActivity, createHuntPresenter.treasureHuntUuid)
     }
 
     private fun startCreateClueContainer() {

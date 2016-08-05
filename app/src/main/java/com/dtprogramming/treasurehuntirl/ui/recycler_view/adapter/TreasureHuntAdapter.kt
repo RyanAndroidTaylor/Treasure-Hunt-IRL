@@ -1,28 +1,21 @@
 package com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
-import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
-import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
-import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
-import com.dtprogramming.treasurehuntirl.database.models.Waypoint
-import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ListRecyclerViewSectionAdapter
 import kotlinx.android.synthetic.main.view_holder_treasure_hunt.view.*
 
 /**
  * Created by ryantaylor on 6/29/16.
  */
-class TreasureHuntAdapter(context: Context, items: List<TreasureHunt>, val itemSelected: (TreasureHunt) -> Unit) : ListRecyclerViewSectionAdapter<TreasureHuntAdapter.TreasureHuntViewHolder, TreasureHunt>(context, items) {
+class TreasureHuntAdapter(items: List<TreasureHunt>, val itemSelected: (TreasureHunt) -> Unit) : ListRecyclerViewSectionAdapter<TreasureHuntAdapter.TreasureHuntViewHolder, TreasureHunt>(items) {
 
     override fun onCreateViewHolder(parent: ViewGroup?): TreasureHuntViewHolder? {
         return TreasureHuntViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.view_holder_treasure_hunt, parent, false), itemSelected)

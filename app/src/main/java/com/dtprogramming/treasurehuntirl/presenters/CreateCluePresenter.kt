@@ -53,6 +53,8 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
     }
 
     override fun dispose() {
+        unsubscribe()
+
         PresenterManager.removePresenter(TAG)
     }
 

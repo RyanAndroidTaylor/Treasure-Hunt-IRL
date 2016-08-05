@@ -20,7 +20,7 @@ import java.util.*
  */
 class ClueConnectionImpl : ClueConnection {
 
-    override val connections = ArrayList<Subscription>()
+    override val subscriptions = ArrayList<Subscription>()
 
     override val database: BriteDatabase
 
@@ -81,12 +81,12 @@ class ClueConnectionImpl : ClueConnection {
     }
 
     override fun unsubscribe() {
-        for (connection in connections) {
+        for (connection in subscriptions) {
             if (!connection.isUnsubscribed)
                 connection.unsubscribe()
         }
 
-        connections.clear()
+        subscriptions.clear()
     }
 
     private fun getTextCluesForParent(parentUuid: String): List<TextClue>? {

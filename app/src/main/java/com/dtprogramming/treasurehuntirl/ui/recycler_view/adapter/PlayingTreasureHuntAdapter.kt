@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.adapter_treasure_chest.view.*
 /**
  * Created by ryantaylor on 7/21/16.
  */
-class PlayingTreasureHuntAdapter(context: Context, playingTreasureHunts: List<PlayingTreasureHunt>, val selected: (PlayingTreasureHunt) -> Unit) : ListRecyclerViewSectionAdapter<PlayingTreasureHuntAdapter.PlayingTreasureHuntViewHolder, PlayingTreasureHunt>(context, playingTreasureHunts) {
+class PlayingTreasureHuntAdapter(playingTreasureHunts: List<PlayingTreasureHunt>, val selected: (PlayingTreasureHunt) -> Unit) : ListRecyclerViewSectionAdapter<PlayingTreasureHuntAdapter.PlayingTreasureHuntViewHolder, PlayingTreasureHunt>(playingTreasureHunts) {
 
     override fun onBindViewHolder(viewHolder: PlayingTreasureHuntViewHolder?, item: PlayingTreasureHunt) {
         viewHolder?.bind(item)

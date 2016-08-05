@@ -15,25 +15,25 @@ class PlayingTreasureHuntConnectionImpl : PlayingTreasureHuntConnection {
 
     override val database = THApp.briteDatabase
 
-    override val connections = ArrayList<Subscription>()
+    override val subscriptions = ArrayList<Subscription>()
 
     override fun insert(playingTreasureHunt: PlayingTreasureHunt) {
         database.insert(PlayingTreasureHunt.TABLE.NAME, playingTreasureHunt.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
     }
 
     override fun getPlayingTreasureHuntsAsync(onComplete: (List<PlayingTreasureHunt>) -> Unit) {
-        val connection = database.createQuery(PlayingTreasureHunt.TABLE.NAME, "SELECT * FROM ${PlayingTreasureHunt.TABLE.NAME}")
+        val subscription = database.createQuery(PlayingTreasureHunt.TABLE.NAME, "SELECT * FROM ${PlayingTreasureHunt.TABLE.NAME}")
                 .mapToList { PlayingTreasureHunt(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     onComplete(it)
                 }
 
-        connections.add(connection)
+        subscriptions.add(subscription)
     }
 
     override fun unsubscribe() {
-        for (connection in connections)
+        for (connection in subscriptions)
             if (!connection.isUnsubscribed)
                 connection.unsubscribe()
     }

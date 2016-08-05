@@ -9,15 +9,15 @@ import com.dtprogramming.treasurehuntirl.util.*
 /**
  * Created by ryantaylor on 7/11/16.
  */
-data class TreasureChest(val id: Long, val uuid: String, val treasureHuntUuid: String, val title: String, val order: Int) {
+data class TreasureChest(val id: Long, val uuid: String, val treasureHuntUuid: String, val title: String, val order: Int, val state: Int) {
 
     companion object {
         val TABLE = Table()
     }
 
-    constructor(uuid: String, treasureHuntUuid: String, title: String, order: Int): this(-1L, uuid, treasureHuntUuid, title, order)
+    constructor(uuid: String, treasureHuntUuid: String, title: String, order: Int, state: Int): this(-1L, uuid, treasureHuntUuid, title, order, state)
 
-    constructor(cursor: Cursor): this(cursor.getLong(TableColumns.ID), cursor.getString(TableColumns.UUID), cursor.getString(TreasureChest.TABLE.TREASURE_HUNT), cursor.getString(TABLE.TITLE), cursor.getInt(TABLE.ORDER))
+    constructor(cursor: Cursor): this(cursor.getLong(TableColumns.ID), cursor.getString(TableColumns.UUID), cursor.getString(TreasureChest.TABLE.TREASURE_HUNT), cursor.getString(TABLE.TITLE), cursor.getInt(TABLE.ORDER), cursor.getInt(TABLE.STATE))
 
     fun getContentValues(): ContentValues {
         val contentValues = ContentValues()
@@ -26,6 +26,7 @@ data class TreasureChest(val id: Long, val uuid: String, val treasureHuntUuid: S
         contentValues.put(TableColumns.UUID, uuid)
         contentValues.put(TABLE.TREASURE_HUNT, treasureHuntUuid)
         contentValues.put(TABLE.ORDER, order)
+        contentValues.put(TABLE.STATE, state)
 
         return contentValues
     }
@@ -36,6 +37,7 @@ data class TreasureChest(val id: Long, val uuid: String, val treasureHuntUuid: S
         val TITLE: String
         val TREASURE_HUNT: String
         val ORDER: String
+        val STATE: String
 
         val CREATE: String
 
@@ -47,6 +49,7 @@ data class TreasureChest(val id: Long, val uuid: String, val treasureHuntUuid: S
             TITLE = quickTable.buildTextColumn("Title").build()
             TREASURE_HUNT = quickTable.buildTextColumn("TreasureHunt").build()
             ORDER = quickTable.buildIntColumn("TreasureChestOrder").build()
+            STATE = quickTable.buildIntColumn("State").build()
 
             CREATE = quickTable.retrieveCreateString()
         }

@@ -47,6 +47,23 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
 
     companion object {
         val URI: String = CreateTreasureChestContainer::class.java.simpleName
+
+        fun createTreasureChest(containerActivity: ContainerActivity, treasureHuntUuid: String) {
+            val extras = Bundle()
+
+            extras.putBoolean(NEW, true)
+            extras.putString(HUNT_UUID, treasureHuntUuid)
+
+            containerActivity.startContainer(URI, extras);
+        }
+
+        fun loadTreasureChest(containerActivity: ContainerActivity, treasureChestUuid: String) {
+            val extras = Bundle()
+
+            extras.putString(TREASURE_CHEST_UUID, treasureChestUuid)
+
+            containerActivity.startContainer(URI, extras)
+        }
     }
 
     override var rootViewId = R.layout.container_create_treasure_chest
@@ -71,7 +88,6 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
             PresenterManager.addPresenter(CreateTreasureChestPresenter.TAG, CreateTreasureChestPresenter(TreasureChestConnectionImpl(), ClueConnectionImpl(), WaypointConnectionImpl())) as CreateTreasureChestPresenter
     }
 
-    //TODO Need to add RecyclerView to hold clues. And make it so multiple clues can be added
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
         super.inflate(containerActivity, parent, extras)
         containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.treasure_chest_action_bar_title))
@@ -86,7 +102,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
 
         clueList = parent.create_treasure_chest_clue_list
 
-        adapter = ClueAdapter(containerActivity, listOf(), { loadCreateClueContainer(it) })
+        adapter = ClueAdapter(listOf(), { itemSelected(it) })
 
         clueList.layoutManager = CustomLinearLayoutManager(containerActivity)
         clueList.addOnScrollListener(ClueScrollListener())
@@ -167,13 +183,9 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         editTitle.setText(title)
     }
 
-    override fun close() {
-        containerActivity.finishCurrentContainer()
-    }
-
     private fun loadPresenter(extras: Bundle) {
         if (extras.containsKey(TREASURE_CHEST_UUID))
-            createTreasureChestPresenter.load(extras.getString(TREASURE_CHEST_UUID), extras.getString(HUNT_UUID), this)
+            createTreasureChestPresenter.load(extras.getString(TREASURE_CHEST_UUID), this)
         else if (extras.containsKey(NEW)) {
             createTreasureChestPresenter.create(extras.getString(HUNT_UUID), this)
         }
@@ -199,7 +211,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
         CreateTextClueContainer.startNewContainer(containerActivity, createTreasureChestPresenter.treasureChestUuid)
     }
 
-    private fun loadCreateClueContainer(item: InventoryItem) {
+    private fun itemSelected(item: InventoryItem) {
         when (item.type) {
             TEXT_CLUE -> {
                 val textClue = item as TextClue

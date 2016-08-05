@@ -6,6 +6,7 @@ import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnec
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
+import com.dtprogramming.treasurehuntirl.util.CLOSED
 import com.dtprogramming.treasurehuntirl.util.randomUuid
 
 /**
@@ -91,7 +92,7 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
     }
 
     private fun createInitialTreasureChest() {
-        val initialTreasureChest = TreasureChest(randomUuid(), treasureHuntUuid, "Initial Treasure Chest", -1)
+        val initialTreasureChest = TreasureChest(randomUuid(), treasureHuntUuid, "Initial Treasure Chest", -1, CLOSED)
 
         treasureChestConnection.insert(initialTreasureChest)
 

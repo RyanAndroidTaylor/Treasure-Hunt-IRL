@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.database.connections.impl
 
+import android.database.sqlite.SQLiteDatabase
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
@@ -16,7 +17,7 @@ import java.util.*
  */
 class TreasureChestConnectionImpl : TreasureChestConnection {
 
-    override val connections = ArrayList<Subscription>()
+    override val subscriptions = ArrayList<Subscription>()
 
     override val database: BriteDatabase
 
@@ -25,7 +26,7 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
     }
 
     override fun insert(treasureChest: TreasureChest) {
-        database.insert(TreasureChest.TABLE.NAME, treasureChest.getContentValues())
+        database.insert(TreasureChest.TABLE.NAME, treasureChest.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
     }
 
     override fun update(treasureChest: TreasureChest) {
@@ -40,10 +41,10 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
         database.delete(TreasureChest.TABLE.NAME, TableColumns.WHERE_UUID_EQUALS, treasureChestId)
     }
 
-    override fun getNextTreasureChestOrder(treasureHuntUuid: String): Int {
+    override fun getNextTreasureChestPosition(treasureHuntUuid: String): Int {
         var treasureChestCount = 0
 
-        val cursor = database.query("SELECT COUNT(*) FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.ORDER}!=?", treasureHuntUuid, "-1")
+        val cursor = database.query("SELECT COUNT(*) FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.ORDER}!=?", treasureHuntUuid, INITIAL_TREASURE_CHEST)
 
         if (cursor != null && cursor.moveToFirst()) {
             treasureChestCount = cursor.getInt(0)
@@ -103,9 +104,9 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
     }
 
     override fun getTreasureChestsForTreasureHunt(treasureHuntUuid: String): List<TreasureChest> {
-        val treasureChests = ArrayList<TreasureChest>()
-
         val cursor = database.query("SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.ORDER}!=? ORDER BY ${TreasureChest.TABLE.ORDER} ASC", treasureHuntUuid, INITIAL_TREASURE_CHEST)
+
+        val treasureChests = ArrayList<TreasureChest>(cursor.count)
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
@@ -119,62 +120,61 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
     }
 
     override fun getTreasureChestsForTreasureHuntAsync(treasureHuntUuid: String, onComplete: (List<TreasureChest>) -> Unit) {
-        val connection = database.createQuery(TreasureChest.TABLE.NAME, "SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.ORDER}!=? ORDER BY ${TreasureChest.TABLE.ORDER} ASC", treasureHuntUuid, INITIAL_TREASURE_CHEST)
+        val subscription = database.createQuery(TreasureChest.TABLE.NAME, "SELECT * FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=? AND ${TreasureChest.TABLE.ORDER}!=? ORDER BY ${TreasureChest.TABLE.ORDER} ASC", treasureHuntUuid, INITIAL_TREASURE_CHEST)
                 .mapToList { TreasureChest(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .first()
                 .subscribe {
-                    val treasureChests = ArrayList<TreasureChest>(it.size)
-
-                    for (treasureChest in it)
-                        treasureChests.add(treasureChest)
-
-                    onComplete(treasureChests)
+                    onComplete(it)
                 }
 
-        connections.add(connection)
+        subscriptions.add(subscription)
     }
 
     override fun getTreasureChestCountForTreasureHuntAsync(treasureHuntUuid: String, onComplete: (count: Int) -> Unit) {
         database.createQuery(TreasureChest.TABLE.NAME, "SELECT COUNT(*) FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntUuid)
                 .mapToOne { it.getInt(0) }
                 .first()
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     onComplete(it)
                 }
     }
 
     override fun getTreasureChestCountForTreasureHunt(treasureHuntUuid: String): Int {
+        var count = 0
+
         val cursor = database.query("SELECT COUNT(*) FROM ${TreasureChest.TABLE.NAME} WHERE ${TreasureChest.TABLE.TREASURE_HUNT}=?", treasureHuntUuid)
 
-        cursor.moveToFirst()
+        if (cursor != null && cursor.moveToFirst()) {
+            count = cursor.getInt(0)
 
-        val count = cursor.getInt(0)
-
-        cursor.close()
+            cursor.close()
+        }
 
         return count
     }
 
     override fun getCollectedChestCountForPlayingTreasureHunt(playingTreasureHuntUuid: String): Int {
+        var count = 0
+
         val cursor = database.query("SELECT COUNT(*) FROM ${CollectedTreasureChest.TABLE.NAME} WHERE ${CollectedTreasureChest.TABLE.PLAYING_TREASURE_HUNT}=?", playingTreasureHuntUuid)
 
-        cursor.moveToFirst()
+        if (cursor != null && cursor.moveToFirst()) {
+            count = cursor.getInt(0)
 
-        val count = cursor.getInt(0)
-
-        cursor.close()
+            cursor.close()
+        }
 
         return count
     }
 
     override fun unsubscribe() {
-        for (connection in connections) {
+        for (connection in subscriptions) {
             if (!connection.isUnsubscribed)
                 connection.unsubscribe()
         }
 
-        connections.clear()
+        subscriptions.clear()
     }
 }

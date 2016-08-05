@@ -47,7 +47,7 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
 
         inventoryList.layoutManager = LinearLayoutManager(containerActivity)
 
-        adapter = InventoryAdapter(containerActivity, listOf(), { inventoryItemSelected(it) })
+        adapter = InventoryAdapter(listOf(), { inventoryItemSelected(it) })
 
         inventoryList.adapter = adapter
 

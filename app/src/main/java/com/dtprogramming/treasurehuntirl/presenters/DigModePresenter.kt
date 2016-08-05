@@ -8,6 +8,7 @@ import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.DigModeView
+import com.dtprogramming.treasurehuntirl.util.CLOSED
 import com.dtprogramming.treasurehuntirl.util.DiggingTimer
 import rx.Subscription
 
@@ -118,7 +119,7 @@ class DigModePresenter(val waypointConnection: WaypointConnection, val treasureC
         val (id, uuid, parentUuid, lat, long) = currentTreasureChestLocation
 
         if ((lat > lat - 0.000150 && lat < lat + 0.000150) && (lng > long - 0.000150 && lng < long + 0.00150)) {
-            collectedTreasureChestConnection.insert(CollectedTreasureChest(currentTreasureChest.uuid, currentTreasureChest.title, playingTreasureHuntUuid, CollectedTreasureChest.CLOSED))
+            collectedTreasureChestConnection.insert(CollectedTreasureChest(currentTreasureChest.uuid, currentTreasureChest.title, playingTreasureHuntUuid, CLOSED))
 
             digModeView?.displayCollectedTreasureChest(currentTreasureChest.uuid)
         } else {

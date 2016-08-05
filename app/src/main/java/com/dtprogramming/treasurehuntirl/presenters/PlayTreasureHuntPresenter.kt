@@ -4,6 +4,7 @@ import com.dtprogramming.treasurehuntirl.database.connections.*
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.PlayingTreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.views.PlayTreasureHuntView
+import com.dtprogramming.treasurehuntirl.util.CLOSED
 
 /**
  * Created by ryantaylor on 7/19/16.
@@ -60,7 +61,7 @@ class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasu
     private fun collectAndOpenInitialTreasureChest() {
         val treasureChest = treasureChestConnection.getInitialTreasureChest(playingTreasureHuntUuid)
 
-        val collectedTreasureChest = CollectedTreasureChest(treasureChest.uuid, treasureChest.title, playingTreasureHuntUuid, CollectedTreasureChest.CLOSED)
+        val collectedTreasureChest = CollectedTreasureChest(treasureChest.uuid, treasureChest.title, playingTreasureHuntUuid, CLOSED)
 
         collectedTreasureChestConnection.insert(collectedTreasureChest)
 

@@ -4,6 +4,7 @@ import com.dtprogramming.treasurehuntirl.database.connections.CollectedTreasureC
 import com.dtprogramming.treasurehuntirl.database.connections.InventoryConnection
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.ui.views.ViewCollectedTreasureChestView
+import com.dtprogramming.treasurehuntirl.util.OPEN
 
 /**
  * Created by ryantaylor on 7/26/16.
@@ -67,6 +68,6 @@ class ViewCollectedTreasureChestPresenter(val collectedTreasureChestConnection: 
     }
 
     private fun isTreasureChestOpen(): Boolean {
-        return collectedTreasureChest.state == CollectedTreasureChest.OPEN
+        return collectedTreasureChest.state == OPEN
     }
 }

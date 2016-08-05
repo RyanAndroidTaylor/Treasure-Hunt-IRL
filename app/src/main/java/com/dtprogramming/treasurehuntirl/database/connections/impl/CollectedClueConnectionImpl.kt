@@ -19,7 +19,7 @@ class CollectedClueConnectionImpl : CollectedClueConnection {
 
     override val database = THApp.briteDatabase
 
-    override val connections = ArrayList<Subscription>()
+    override val subscriptions = ArrayList<Subscription>()
 
     override fun insert(collectedTextClue: CollectedTextClue) {
         database.insert(CollectedTextClue.TABLE.NAME, collectedTextClue.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
@@ -38,18 +38,18 @@ class CollectedClueConnectionImpl : CollectedClueConnection {
     }
 
     override fun subscribeToCollectedCluesForTreasureHuntAsync(parentUuid: String, onComplete: (List<CollectedTextClue>) -> Unit) {
-        val connection = database.createQuery(CollectedTextClue.TABLE.NAME, "SELECT * FROM ${CollectedTextClue.TABLE.NAME} WHERE ${CollectedTextClue.TABLE.PARENT}=?", parentUuid)
+        val subscription = database.createQuery(CollectedTextClue.TABLE.NAME, "SELECT * FROM ${CollectedTextClue.TABLE.NAME} WHERE ${CollectedTextClue.TABLE.PARENT}=?", parentUuid)
                 .mapToList { CollectedTextClue(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     onComplete(it)
                 }
 
-        connections.add(connection)
+        subscriptions.add(subscription)
     }
 
     override fun unsubscribe() {
-        for (connection in connections)
+        for (connection in subscriptions)
             if (!connection.isUnsubscribed)
                 connection.unsubscribe()
     }

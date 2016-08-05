@@ -12,7 +12,7 @@ interface TreasureChestConnection : Connection {
     fun delete(treasureChest: TreasureChest)
     fun delete(treasureChestId: String)
 
-    fun getNextTreasureChestOrder(treasureHuntUuid: String): Int
+    fun getNextTreasureChestPosition(treasureHuntUuid: String): Int
     fun getCurrentTreasureChest(treasureHuntUuid: String): TreasureChest?
 
     fun getTreasureChest(treasureChestUuid: String): TreasureChest

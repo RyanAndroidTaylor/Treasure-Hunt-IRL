@@ -14,6 +14,4 @@ interface CreateTreasureChestView {
     fun updateClueList(clues: List<Clue>)
     fun displayWaypoint(waypoint: Waypoint)
     fun setTitle(title: String)
-
-    fun close()
 }

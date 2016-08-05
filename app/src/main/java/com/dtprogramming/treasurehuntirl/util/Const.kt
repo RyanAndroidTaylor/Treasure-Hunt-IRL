@@ -17,3 +17,9 @@ val NEW = "New"
 // Inventory item types
 val TEXT_CLUE = 0
 val WAYPOINT = 1
+
+// Treasure chest states
+val OPEN = 0 // Only collected chests can be open
+val CLOSED = 1 // Can change to open. Only collected chests can be opened
+val LOCKED = 2 // Can change to open. Only collected chests can be opened
+val BURIED = 3 // Can change to closed or locked
