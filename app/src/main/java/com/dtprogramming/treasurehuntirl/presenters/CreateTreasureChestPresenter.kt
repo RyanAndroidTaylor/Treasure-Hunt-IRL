@@ -1,8 +1,10 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
+import com.dtprogramming.treasurehuntirl.database.connections.PassPhraseConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
+import com.dtprogramming.treasurehuntirl.database.models.PassPhrase
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.ui.views.CreateTreasureChestView
 import com.dtprogramming.treasurehuntirl.util.BURIED
@@ -13,7 +15,7 @@ import com.dtprogramming.treasurehuntirl.util.randomUuid
 /**
  * Created by ryantaylor on 7/11/16.
  */
-class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestConnection, val clueConnection: ClueConnection, val waypointConnection: WaypointConnection) : Presenter {
+class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestConnection, val clueConnection: ClueConnection, val waypointConnection: WaypointConnection, val passPhraseConnection: PassPhraseConnection) : Presenter {
 
     companion object {
         val TAG: String = CreateTreasureChestPresenter::class.java.simpleName
@@ -29,6 +31,9 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     lateinit var treasureChestUuid: String
         private set
 
+    private var passPhraseUuid: String? = null
+    private var passPhraseText: String? = null
+
     private var treasureChestOrder = 0
     private var treasureChestState = BURIED
 
@@ -42,6 +47,9 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         treasureChestConnection.insert(TreasureChest(treasureChestUuid, treasureHuntUuid, treasureChestTitle, treasureChestOrder, BURIED))
 
         createTreasureChestView.setTitle(treasureChestTitle)
+        createTreasureChestView.setState(treasureChestState)
+
+        stateChanged(treasureChestState)
     }
 
     fun load(treasureChestId: String, createTreasureChestView: CreateTreasureChestView) {
@@ -76,6 +84,12 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
 
         treasureChestConnection.update(TreasureChest(treasureChestUuid, treasureHuntUuid, treasureChestTitle, treasureChestOrder, treasureChestState))
 
+        if (treasureChestState == LOCKED || treasureChestState == BURIED_LOCKED) {
+            passPhraseConnection.insert(PassPhrase(passPhraseUuid!!, treasureChestUuid, passPhraseText!!))
+        } else {
+            passPhraseConnection.deleteForParent(treasureChestUuid)
+        }
+
         PresenterManager.removePresenter(TAG)
     }
 
@@ -89,6 +103,8 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
 
         createTreasureChestView?.setTitle(treasureChestTitle)
         createTreasureChestView?.setState(treasureChestState)
+
+        stateChanged(treasureChestState)
     }
 
     private fun loadClues() {
@@ -102,11 +118,27 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     }
 
     private fun loadPassPhrase() {
-        createTreasureChestView?.displayPassPhraseInfo("Need to set this up")
+        val passPhrase = passPhraseConnection.getPassPhraseForParent(treasureChestUuid)
+
+        if (passPhrase == null) {
+            if (passPhraseUuid == null)
+                this.passPhraseUuid = randomUuid()
+
+            passPhraseText = ""
+        } else {
+            passPhraseText = passPhrase.text
+            passPhraseUuid = passPhrase.uuid
+        }
+
+        createTreasureChestView?.displayPassPhraseInfo(passPhrase?.text)
     }
 
     fun titleChanged(newTitle: String) {
         treasureChestTitle = newTitle
+    }
+
+    fun passPhraseChanged(newPassPhraseText: String) {
+        passPhraseText = newPassPhraseText
     }
 
     fun stateChanged(newState: Int) {

@@ -22,6 +22,7 @@ class DatabaseOpenHelper(context: Context) : SQLiteOpenHelper(context, "THApp", 
         db?.execSQL(TextClue.TABLE.CREATE)
         db?.execSQL(Waypoint.TABLE.CREATE)
         db?.execSQL(TreasureChest.TABLE.CREATE)
+        db?.execSQL(PassPhrase.TABLE.CREATE)
 
         db?.execSQL(PlayingTreasureHunt.TABLE.CREATE)
         db?.execSQL(CollectedTreasureChest.TABLE.CREATE)

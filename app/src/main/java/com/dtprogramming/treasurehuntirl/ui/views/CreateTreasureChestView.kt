@@ -12,7 +12,7 @@ interface CreateTreasureChestView {
     fun updateClueList(clues: List<Clue>)
     fun displayWaypointInfo(waypoint: Waypoint?)
     fun hideWaypointInfo()
-    fun displayPassPhraseInfo(passPhrase: String)
+    fun displayPassPhraseInfo(passPhrase: String?)
     fun hidePassPhraseInfo()
     fun setTitle(title: String)
     fun setState(state: Int)

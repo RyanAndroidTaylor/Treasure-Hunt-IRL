@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.PassPhraseConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.Clue
@@ -80,7 +81,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView {
         createTreasureChestPresenter = if (PresenterManager.hasPresenter(CreateTreasureChestPresenter.TAG))
             PresenterManager.getPresenter(CreateTreasureChestPresenter.TAG) as CreateTreasureChestPresenter
         else
-            PresenterManager.addPresenter(CreateTreasureChestPresenter.TAG, CreateTreasureChestPresenter(TreasureChestConnectionImpl(), ClueConnectionImpl(), WaypointConnectionImpl())) as CreateTreasureChestPresenter
+            PresenterManager.addPresenter(CreateTreasureChestPresenter.TAG, CreateTreasureChestPresenter(TreasureChestConnectionImpl(), ClueConnectionImpl(), WaypointConnectionImpl(), PassPhraseConnectionImpl())) as CreateTreasureChestPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
@@ -115,12 +116,16 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 createTreasureChestPresenter.titleChanged(s.toString())
             }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun afterTextChanged(s: Editable?) { }
+        })
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        editPassPhrase.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                createTreasureChestPresenter.passPhraseChanged(s.toString())
             }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
         })
 
         stateGroup.setOnCheckedChangeListener { radioGroup, buttonId ->
@@ -179,7 +184,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView {
         waypointContainer.visibility = View.GONE
     }
 
-    override fun displayPassPhraseInfo(passPhrase: String) {
+    override fun displayPassPhraseInfo(passPhrase: String?) {
         editPassPhrase.setText(passPhrase)
 
         passPhraseContainer.visibility = View.VISIBLE
