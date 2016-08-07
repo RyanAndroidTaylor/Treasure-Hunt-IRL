@@ -12,9 +12,9 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
     val BASE_NUDGE_DISTANCE = 1.0
 
     private var createWaypointView: CreateWaypointView? = null
-    private lateinit var treasureChestId: String
 
-    private lateinit var waypointId: String
+    private lateinit var parentUuid: String
+    private lateinit var waypointUuid: String
 
     private var lat: Double = 0.0
     private var lng: Double = 0.0
@@ -40,9 +40,9 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
         val TAG: String = CreateWaypointPresenter::class.java.simpleName
     }
 
-    fun load(createWaypointView: CreateWaypointView, treasureHuntId: String) {
+    fun load(createWaypointView: CreateWaypointView, parentUuid: String) {
         this.createWaypointView = createWaypointView
-        this.treasureChestId = treasureHuntId
+        this.parentUuid = parentUuid
 
         loadWaypoint()
     }
@@ -57,20 +57,22 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
         createWaypointView = null
     }
 
-    override fun finish() {
+    override fun dispose() {
+        unsubscribe()
+
         PresenterManager.removePresenter(TAG)
     }
 
     private fun loadWaypoint() {
-        val waypoint = waypointConnection.getWaypointForTreasureChest(treasureChestId)
+        val waypoint = waypointConnection.getWaypointForParent(parentUuid)
 
         if (waypoint !=  null) {
-            waypointId = waypoint.uuid
+            waypointUuid = waypoint.uuid
             lat = waypoint.lat
             lng = waypoint.long
         } else {
             new = true
-            waypointId = randomUuid()
+            waypointUuid = randomUuid()
         }
     }
 
@@ -121,9 +123,9 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
 
     fun save() {
         if (new)
-            waypointConnection.insert(Waypoint(waypointId, treasureChestId, lat, lng))
+            waypointConnection.insert(Waypoint(waypointUuid, parentUuid, lat, lng))
         else
-            waypointConnection.update(Waypoint(waypointId, treasureChestId, lat, lng))
+            waypointConnection.update(Waypoint(waypointUuid, parentUuid, lat, lng))
 
         PresenterManager.removePresenter(TAG)
 

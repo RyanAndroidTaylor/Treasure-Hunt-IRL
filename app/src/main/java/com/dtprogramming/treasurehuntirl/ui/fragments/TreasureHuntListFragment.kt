@@ -11,7 +11,7 @@ import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.activities.ViewTreasureHuntActivity
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.TreasureHuntAdapter
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureHuntAdapter
 import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
 import kotlinx.android.synthetic.main.fragment_hunt_list.view.*
 
@@ -21,9 +21,9 @@ import kotlinx.android.synthetic.main.fragment_hunt_list.view.*
 class TreasureHuntListFragment : TabFragment() {
     override val title = "HUNTS"
 
-    lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerView: RecyclerView
 
-    lateinit var adapter: TreasureHuntAdapter
+    private lateinit var adapter: TreasureHuntAdapter
 
     private val treasureHuntConnection = TreasureHuntConnectionImpl()
 
@@ -35,7 +35,7 @@ class TreasureHuntListFragment : TabFragment() {
 
             recyclerView.layoutManager = LinearLayoutManager(context)
 
-            adapter = TreasureHuntAdapter(context, listOf(), { launchTreasureHuntActivity(it) })
+            adapter = TreasureHuntAdapter(listOf(), { launchTreasureHuntActivity(it) })
 
             recyclerView.adapter = adapter
         }

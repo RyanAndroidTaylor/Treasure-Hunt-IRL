@@ -3,7 +3,7 @@ package com.dtprogramming.treasurehuntirl.presenters
 import com.dtprogramming.treasurehuntirl.BuildConfig
 import com.dtprogramming.treasurehuntirl.MockitoMatchers
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
-import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.ui.views.CreateClueView
 import org.junit.After
 import org.junit.Before
@@ -21,7 +21,7 @@ import org.robolectric.annotation.Config
  */
 @RunWith(RobolectricGradleTestRunner::class)
 @Config(constants = BuildConfig::class)
-class CreateCluePresenterTest {
+class CreateTextCluePresenterTest {
 
     lateinit var clueConnection: ClueConnection
 
@@ -29,7 +29,7 @@ class CreateCluePresenterTest {
     lateinit var createCluePresenter: CreateCluePresenter
 
     val treasureChestId = "TreasureChestUuid"
-    val clueText = "Some clue text"
+    val clueText = "Some textClue text"
 
     @Before
     fun setUp() {
@@ -54,17 +54,17 @@ class CreateCluePresenterTest {
         createCluePresenter.load(createClueView, treasureChestId)
 
         Mockito.verify(createClueView).setClueText("")
-        Mockito.verify(clueConnection).getClueForTreasureChest(treasureChestId)
+        Mockito.verify(clueConnection).getTextClueForParent(treasureChestId)
     }
 
     @Test
     fun loadExistingClue() {
-        Mockito.`when`(clueConnection.getClueForTreasureChest(treasureChestId)).thenReturn(Clue("uuid", treasureChestId, clueText))
+        Mockito.`when`(clueConnection.getTextClueForParent(treasureChestId)).thenReturn(TextClue("uuid", treasureChestId, clueText))
 
         createCluePresenter.load(createClueView, treasureChestId)
 
         Mockito.verify(createClueView).setClueText(clueText)
-        Mockito.verify(clueConnection).getClueForTreasureChest(treasureChestId)
+        Mockito.verify(clueConnection).getTextClueForParent(treasureChestId)
     }
 
     @Test

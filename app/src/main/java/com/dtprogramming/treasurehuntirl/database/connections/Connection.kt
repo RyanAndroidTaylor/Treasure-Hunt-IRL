@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.database.connections
 
+import com.squareup.sqlbrite.BriteDatabase
 import rx.Subscription
 
 /**
@@ -7,7 +8,9 @@ import rx.Subscription
  */
 interface Connection {
 
-    val connections: List<Subscription>
+    val database: BriteDatabase
+
+    val subscriptions: List<Subscription>
 
     fun unsubscribe()
 }

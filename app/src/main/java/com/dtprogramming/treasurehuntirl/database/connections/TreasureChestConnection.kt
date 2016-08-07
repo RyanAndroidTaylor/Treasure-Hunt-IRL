@@ -12,9 +12,17 @@ interface TreasureChestConnection : Connection {
     fun delete(treasureChest: TreasureChest)
     fun delete(treasureChestId: String)
 
-    fun getTreasureChest(treasureChestId: String): TreasureChest
-    fun getTreasureChestsForTreasureHunt(treasureHuntId: String): List<TreasureChest>
-    fun getTreasureChestsForTreasureHuntAsync(treasureHuntId: String, onComplete: (List<TreasureChest>) -> Unit)
+    fun getNextTreasureChestPosition(treasureHuntUuid: String): Int
+    fun getCurrentTreasureChest(treasureHuntUuid: String): TreasureChest?
+    fun getCurrentTreasureChestState(treasureHuntUuid: String): Int
 
-    fun getTreasureChestCountForTreasureHunt(treasureHuntId: String, onComplete: (count: Int) -> Unit)
+    fun getTreasureChest(treasureChestUuid: String): TreasureChest
+    fun getInitialTreasureChest(treasureHuntUuid: String): TreasureChest
+    fun getTreasureChestsForTreasureHunt(treasureHuntUuid: String): List<TreasureChest>
+    fun getTreasureChestsForTreasureHuntAsync(treasureHuntUuid: String, onComplete: (List<TreasureChest>) -> Unit)
+
+    fun getTreasureChestCountForTreasureHuntAsync(treasureHuntUuid: String, onComplete: (count: Int) -> Unit)
+    fun getTreasureChestCountForTreasureHunt(treasureHuntUuid: String): Int
+
+    fun getCollectedChestCountForPlayingTreasureHunt(playingTreasureHuntUuid: String): Int
 }

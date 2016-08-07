@@ -1,19 +1,24 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
+import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
+import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
+import com.dtprogramming.treasurehuntirl.util.CLOSED
 import com.dtprogramming.treasurehuntirl.util.randomUuid
 
 /**
  * Created by ryantaylor on 6/20/16.
  */
-class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, val treasureChestConnection: TreasureChestConnection) : Presenter {
+class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, val treasureChestConnection: TreasureChestConnection, val clueConnection: ClueConnection) : Presenter {
 
     var treasureHuntTitle = "New Treasure Hunt"
 
-    lateinit var treasureHuntId: String
+    lateinit var treasureHuntUuid: String
+        private set
+    lateinit var initialTreasureChestUuid: String
         private set
 
     private var createHuntView: CreateHuntView? = null
@@ -24,19 +29,22 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
 
     fun create(createHuntView: CreateHuntView) {
         this.createHuntView = createHuntView
-        treasureHuntId = randomUuid()
+        treasureHuntUuid = randomUuid()
 
-        treasureHuntConnection.insert(TreasureHunt(treasureHuntId, treasureHuntTitle))
+        treasureHuntConnection.insert(TreasureHunt(treasureHuntUuid, treasureHuntTitle))
+        createInitialTreasureChest()
 
         createHuntView.setTitle(treasureHuntTitle)
     }
 
-    fun load(createHuntView: CreateHuntView, treasureHuntId: String) {
+    fun load(createHuntView: CreateHuntView, treasureHuntUuid: String) {
         this.createHuntView = createHuntView
-        this.treasureHuntId = treasureHuntId
+        this.treasureHuntUuid = treasureHuntUuid
 
         requestTreasureChestsForTreasureHunt()
         loadTreasureHunt()
+        loadInitialTreasureChest()
+        loadInitialClues()
     }
 
     fun reload(createHuntView: CreateHuntView) {
@@ -44,6 +52,8 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
 
         requestTreasureChestsForTreasureHunt()
         loadTreasureHunt()
+        loadInitialTreasureChest()
+        loadInitialClues()
     }
 
     override fun unsubscribe() {
@@ -53,21 +63,40 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
         createHuntView = null
     }
 
-    override fun finish() {
-        treasureHuntConnection.update(TreasureHunt(treasureHuntId, treasureHuntTitle))
+    override fun dispose() {
+        treasureHuntConnection.update(TreasureHunt(treasureHuntUuid, treasureHuntTitle))
 
         PresenterManager.removePresenter(TAG)
     }
 
     private fun loadTreasureHunt() {
-        val treasureHunt = treasureHuntConnection.getTreasureHunt(treasureHuntId)
+        val treasureHunt = treasureHuntConnection.getTreasureHunt(treasureHuntUuid)
 
         treasureHuntTitle = treasureHunt.title
+
         createHuntView?.setTitle(treasureHuntTitle)
     }
 
+    private fun loadInitialTreasureChest() {
+        val initialTreasureChest = treasureChestConnection.getInitialTreasureChest(treasureHuntUuid)
+
+        initialTreasureChestUuid = initialTreasureChest.uuid
+    }
+
+    private fun loadInitialClues() {
+        clueConnection.getCluesForParentAsync(initialTreasureChestUuid, { createHuntView?.displayClues(it) })
+    }
+
     private fun requestTreasureChestsForTreasureHunt() {
-        treasureChestConnection.getTreasureChestsForTreasureHuntAsync(treasureHuntId, { createHuntView?.onTreasureChestsLoaded(it) })
+        treasureChestConnection.getTreasureChestsForTreasureHuntAsync(treasureHuntUuid, { createHuntView?.onTreasureChestsLoaded(it) })
+    }
+
+    private fun createInitialTreasureChest() {
+        val initialTreasureChest = TreasureChest(randomUuid(), treasureHuntUuid, "Initial Treasure Chest", -1, CLOSED)
+
+        treasureChestConnection.insert(initialTreasureChest)
+
+        initialTreasureChestUuid = initialTreasureChest.uuid
     }
 
     fun onTitleChanged(newTitle: String) {

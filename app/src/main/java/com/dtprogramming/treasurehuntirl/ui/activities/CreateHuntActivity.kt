@@ -44,14 +44,10 @@ class CreateHuntActivity : ContainerActivity() {
         if (savedInstanceState != null && savedInstanceState.containsKey(CURRENT_URI)) {
             startContainer(savedInstanceState.getString(CURRENT_URI))
         } else {
-            val extras = Bundle()
-
             if (intent.hasExtra(HUNT_UUID))
-                extras.putString(HUNT_UUID, intent.getStringExtra(HUNT_UUID))
+                CreateHuntContainer.loadExistingHunt(this, intent.getStringExtra(HUNT_UUID))
             if (intent.hasExtra(NEW))
-                extras.putBoolean(NEW, intent.getBooleanExtra(NEW, true))
-
-            startContainer(CreateHuntContainer.URI, extras)
+                CreateHuntContainer.createNewHunt(this)
         }
 
         toolbar?.title = stringFrom(R.string.treasure_hunt_action_bar_title)

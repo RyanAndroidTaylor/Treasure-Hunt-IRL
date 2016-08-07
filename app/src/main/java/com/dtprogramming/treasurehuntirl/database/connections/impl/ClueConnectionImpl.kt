@@ -1,13 +1,18 @@
 package com.dtprogramming.treasurehuntirl.database.connections.impl
 
+import android.database.sqlite.SQLiteDatabase
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
+import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
 import com.dtprogramming.treasurehuntirl.util.getString
 import com.squareup.sqlbrite.BriteDatabase
+import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import java.util.*
 
 /**
@@ -15,41 +20,90 @@ import java.util.*
  */
 class ClueConnectionImpl : ClueConnection {
 
-    override val connections = ArrayList<Subscription>()
+    override val subscriptions = ArrayList<Subscription>()
 
-    private val database: BriteDatabase
+    override val database: BriteDatabase
 
     init {
         database = THApp.briteDatabase
     }
 
-    override fun insert(clue: Clue) {
-        database.insert(Clue.TABLE.NAME, clue.getContentValues())
+    override fun insert(textClue: TextClue) {
+        database.insert(TextClue.TABLE.NAME, textClue.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
     }
 
-    override fun update(clue: Clue) {
-        database.update(Clue.TABLE.NAME, clue.getContentValues(), TableColumns.WHERE_UUID_EQUALS, clue.uuid)
+    override fun update(textClue: TextClue) {
+        database.update(TextClue.TABLE.NAME, textClue.getContentValues(), TableColumns.WHERE_UUID_EQUALS, textClue.uuid)
     }
 
-    override fun getClueForTreasureChest(treasureChestId: String): Clue? {
-        val cursor = database.query("SELECT * FROM ${Clue.TABLE.NAME} WHERE ${Clue.TABLE.TREASURE_CHEST}=?", treasureChestId)
+    override fun getTextClue(textClueUuid: String): TextClue {
+        val cursor = database.query("SELECT * FROM ${TextClue.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", textClueUuid)
 
-        var clue: Clue? = null
+        cursor.moveToFirst()
 
-        if (cursor != null && cursor.moveToFirst())
-            clue = Clue(cursor)
+        val clue = TextClue(cursor)
 
         cursor.close()
 
         return clue
     }
 
+    override fun getTextClueForParent(parentUuid: String): TextClue? {
+        val cursor = database.query("SELECT * FROM ${TextClue.TABLE.NAME} WHERE ${TextClue.TABLE.PARENT}=?", parentUuid)
+
+        var clue: TextClue? = null
+
+        if (cursor != null && cursor.moveToFirst())
+            clue = TextClue(cursor)
+
+        cursor.close()
+
+        return clue
+    }
+
+    override fun getCluesForParentAsync(parentUuid: String, onComplete: (List<Clue>) -> Unit) {
+        Observable.just(parentUuid)
+        .map {
+            val clues = ArrayList<Clue>()
+
+            val textClues = getTextCluesForParent(parentUuid)
+
+            textClues?.let {
+                for (textClue in textClues)
+                    clues.add(textClue)
+            }
+
+            clues
+        }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { onComplete(it) }
+    }
+
     override fun unsubscribe() {
-        for (connection in connections) {
+        for (connection in subscriptions) {
             if (!connection.isUnsubscribed)
                 connection.unsubscribe()
         }
 
-        connections.clear()
+        subscriptions.clear()
+    }
+
+    private fun getTextCluesForParent(parentUuid: String): List<TextClue>? {
+        val cursor = database.query("SELECT * FROM ${TextClue.TABLE.NAME} WHERE ${TextClue.TABLE.PARENT}=?", parentUuid)
+
+        if (cursor != null) {
+            val textClues = ArrayList<TextClue>()
+
+            while (cursor.moveToNext()) {
+                textClues.add(TextClue(cursor))
+            }
+
+            cursor.close()
+
+            return textClues
+        }
+
+        return null
     }
 }

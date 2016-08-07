@@ -5,52 +5,55 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v7.widget.CardView
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.connections.impl.PassPhraseConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateTreasureChestPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
-import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.ClueAdapter
 import com.dtprogramming.treasurehuntirl.ui.views.CreateTreasureChestView
-import com.dtprogramming.treasurehuntirl.util.CLUE_UUID
-import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
-import com.dtprogramming.treasurehuntirl.util.NEW
-import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapFragment
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
+import com.dtprogramming.treasurehuntirl.util.*
 import kotlinx.android.synthetic.main.container_create_treasure_chest.view.*
 
 /**
  * Created by ryantaylor on 7/11/16.
  */
-class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, OnMapReadyCallback {
+class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView {
 
     companion object {
         val URI: String = CreateTreasureChestContainer::class.java.simpleName
+
+        fun createTreasureChest(containerActivity: ContainerActivity, treasureHuntUuid: String) {
+            val extras = Bundle()
+
+            extras.putBoolean(NEW, true)
+            extras.putString(HUNT_UUID, treasureHuntUuid)
+
+            containerActivity.startContainer(URI, extras);
+        }
+
+        fun loadTreasureChest(containerActivity: ContainerActivity, treasureChestUuid: String) {
+            val extras = Bundle()
+
+            extras.putString(TREASURE_CHEST_UUID, treasureChestUuid)
+
+            containerActivity.startContainer(URI, extras)
+        }
     }
 
     override var rootViewId = R.layout.container_create_treasure_chest
@@ -59,19 +62,26 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
 
     private lateinit var editTitle: EditText
 
-    private lateinit var addClue: Button
-    private lateinit var clueContainer: CardView
-    private lateinit var clueText: TextView
+    private lateinit var stateGroup: RadioGroup
 
-    private lateinit var addWaypoint: Button
+    private lateinit var clueList: RecyclerView
+    private lateinit var adapter: ClueAdapter
 
-    private var googleMap: GoogleMap? = null
+    private lateinit var addClue: TextView
+
+    private lateinit var waypointContainer: FrameLayout
+    private lateinit var editWaypoint: TextView
+    private lateinit var waypointLat: TextView
+    private lateinit var waypointLng: TextView
+
+    private lateinit var passPhraseContainer: FrameLayout
+    private lateinit var editPassPhrase: EditText
 
     init {
         createTreasureChestPresenter = if (PresenterManager.hasPresenter(CreateTreasureChestPresenter.TAG))
             PresenterManager.getPresenter(CreateTreasureChestPresenter.TAG) as CreateTreasureChestPresenter
         else
-            PresenterManager.addPresenter(CreateTreasureChestPresenter.TAG, CreateTreasureChestPresenter(TreasureChestConnectionImpl(), ClueConnectionImpl(), WaypointConnectionImpl())) as CreateTreasureChestPresenter
+            PresenterManager.addPresenter(CreateTreasureChestPresenter.TAG, CreateTreasureChestPresenter(TreasureChestConnectionImpl(), ClueConnectionImpl(), WaypointConnectionImpl(), PassPhraseConnectionImpl())) as CreateTreasureChestPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
@@ -82,26 +92,53 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
 
         editTitle = parent.create_chest_container_title
 
-        addWaypoint = parent.create_chest_container_add_waypoint
+        stateGroup = parent.create_chest_container_state_group
+
+        waypointContainer = parent.create_chest_container_waypoint_container
+        editWaypoint = parent.create_chest_container_edit_waypoint
+        waypointLat = parent.create_chest_container_lat
+        waypointLng = parent.create_chest_container_lng
+
+        passPhraseContainer = parent.create_chest_container_pass_phrase_container
+        editPassPhrase = parent.create_chest_container_pass_phrase
 
         addClue = parent.create_chest_container_add_clue
-        clueContainer = parent.create_chest_container_clue_container
-        clueText = parent.create_chest_container_clue_text
+
+        clueList = parent.create_treasure_chest_clue_list
+
+        adapter = ClueAdapter(listOf(), { itemSelected(it) })
+
+        clueList.layoutManager = CustomLinearLayoutManager(containerActivity)
+        clueList.addOnScrollListener(ClueScrollListener())
+        clueList.adapter = adapter
 
         parent.create_chest_container_title.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 createTreasureChestPresenter.titleChanged(s.toString())
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun afterTextChanged(s: Editable?) { }
         })
 
-        addClue.setOnClickListener { moveToContainer(CreateClueContainer.URI) }
+        editPassPhrase.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                createTreasureChestPresenter.passPhraseChanged(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
-        clueContainer.setOnClickListener { moveToContainer(CreateClueContainer.URI) }
+        stateGroup.setOnCheckedChangeListener { radioGroup, buttonId ->
+            when (buttonId) {
+                R.id.create_chest_container_state_buried -> createTreasureChestPresenter.stateChanged(BURIED)
+                R.id.create_chest_container_state_locked -> createTreasureChestPresenter.stateChanged(LOCKED)
+                R.id.create_chest_container_state_both -> createTreasureChestPresenter.stateChanged(BURIED_LOCKED)
+            }
+        }
 
-        addWaypoint.setOnClickListener { moveToContainer(CreateWayPointContainer.URI) }
+        addClue.setOnClickListener { loadNewCreateClueContainer() }
+
+        editWaypoint.setOnClickListener { moveToContainer(CreateWayPointContainer.URI) }
 
         loadPresenter(extras)
 
@@ -123,61 +160,58 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
     override fun onFinish() {
         super.onFinish()
 
-        createTreasureChestPresenter.finish()
+        createTreasureChestPresenter.dispose()
     }
 
-    override fun onMapReady(map: GoogleMap?) {
-        this.googleMap = map
+    override fun updateClueList(clues: List<Clue>) {
+        adapter.updateList(clues)
+    }
 
-        this.googleMap?.setOnMarkerClickListener {
-            moveToContainer(CreateWayPointContainer.URI)
+    override fun displayWaypointInfo(waypoint: Waypoint?) {
+        waypointContainer.visibility = View.VISIBLE
 
-            true
+        if (waypoint != null) {
+            waypointLat.text = "${waypoint.lat.format(6)}"
+            waypointLng.text = "${waypoint.long.format(6)}"
+
+            editWaypoint.text = containerActivity.stringFrom(R.string.edit_waypoint)
+        } else {
+            editWaypoint.text = containerActivity.stringFrom(R.string.add_waypoint)
         }
-
-        createTreasureChestPresenter.mapLoaded()
     }
 
-    override fun loadMap() {
-        addWaypoint.visibility = View.GONE
-
-        val mapFragment = MapFragment()
-        containerActivity.fragmentManager.beginTransaction().replace(R.id.create_chest_container_map_container, mapFragment).commit()
-
-        mapFragment.getMapAsync(this)
+    override fun hideWaypointInfo() {
+        waypointContainer.visibility = View.GONE
     }
 
-    override fun displayClue(clue: Clue) {
-        addClue.visibility = View.GONE
-        clueContainer.visibility = View.VISIBLE
+    override fun displayPassPhraseInfo(passPhrase: String?) {
+        editPassPhrase.setText(passPhrase)
 
-        clueText.text = clue.text
+        passPhraseContainer.visibility = View.VISIBLE
     }
 
-    override fun displayWaypoint(waypoint: Waypoint) {
-        val latLng = LatLng(waypoint.lat, waypoint.long)
-
-        googleMap?.addMarker(MarkerOptions().title("Waypoint").position(latLng))
-
-        val cameraPosition = CameraUpdateFactory.newLatLngZoom(latLng, 12.0f)
-
-        googleMap?.moveCamera(cameraPosition)
+    override fun hidePassPhraseInfo() {
+        passPhraseContainer.visibility = View.GONE
     }
 
     override fun setTitle(title: String) {
         editTitle.setText(title)
     }
 
-    override fun close() {
-        containerActivity.finishCurrentContainer()
+    override fun setState(state: Int) {
+        when (state) {
+            BURIED -> stateGroup.check(R.id.create_chest_container_state_buried)
+            LOCKED -> stateGroup.check(R.id.create_chest_container_state_locked)
+            BURIED_LOCKED -> stateGroup.check(R.id.create_chest_container_state_both)
+        }
     }
 
     private fun loadPresenter(extras: Bundle) {
         if (extras.containsKey(TREASURE_CHEST_UUID))
-            createTreasureChestPresenter.load(extras.getString(TREASURE_CHEST_UUID), extras.getString(HUNT_UUID), this)
-        else if (extras.containsKey(NEW))
+            createTreasureChestPresenter.load(extras.getString(TREASURE_CHEST_UUID), this)
+        else if (extras.containsKey(NEW)) {
             createTreasureChestPresenter.create(extras.getString(HUNT_UUID), this)
-        else
+        } else
             createTreasureChestPresenter.reload(this)
     }
 
@@ -190,8 +224,22 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView, 
     private fun moveToContainer(uri: String) {
         val extras = Bundle()
 
-        extras.putString(TREASURE_CHEST_UUID, createTreasureChestPresenter.treasureChestId)
+        extras.putString(PARENT_UUID, createTreasureChestPresenter.treasureChestUuid)
 
         containerActivity.startContainer(uri, extras)
+    }
+
+    private fun loadNewCreateClueContainer() {
+        CreateTextClueContainer.startNewContainer(containerActivity, createTreasureChestPresenter.treasureChestUuid)
+    }
+
+    private fun itemSelected(item: InventoryItem) {
+        when (item.type) {
+            TEXT_CLUE -> {
+                val textClue = item as TextClue
+
+                CreateTextClueContainer.loadContainer(containerActivity, textClue.parentUuid, textClue.uuid)
+            }
+        }
     }
 }

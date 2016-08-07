@@ -1,8 +1,11 @@
 package com.dtprogramming.treasurehuntirl.database
 
 import android.content.Context
+import android.database.Cursor
+import android.database.sqlite.SQLiteCursorDriver
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.database.sqlite.SQLiteQuery
 import com.dtprogramming.treasurehuntirl.database.models.*
 
 /**
@@ -16,8 +19,13 @@ class DatabaseOpenHelper(context: Context) : SQLiteOpenHelper(context, "THApp", 
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(TreasureHunt.TABLE.CREATE)
-        db?.execSQL(Clue.TABLE.CREATE)
+        db?.execSQL(TextClue.TABLE.CREATE)
         db?.execSQL(Waypoint.TABLE.CREATE)
         db?.execSQL(TreasureChest.TABLE.CREATE)
+        db?.execSQL(PassPhrase.TABLE.CREATE)
+
+        db?.execSQL(PlayingTreasureHunt.TABLE.CREATE)
+        db?.execSQL(CollectedTreasureChest.TABLE.CREATE)
+        db?.execSQL(CollectedTextClue.TABLE.CREATE)
     }
 }

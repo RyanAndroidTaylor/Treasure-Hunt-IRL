@@ -12,7 +12,7 @@ import android.util.DisplayMetrics
  */
 class CustomLinearLayoutManager(val context: Context, orientation: Int, reverseLayout: Boolean) : LinearLayoutManager(context, orientation, reverseLayout) {
 
-    constructor(context: Context): this(context, VERTICAL, false)
+    constructor(context: Context): this(context, HORIZONTAL, false)
 
     override fun smoothScrollToPosition(recyclerView: RecyclerView?, state: RecyclerView.State?, position: Int) {
         val linearSmoothScroller = object : LinearSmoothScroller(context) {

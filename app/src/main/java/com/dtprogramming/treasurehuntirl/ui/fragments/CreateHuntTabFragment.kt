@@ -8,8 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
+import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
-import com.dtprogramming.treasurehuntirl.ui.recycler_view.TreasureHuntAdapter
+import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureHuntAdapter
 import kotlinx.android.synthetic.main.fragment_create_hunt.view.*
 
 /**
@@ -31,7 +32,7 @@ class CreateHuntTabFragment : TabFragment() {
             recyclerView = view.create_hunt_list
 
             recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            adapter = TreasureHuntAdapter(context, listOf(), { startActivity(CreateHuntActivity.getLoadIntent(view.context, it.uuid)) })
+            adapter = TreasureHuntAdapter(listOf(), { itemSelected(it) })
             recyclerView.adapter = adapter
 
             view.create_hunt_fragment_fab?.setOnClickListener { startActivity(CreateHuntActivity.getCreateNewIntent(activity)) }
@@ -50,5 +51,9 @@ class CreateHuntTabFragment : TabFragment() {
         super.onResume()
 
         treasureHuntConnection.subscribeToTreasureHunts { adapter.updateList(it) }
+    }
+
+    fun itemSelected(treasureHunt: TreasureHunt) {
+        startActivity(CreateHuntActivity.getLoadIntent(context, treasureHunt.uuid))
     }
 }

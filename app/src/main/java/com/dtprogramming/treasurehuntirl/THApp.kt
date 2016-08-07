@@ -12,15 +12,9 @@ import rx.schedulers.Schedulers
  */
 class THApp : Application() {
 
-    val test = ""
-
     companion object {
         lateinit var briteDatabase: BriteDatabase
             private set
-    }
-
-    init {
-
     }
 
     override fun onCreate() {
@@ -28,6 +22,7 @@ class THApp : Application() {
 
         LeakCanary.install(this)
 
-        briteDatabase = SqlBrite.create().wrapDatabaseHelper(DatabaseOpenHelper(baseContext), Schedulers.io())
+        val database = DatabaseOpenHelper(baseContext)
+        briteDatabase = SqlBrite.create().wrapDatabaseHelper(database, Schedulers.io())
     }
 }

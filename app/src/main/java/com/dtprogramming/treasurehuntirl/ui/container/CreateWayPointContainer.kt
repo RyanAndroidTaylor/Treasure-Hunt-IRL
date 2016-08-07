@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.util.Log
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
@@ -13,7 +12,7 @@ import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.views.AdjustableValueView
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
-import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
+import com.dtprogramming.treasurehuntirl.util.PARENT_UUID
 import com.dtprogramming.treasurehuntirl.util.format
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -54,8 +53,8 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
         super.inflate(containerActivity, parent, extras)
         containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.waypoint_action_bar_title))
 
-        if (extras.containsKey(TREASURE_CHEST_UUID))
-            createWaypointPresenter.load(this, extras.getString(TREASURE_CHEST_UUID))
+        if (extras.containsKey(PARENT_UUID))
+            createWaypointPresenter.load(this, extras.getString(PARENT_UUID))
         else
             createWaypointPresenter.reload(this)
 
@@ -94,7 +93,7 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
     override fun onFinish() {
         super.onFinish()
 
-        createWaypointPresenter.finish()
+        createWaypointPresenter.dispose()
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {

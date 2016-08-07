@@ -1,6 +1,7 @@
 package com.dtprogramming.treasurehuntirl.ui.views
 
 import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 
 /**
@@ -8,11 +9,11 @@ import com.dtprogramming.treasurehuntirl.database.models.Waypoint
  */
 interface CreateTreasureChestView {
 
-    fun loadMap()
-
-    fun displayClue(clue: Clue)
-    fun displayWaypoint(waypoint: Waypoint)
+    fun updateClueList(clues: List<Clue>)
+    fun displayWaypointInfo(waypoint: Waypoint?)
+    fun hideWaypointInfo()
+    fun displayPassPhraseInfo(passPhrase: String?)
+    fun hidePassPhraseInfo()
     fun setTitle(title: String)
-
-    fun close()
+    fun setState(state: Int)
 }

@@ -1,10 +1,12 @@
 package com.dtprogramming.treasurehuntirl.database.connections.impl
 
+import android.database.sqlite.SQLiteDatabase
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
 import com.dtprogramming.treasurehuntirl.util.getString
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
+import com.dtprogramming.treasurehuntirl.util.getStringOrNull
 import com.squareup.sqlbrite.BriteDatabase
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -15,16 +17,16 @@ import java.util.*
  */
 class TreasureHuntConnectionImpl : TreasureHuntConnection {
 
-    override val connections = ArrayList<Subscription>()
+    override val subscriptions = ArrayList<Subscription>()
 
-    val database: BriteDatabase
+    override val database: BriteDatabase
 
     init {
         database = THApp.briteDatabase
     }
 
     override fun insert(treasureHunt: TreasureHunt) {
-        database.insert(TreasureHunt.TABLE.NAME, treasureHunt.getContentValues())
+        database.insert(TreasureHunt.TABLE.NAME, treasureHunt.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
     }
 
     override fun update(treasureHunt: TreasureHunt) {
@@ -38,7 +40,7 @@ class TreasureHuntConnectionImpl : TreasureHuntConnection {
 
         cursor.moveToFirst()
 
-        treasureHunt = TreasureHunt(cursor.getString(TableColumns.UUID), cursor.getString(TreasureHunt.TABLE.TITLE))
+        treasureHunt = TreasureHunt(cursor)
 
         cursor.close()
 
@@ -46,42 +48,34 @@ class TreasureHuntConnectionImpl : TreasureHuntConnection {
     }
 
     override fun getTreasureHuntsAsync(onComplete: (List<TreasureHunt>) -> Unit) {
-        THApp.briteDatabase.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
-                .mapToList { TreasureHunt(it.getString(TableColumns.UUID), it.getString(TreasureHunt.TABLE.TITLE)) }
+        val subscription = THApp.briteDatabase.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
+                .mapToList { TreasureHunt(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .first()
                 .subscribe {
-                    val treasureHunts = ArrayList<TreasureHunt>()
-
-                    for (treasure in it)
-                        treasureHunts.add(treasure)
-
-                    onComplete(treasureHunts)
+                    onComplete(it)
                 }
+
+        subscriptions.add(subscription)
     }
 
     override fun subscribeToTreasureHunts(onChange: (List<TreasureHunt>) -> Unit) {
-        val connection = THApp.briteDatabase.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
-                .mapToList { TreasureHunt(it.getString(TableColumns.UUID), it.getString(TreasureHunt.TABLE.TITLE)) }
+        val subscription = THApp.briteDatabase.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
+                .mapToList { TreasureHunt(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    val treasureHunts = ArrayList<TreasureHunt>()
-
-                    for (treasure in it)
-                        treasureHunts.add(treasure)
-
-                    onChange(treasureHunts)
+                    onChange(it)
                 }
 
-        connections.add(connection)
+        subscriptions.add(subscription)
     }
 
     override fun unsubscribe() {
-        for (connection in connections) {
+        for (connection in subscriptions) {
             if (!connection.isUnsubscribed)
                 connection.unsubscribe()
         }
 
-        connections.clear()
+        subscriptions.clear()
     }
 }

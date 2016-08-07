@@ -16,8 +16,16 @@
     <string name="start">START</string>
     <string name="save">SAVE</string>
     <string name="cancel">CANCEL</string>
+    <string name="dig">Dig</string>
+    <string name="dig_mode">Dig Mode</string>
+    <string name="edit_waypoint">Edit Waypoint</string>
     <string name="add_waypoint">Add Waypoint</string>
     <string name="title_hint">Title:</string>
     <string name="add_answer">Add Answer</string>
     <string name="treasure_chests_title">Treasure Chests</string>
+    <string name="locked">Locked</string>
+    <string name="buried">Buried</string>
+    <string name="both">Both</string>
+    <string name="location">Location:</string>
+    <string name="pass_phrase">Pass Phrase</string>
 </resources>

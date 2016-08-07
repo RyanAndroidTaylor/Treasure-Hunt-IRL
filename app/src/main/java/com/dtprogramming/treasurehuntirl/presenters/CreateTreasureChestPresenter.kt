@@ -1,16 +1,21 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
+import com.dtprogramming.treasurehuntirl.database.connections.PassPhraseConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
+import com.dtprogramming.treasurehuntirl.database.models.PassPhrase
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.ui.views.CreateTreasureChestView
+import com.dtprogramming.treasurehuntirl.util.BURIED
+import com.dtprogramming.treasurehuntirl.util.BURIED_LOCKED
+import com.dtprogramming.treasurehuntirl.util.LOCKED
 import com.dtprogramming.treasurehuntirl.util.randomUuid
 
 /**
  * Created by ryantaylor on 7/11/16.
  */
-class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestConnection, val clueConnection: ClueConnection, val waypointConnection: WaypointConnection) : Presenter {
+class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestConnection, val clueConnection: ClueConnection, val waypointConnection: WaypointConnection, val passPhraseConnection: PassPhraseConnection) : Presenter {
 
     companion object {
         val TAG: String = CreateTreasureChestPresenter::class.java.simpleName
@@ -21,30 +26,39 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
     private var treasureChestTitle = "New Treasure Chest"
         private set
 
-    lateinit var treasureHuntId: String
+    lateinit var treasureHuntUuid: String
         private set
-    lateinit var treasureChestId: String
+    lateinit var treasureChestUuid: String
         private set
 
-    fun create(treasureHuntId: String, createTreasureChestView: CreateTreasureChestView) {
+    private var passPhraseUuid: String? = null
+    private var passPhraseText: String? = null
+
+    private var treasureChestOrder = 0
+    private var treasureChestState = BURIED
+
+    fun create(treasureHuntUuid: String, createTreasureChestView: CreateTreasureChestView) {
         this.createTreasureChestView = createTreasureChestView
-        this.treasureHuntId = treasureHuntId
+        this.treasureHuntUuid = treasureHuntUuid
 
-        treasureChestId = randomUuid()
+        treasureChestUuid = randomUuid()
+        treasureChestOrder = treasureChestConnection.getNextTreasureChestPosition(this.treasureHuntUuid)
 
-        treasureChestConnection.insert(TreasureChest(treasureChestId, treasureHuntId, treasureChestTitle))
+        treasureChestConnection.insert(TreasureChest(treasureChestUuid, treasureHuntUuid, treasureChestTitle, treasureChestOrder, BURIED))
 
         createTreasureChestView.setTitle(treasureChestTitle)
+        createTreasureChestView.setState(treasureChestState)
+
+        stateChanged(treasureChestState)
     }
 
-    fun load(treasureChestId: String, treasureHuntId: String, createTreasureChestView: CreateTreasureChestView) {
+    fun load(treasureChestId: String, createTreasureChestView: CreateTreasureChestView) {
         this.createTreasureChestView = createTreasureChestView
-        this.treasureChestId = treasureChestId
-        this.treasureHuntId = treasureHuntId
+        this.treasureChestUuid = treasureChestId
 
 
         loadTreasureChest()
-        loadClue()
+        loadClues()
         loadWaypoint()
     }
 
@@ -53,7 +67,7 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
 
         createTreasureChestView.setTitle(treasureChestTitle)
 
-        loadClue()
+        loadClues()
         loadWaypoint()
     }
 
@@ -65,39 +79,86 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
         createTreasureChestView = null
     }
 
-    override fun finish() {
-        treasureChestConnection.update(TreasureChest(treasureChestId, treasureHuntId, treasureChestTitle))
+    override fun dispose() {
+        unsubscribe()
+
+        treasureChestConnection.update(TreasureChest(treasureChestUuid, treasureHuntUuid, treasureChestTitle, treasureChestOrder, treasureChestState))
+
+        if (treasureChestState == LOCKED || treasureChestState == BURIED_LOCKED) {
+            passPhraseConnection.insert(PassPhrase(passPhraseUuid!!, treasureChestUuid, passPhraseText!!))
+        } else {
+            passPhraseConnection.deleteForParent(treasureChestUuid)
+        }
 
         PresenterManager.removePresenter(TAG)
     }
 
     private fun loadTreasureChest() {
-        val treasureChest = treasureChestConnection.getTreasureChest(treasureChestId)
+        val treasureChest = treasureChestConnection.getTreasureChest(treasureChestUuid)
 
+        treasureHuntUuid = treasureChest.treasureHuntUuid
         treasureChestTitle = treasureChest.title
+        treasureChestOrder = treasureChest.order
+        treasureChestState = treasureChest.state
+
         createTreasureChestView?.setTitle(treasureChestTitle)
+        createTreasureChestView?.setState(treasureChestState)
+
+        stateChanged(treasureChestState)
     }
 
-    private fun loadClue() {
-        val clue = clueConnection.getClueForTreasureChest(treasureChestId)
-
-        clue?.let { createTreasureChestView?.displayClue(it) }
+    private fun loadClues() {
+        clueConnection.getCluesForParentAsync(treasureChestUuid, { createTreasureChestView?.updateClueList(it) })
     }
 
     private fun loadWaypoint() {
-        val waypoint = waypointConnection.getWaypointForTreasureChest(treasureChestId)
+        val waypoint = waypointConnection.getWaypointForParent(treasureChestUuid)
 
-        if (waypoint != null)
-            createTreasureChestView?.loadMap()
+        createTreasureChestView?.displayWaypointInfo(waypoint)
+    }
+
+    private fun loadPassPhrase() {
+        val passPhrase = passPhraseConnection.getPassPhraseForParent(treasureChestUuid)
+
+        if (passPhrase == null) {
+            if (passPhraseUuid == null)
+                this.passPhraseUuid = randomUuid()
+
+            passPhraseText = ""
+        } else {
+            passPhraseText = passPhrase.text
+            passPhraseUuid = passPhrase.uuid
+        }
+
+        createTreasureChestView?.displayPassPhraseInfo(passPhrase?.text)
     }
 
     fun titleChanged(newTitle: String) {
         treasureChestTitle = newTitle
     }
 
-    fun mapLoaded() {
-        val waypoint = waypointConnection.getWaypointForTreasureChest(treasureChestId)
+    fun passPhraseChanged(newPassPhraseText: String) {
+        passPhraseText = newPassPhraseText
+    }
 
-        waypoint?.let { createTreasureChestView?.displayWaypoint(it) }
+    fun stateChanged(newState: Int) {
+        treasureChestState = newState
+
+        when (newState) {
+            BURIED -> {
+                loadWaypoint()
+
+                createTreasureChestView?.hidePassPhraseInfo()
+            }
+            LOCKED -> {
+                loadPassPhrase()
+
+                createTreasureChestView?.hideWaypointInfo()
+            }
+            BURIED_LOCKED -> {
+                loadWaypoint()
+                loadPassPhrase()
+            }
+        }
     }
 }

@@ -7,23 +7,39 @@ import android.util.Log
 import android.view.ViewGroup
 import android.widget.EditText
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.presenters.CreateCluePresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.views.CreateClueView
-import com.dtprogramming.treasurehuntirl.util.NEW
-import com.dtprogramming.treasurehuntirl.util.TREASURE_CHEST_UUID
+import com.dtprogramming.treasurehuntirl.util.CLUE_UUID
+import com.dtprogramming.treasurehuntirl.util.PARENT_UUID
 import kotlinx.android.synthetic.main.container_create_clue.view.*
 
 /**
  * Created by ryantaylor on 6/20/16.
  */
-class CreateClueContainer() : BasicContainer(), CreateClueView {
+class CreateTextClueContainer() : BasicContainer(), CreateClueView {
 
     companion object {
-        val URI: String = CreateClueContainer::class.java.simpleName
+        val URI: String = CreateTextClueContainer::class.java.simpleName
+
+        fun startNewContainer(containerActivity: ContainerActivity, parentUuid: String) {
+            val extras = Bundle()
+
+            extras.putString(PARENT_UUID, parentUuid)
+
+            containerActivity.startContainer(URI, extras)
+        }
+
+        fun loadContainer(containerActivity: ContainerActivity, parentUuid: String, clueUuid: String) {
+            val extras = Bundle()
+
+            extras.putString(PARENT_UUID, parentUuid)
+            extras.putString(CLUE_UUID, clueUuid)
+
+            containerActivity.startContainer(URI, extras)
+        }
     }
 
     override var rootViewId = R.layout.container_create_clue
@@ -45,8 +61,10 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
 
         clueText = parent.create_clue__container_clue_text
 
-        if (extras.containsKey(TREASURE_CHEST_UUID))
-            createCluePresenter.load(this, extras.getString(TREASURE_CHEST_UUID))
+        if (extras.containsKey(CLUE_UUID))
+            createCluePresenter.load(this, extras.getString(PARENT_UUID), extras.getString(CLUE_UUID))
+        else if (extras.containsKey(PARENT_UUID))
+            createCluePresenter.create(this, extras.getString(PARENT_UUID))
         else
             createCluePresenter.reload(this)
 
@@ -67,7 +85,6 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
     }
 
     override fun onPause() {
-        Log.i("CreateClueContainer", "onPause()")
         super.onPause()
 
         createCluePresenter.unsubscribe()
@@ -80,10 +97,9 @@ class CreateClueContainer() : BasicContainer(), CreateClueView {
     }
 
     override fun onFinish() {
-        Log.i("CreateClueContainer", "onFinish()")
         super.onFinish()
 
-        createCluePresenter.finish()
+        createCluePresenter.dispose()
     }
 
     override fun setClueText(text: String) {

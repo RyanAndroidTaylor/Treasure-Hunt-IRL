@@ -1,10 +1,9 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
-import com.dtprogramming.treasurehuntirl.database.models.Clue
+import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.ui.views.CreateClueView
 import com.dtprogramming.treasurehuntirl.util.randomUuid
-import java.util.*
 
 /**
  * Created by ryantaylor on 6/28/16.
@@ -17,17 +16,26 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
 
     private var createClueView: CreateClueView? = null
 
-    private lateinit var clueId: String
-    private lateinit var treasureHuntId: String
+    private lateinit var clueUuid: String
+    private lateinit var parentUuid: String
 
-    private var new = false
     private var clueText = ""
 
-    fun load(createClueView: CreateClueView, treasureChestId: String) {
+    fun create(createClueView: CreateClueView, parentUuid: String) {
         this.createClueView = createClueView
-        this.treasureHuntId = treasureChestId
+        this.parentUuid = parentUuid
 
-        loadClue(treasureChestId)
+        clueUuid = randomUuid()
+
+        clueConnection.insert(TextClue(clueUuid, parentUuid, ""))
+    }
+
+    fun load(createClueView: CreateClueView, clueUuid: String, parentUuid: String) {
+        this.createClueView = createClueView
+        this.clueUuid = clueUuid
+        this.parentUuid = parentUuid
+
+        loadClue(parentUuid)
 
         createClueView.setClueText(clueText)
     }
@@ -44,20 +52,18 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
         createClueView = null
     }
 
-    override fun finish() {
+    override fun dispose() {
+        unsubscribe()
+
         PresenterManager.removePresenter(TAG)
     }
 
-    private fun loadClue(treasureChestId: String) {
-        val clue = clueConnection.getClueForTreasureChest(treasureChestId)
+    private fun loadClue(clueUuid: String) {
+        val clue = clueConnection.getTextClue(clueUuid)
 
-        if (clue != null) {
-            clueId = clue.uuid
-            clueText = clue.text
-        } else {
-            new = true
-            clueId = randomUuid()
-        }
+        clueText = clue.text
+
+        createClueView?.setClueText(clueText)
     }
 
     fun onTextChanged(clueText: String) {
@@ -65,10 +71,7 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
     }
 
     fun save() {
-        if (new)
-            clueConnection.insert(Clue(clueId, treasureHuntId, clueText))
-        else
-            clueConnection.update(Clue(clueId, treasureHuntId, clueText))
+        clueConnection.update(TextClue(clueUuid, parentUuid, clueText))
 
         PresenterManager.removePresenter(TAG)
 
