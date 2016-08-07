@@ -6,6 +6,7 @@ import com.dtprogramming.treasurehuntirl.database.models.PlayingTreasureHunt
 import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.ui.views.PlayTreasureHuntView
 import com.dtprogramming.treasurehuntirl.util.BURIED
+import com.dtprogramming.treasurehuntirl.util.BURIED_LOCKED
 import com.dtprogramming.treasurehuntirl.util.CLOSED
 import com.dtprogramming.treasurehuntirl.util.LOCKED
 
@@ -50,7 +51,7 @@ class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasu
     }
 
     fun performTreasureChestAction() {
-        if (currentTreasureChest?.state == BURIED) {
+        if (currentTreasureChest?.state == BURIED || currentTreasureChest?.state == BURIED_LOCKED) {
             playTreasureHuntView?.switchToDigMode()
         } else if (currentTreasureChest?.state == LOCKED) {
             currentTreasureChest?.let { playTreasureHuntView?.viewCollectedTreasureChest(it.uuid) }

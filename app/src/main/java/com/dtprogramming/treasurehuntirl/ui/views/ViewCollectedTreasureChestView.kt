@@ -7,6 +7,11 @@ import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
  */
 interface ViewCollectedTreasureChestView {
 
+    fun displayLockedTreasureChest()
+    fun displayClosedTreasureChest()
     fun displayOpenedTreasureChest()
     fun displayCollectedItems(collectedItems: List<InventoryItem>)
+    fun displayIncorrectPassPhraseGuess()
+
+    fun close()
 }
