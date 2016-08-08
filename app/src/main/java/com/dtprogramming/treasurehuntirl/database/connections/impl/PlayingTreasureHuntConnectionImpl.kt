@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.connections.PlayingTreasureHuntConnection
 import com.dtprogramming.treasurehuntirl.database.models.PlayingTreasureHunt
+import com.squareup.sqlbrite.BriteDatabase
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import java.util.*
@@ -11,9 +12,7 @@ import java.util.*
 /**
  * Created by ryantaylor on 7/20/16.
  */
-class PlayingTreasureHuntConnectionImpl : PlayingTreasureHuntConnection {
-
-    override val database = THApp.briteDatabase
+class PlayingTreasureHuntConnectionImpl(override val database: BriteDatabase) : PlayingTreasureHuntConnection {
 
     override val subscriptions = ArrayList<Subscription>()
 
@@ -30,11 +29,5 @@ class PlayingTreasureHuntConnectionImpl : PlayingTreasureHuntConnection {
                 }
 
         subscriptions.add(subscription)
-    }
-
-    override fun unsubscribe() {
-        for (connection in subscriptions)
-            if (!connection.isUnsubscribed)
-                connection.unsubscribe()
     }
 }

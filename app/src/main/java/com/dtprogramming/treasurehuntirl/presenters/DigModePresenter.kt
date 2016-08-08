@@ -1,6 +1,7 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
 import android.util.Log
+import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.connections.CollectedTreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
@@ -11,15 +12,23 @@ import com.dtprogramming.treasurehuntirl.ui.views.DigModeView
 import com.dtprogramming.treasurehuntirl.util.CLOSED
 import com.dtprogramming.treasurehuntirl.util.DiggingTimer
 import rx.Subscription
+import javax.inject.Inject
 
 /**
  * Created by ryantaylor on 7/22/16.
  */
-class DigModePresenter(val waypointConnection: WaypointConnection, val treasureChestConnection: TreasureChestConnection, val collectedTreasureChestConnection: CollectedTreasureChestConnection) : Presenter {
+class DigModePresenter() : Presenter {
 
     companion object {
         val TAG: String = DigModePresenter::class.java.simpleName
     }
+
+    @Inject
+    lateinit var waypointConnection: WaypointConnection
+    @Inject
+    lateinit var treasureChestConnection: TreasureChestConnection
+    @Inject
+    lateinit var collectedTreasureChestConnection: CollectedTreasureChestConnection
 
     //TODO Fine tune accuracy to figure out if we need to warn the user of inaccurate location data
     val PERFECT = 0.0f
@@ -40,6 +49,10 @@ class DigModePresenter(val waypointConnection: WaypointConnection, val treasureC
     private var lat = 0.0
     private var lng = 0.0
     private var accuracy = 0.0f
+
+    init {
+        THApp.databaseComponent.inject(this)
+    }
 
     fun load(digModeView: DigModeView, playingTreasureHuntUuid: String) {
         this.digModeView = digModeView

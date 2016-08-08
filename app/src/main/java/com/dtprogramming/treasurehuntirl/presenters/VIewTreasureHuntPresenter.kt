@@ -1,6 +1,7 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
 import android.location.Location
+import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
@@ -13,15 +14,23 @@ import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import javax.inject.Inject
 
 /**
  * Created by ryantaylor on 7/16/16.
  */
-class ViewTreasureHuntPresenter(private val treasureHuntConnection: TreasureHuntConnection, private val treasureChestConnection: TreasureChestConnection, private val waypointConnection: WaypointConnection) : Presenter {
+class ViewTreasureHuntPresenter() : Presenter {
 
     companion object {
         val TAG: String = ViewTreasureHuntPresenter::class.java.simpleName
     }
+
+    @Inject
+    lateinit var treasureHuntConnection: TreasureHuntConnection
+    @Inject
+    lateinit var treasureChestConnection: TreasureChestConnection
+    @Inject
+    lateinit var waypointConnection: WaypointConnection
 
     private var viewTreasureHuntView: ViewTreasureHuntView? = null
 
@@ -38,6 +47,10 @@ class ViewTreasureHuntPresenter(private val treasureHuntConnection: TreasureHunt
     private lateinit var waypoints: List<Waypoint>
 
     private var loadDataSubscription: Subscription? = null
+
+    init {
+        THApp.databaseComponent.inject(this)
+    }
 
     fun load(viewTreasureHuntView: ViewTreasureHuntView, treasureHuntId: String) {
         this.viewTreasureHuntView = viewTreasureHuntView

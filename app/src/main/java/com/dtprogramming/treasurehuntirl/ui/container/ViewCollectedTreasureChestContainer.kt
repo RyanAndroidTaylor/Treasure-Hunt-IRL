@@ -60,7 +60,7 @@ class ViewCollectedTreasureChestContainer : BasicContainer(), ViewCollectedTreas
         viewCollectedTreasureChestPresenter = if (PresenterManager.hasPresenter(ViewCollectedTreasureChestPresenter.TAG))
             PresenterManager.getPresenter(ViewCollectedTreasureChestPresenter.TAG) as ViewCollectedTreasureChestPresenter
         else
-            PresenterManager.addPresenter(ViewCollectedTreasureChestPresenter.TAG, ViewCollectedTreasureChestPresenter(CollectedTreasureChestConnectionImpl(), InventoryConnectionImpl(), PassPhraseConnectionImpl())) as ViewCollectedTreasureChestPresenter
+            PresenterManager.addPresenter(ViewCollectedTreasureChestPresenter.TAG, ViewCollectedTreasureChestPresenter()) as ViewCollectedTreasureChestPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {

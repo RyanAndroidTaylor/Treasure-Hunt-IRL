@@ -6,6 +6,7 @@ import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.CollectedClueConnection
 import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
+import com.squareup.sqlbrite.BriteDatabase
 import rx.Observable
 import rx.Subscriber
 import rx.Subscription
@@ -15,9 +16,7 @@ import java.util.*
 /**
  * Created by ryantaylor on 7/21/16.
  */
-class CollectedClueConnectionImpl : CollectedClueConnection {
-
-    override val database = THApp.briteDatabase
+class CollectedClueConnectionImpl(override val database: BriteDatabase) : CollectedClueConnection {
 
     override val subscriptions = ArrayList<Subscription>()
 
@@ -46,11 +45,5 @@ class CollectedClueConnectionImpl : CollectedClueConnection {
                 }
 
         subscriptions.add(subscription)
-    }
-
-    override fun unsubscribe() {
-        for (connection in subscriptions)
-            if (!connection.isUnsubscribed)
-                connection.unsubscribe()
     }
 }

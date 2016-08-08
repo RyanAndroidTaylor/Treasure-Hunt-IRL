@@ -40,7 +40,7 @@ class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
         playTreasureHuntPresenter = if (PresenterManager.hasPresenter(PlayTreasureHuntPresenter.TAG))
             PresenterManager.getPresenter(PlayTreasureHuntPresenter.TAG) as PlayTreasureHuntPresenter
         else
-            PresenterManager.addPresenter(PlayTreasureHuntPresenter.TAG, PlayTreasureHuntPresenter(PlayingTreasureHuntConnectionImpl(), InventoryConnectionImpl(), TreasureChestConnectionImpl(), CollectedTreasureChestConnectionImpl())) as PlayTreasureHuntPresenter
+            PresenterManager.addPresenter(PlayTreasureHuntPresenter.TAG, PlayTreasureHuntPresenter()) as PlayTreasureHuntPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {

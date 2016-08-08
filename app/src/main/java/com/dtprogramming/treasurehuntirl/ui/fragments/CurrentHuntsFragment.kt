@@ -8,12 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.THApp
+import com.dtprogramming.treasurehuntirl.database.connections.PlayingTreasureHuntConnection
 import com.dtprogramming.treasurehuntirl.ui.activities.PlayTreasureHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.PlayingTreasureHuntAdapter
 import com.dtprogramming.treasurehuntirl.database.connections.impl.PlayingTreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.PlayingTreasureHunt
 import com.dtprogramming.treasurehuntirl.util.PLAYING_HUNT_UUID
 import kotlinx.android.synthetic.main.fragment_current_hunts.view.*
+import javax.inject.Inject
 
 /**
  * Created by ryantaylor on 6/15/16.
@@ -25,10 +28,12 @@ class CurrentHuntsFragment : TabFragment() {
 
     private lateinit var adapter: PlayingTreasureHuntAdapter
 
-    private val treasureHuntConnection = PlayingTreasureHuntConnectionImpl()
+    @Inject
+    lateinit var treasureHuntConnection: PlayingTreasureHuntConnection
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_current_hunts, container, false)
+        THApp.databaseComponent.inject(this)
 
         view?.let {
             recyclerView = view.current_hunt_list

@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
+import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.connections.*
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.PlayingTreasureHunt
@@ -9,11 +10,21 @@ import com.dtprogramming.treasurehuntirl.util.BURIED
 import com.dtprogramming.treasurehuntirl.util.BURIED_LOCKED
 import com.dtprogramming.treasurehuntirl.util.CLOSED
 import com.dtprogramming.treasurehuntirl.util.LOCKED
+import javax.inject.Inject
 
 /**
  * Created by ryantaylor on 7/19/16.
  */
-class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasureHuntConnection, val inventoryConnection: InventoryConnection, val treasureChestConnection: TreasureChestConnection, val collectedTreasureChestConnection: CollectedTreasureChestConnection) : Presenter {
+class PlayTreasureHuntPresenter() : Presenter {
+
+    @Inject
+    lateinit var playingTreasureHuntConnection: PlayingTreasureHuntConnection
+    @Inject
+    lateinit var inventoryConnection: InventoryConnection
+    @Inject
+    lateinit var treasureChestConnection: TreasureChestConnection
+    @Inject
+    lateinit var collectedTreasureChestConnection: CollectedTreasureChestConnection
 
     private var playTreasureHuntView: PlayTreasureHuntView? = null
 
@@ -24,6 +35,10 @@ class PlayTreasureHuntPresenter(val playingTreasureHuntConnection: PlayingTreasu
 
     companion object {
         val TAG: String = PlayTreasureHuntPresenter::class.java.simpleName
+    }
+
+    init {
+        THApp.databaseComponent.inject(this)
     }
 
     fun start(playTreasureHuntView: PlayTreasureHuntView, treasureHuntUuid: String) {

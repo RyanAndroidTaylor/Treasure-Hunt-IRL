@@ -70,7 +70,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         createHuntPresenter = if (PresenterManager.hasPresenter(CreateHuntPresenter.TAG))
             PresenterManager.getPresenter(CreateHuntPresenter.TAG) as CreateHuntPresenter
         else
-            PresenterManager.addPresenter(CreateHuntPresenter.TAG, CreateHuntPresenter(TreasureHuntConnectionImpl(), TreasureChestConnectionImpl(), ClueConnectionImpl())) as CreateHuntPresenter
+            PresenterManager.addPresenter(CreateHuntPresenter.TAG, CreateHuntPresenter()) as CreateHuntPresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {

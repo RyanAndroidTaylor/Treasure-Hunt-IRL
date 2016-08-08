@@ -52,7 +52,7 @@ class CreateTextClueContainer() : BasicContainer(), CreateClueView {
         createCluePresenter = if (PresenterManager.hasPresenter(CreateCluePresenter.TAG))
             PresenterManager.getPresenter(CreateCluePresenter.TAG) as CreateCluePresenter
         else
-            PresenterManager.addPresenter(CreateCluePresenter.TAG, CreateCluePresenter(ClueConnectionImpl())) as CreateCluePresenter
+            PresenterManager.addPresenter(CreateCluePresenter.TAG, CreateCluePresenter()) as CreateCluePresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {

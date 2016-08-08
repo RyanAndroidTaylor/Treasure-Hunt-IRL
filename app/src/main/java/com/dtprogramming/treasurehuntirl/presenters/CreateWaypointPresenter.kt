@@ -1,15 +1,24 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
+import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.connections.WaypointConnection
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.views.CreateWaypointView
 import com.dtprogramming.treasurehuntirl.util.randomUuid
+import javax.inject.Inject
 
 /**
  * Created by ryantaylor on 6/25/16.
  */
-class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Presenter {
+class CreateWaypointPresenter() : Presenter {
     val BASE_NUDGE_DISTANCE = 1.0
+
+    companion object {
+        val TAG: String = CreateWaypointPresenter::class.java.simpleName
+    }
+
+    @Inject
+    lateinit var waypointConnection: WaypointConnection
 
     private var createWaypointView: CreateWaypointView? = null
 
@@ -36,8 +45,8 @@ class CreateWaypointPresenter(val waypointConnection: WaypointConnection) : Pres
             return finalNudgeDistance
         }
 
-    companion object {
-        val TAG: String = CreateWaypointPresenter::class.java.simpleName
+    init {
+        THApp.databaseComponent.inject(this)
     }
 
     fun load(createWaypointView: CreateWaypointView, parentUuid: String) {

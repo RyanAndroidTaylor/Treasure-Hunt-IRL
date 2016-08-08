@@ -1,7 +1,6 @@
 package com.dtprogramming.treasurehuntirl.database.connections.impl
 
 import android.database.sqlite.SQLiteDatabase
-import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
@@ -17,15 +16,9 @@ import java.util.*
 /**
  * Created by ryantaylor on 7/11/16.
  */
-class TreasureChestConnectionImpl : TreasureChestConnection {
+class TreasureChestConnectionImpl(override val database: BriteDatabase) : TreasureChestConnection {
 
     override val subscriptions = ArrayList<Subscription>()
-
-    override val database: BriteDatabase
-
-    init {
-        database = THApp.briteDatabase
-    }
 
     override fun insert(treasureChest: TreasureChest) {
         database.insert(TreasureChest.TABLE.NAME, treasureChest.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
@@ -193,14 +186,5 @@ class TreasureChestConnectionImpl : TreasureChestConnection {
         }
 
         return count
-    }
-
-    override fun unsubscribe() {
-        for (connection in subscriptions) {
-            if (!connection.isUnsubscribed)
-                connection.unsubscribe()
-        }
-
-        subscriptions.clear()
     }
 }

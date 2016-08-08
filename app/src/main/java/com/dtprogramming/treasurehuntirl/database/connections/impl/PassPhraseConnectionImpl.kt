@@ -5,15 +5,14 @@ import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.PassPhraseConnection
 import com.dtprogramming.treasurehuntirl.database.models.PassPhrase
+import com.squareup.sqlbrite.BriteDatabase
 import rx.Subscription
 import java.util.*
 
 /**
  * Created by ryantaylor on 8/5/16.
  */
-class PassPhraseConnectionImpl : PassPhraseConnection {
-
-    override val database = THApp.briteDatabase
+class PassPhraseConnectionImpl(override val database: BriteDatabase) : PassPhraseConnection {
 
     override val subscriptions = ArrayList<Subscription>()
 
@@ -48,10 +47,5 @@ class PassPhraseConnectionImpl : PassPhraseConnection {
         }
 
         return passPhrase
-    }
-
-    override fun unsubscribe() {
-        for (subscription in subscriptions)
-            subscription.unsubscribe()
     }
 }
