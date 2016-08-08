@@ -59,7 +59,7 @@ class DigModeContainer : BasicContainer(), DigModeView, LocationListener, OnMapR
         digModePresenter = if (PresenterManager.hasPresenter(DigModePresenter.TAG))
             PresenterManager.getPresenter(DigModePresenter.TAG) as DigModePresenter
         else
-            PresenterManager.addPresenter(DigModePresenter.TAG, DigModePresenter(WaypointConnectionImpl(), TreasureChestConnectionImpl(), CollectedTreasureChestConnectionImpl())) as DigModePresenter
+            PresenterManager.addPresenter(DigModePresenter.TAG, DigModePresenter()) as DigModePresenter
     }
 
     override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {

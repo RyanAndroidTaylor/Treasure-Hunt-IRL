@@ -10,6 +10,7 @@ import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.util.LOCKED
 import com.dtprogramming.treasurehuntirl.util.OPEN
 import com.dtprogramming.treasurehuntirl.util.getString
+import com.squareup.sqlbrite.BriteDatabase
 import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -19,8 +20,7 @@ import java.util.*
 /**
  * Created by ryantaylor on 7/27/16.
  */
-class InventoryConnectionImpl : InventoryConnection {
-    override val database = THApp.briteDatabase
+class InventoryConnectionImpl(override val database: BriteDatabase) : InventoryConnection {
 
     override val subscriptions = ArrayList<Subscription>()
 
@@ -59,11 +59,6 @@ class InventoryConnectionImpl : InventoryConnection {
                 .subscribe {
                     onComplete(it)
                 }
-    }
-
-    override fun unsubscribe() {
-        for (connection in subscriptions)
-            connection.unsubscribe()
     }
 
     private fun getCollectedClues(treasureChestUuid: String): List<InventoryItem> {

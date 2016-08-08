@@ -7,11 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.THApp
+import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureHuntAdapter
 import kotlinx.android.synthetic.main.fragment_create_hunt.view.*
+import javax.inject.Inject
 
 /**
  * Created by ryantaylor on 6/15/16.
@@ -23,10 +26,12 @@ class CreateHuntTabFragment : TabFragment() {
 
     lateinit var adapter: TreasureHuntAdapter
 
-    var treasureHuntConnection = TreasureHuntConnectionImpl()
+    @Inject
+    lateinit var treasureHuntConnection: TreasureHuntConnection
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_create_hunt, container, false)
+        THApp.databaseComponent.inject(this)
 
         if (view != null) {
             recyclerView = view.create_hunt_list

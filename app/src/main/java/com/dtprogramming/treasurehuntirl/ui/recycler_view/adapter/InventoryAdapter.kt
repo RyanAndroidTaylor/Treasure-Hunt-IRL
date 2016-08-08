@@ -6,12 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.THApp
+import com.dtprogramming.treasurehuntirl.database.connections.CollectedClueConnection
 import com.dtprogramming.treasurehuntirl.database.connections.impl.CollectedClueConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ListRecyclerViewSectionAdapter
 import com.dtprogramming.treasurehuntirl.util.*
 import kotlinx.android.synthetic.main.adapter_inventory_item.view.*
+import javax.inject.Inject
 
 /**
  * Created by ryantaylor on 7/26/16.
@@ -37,7 +40,12 @@ class InventoryAdapter(items: List<InventoryItem>, val itemSelected: (item: Inve
 
         private lateinit var itemInfo: TextView
 
-        private val collectedClueConnection =  CollectedClueConnectionImpl()
+        @Inject
+        lateinit var collectedClueConnection: CollectedClueConnection
+
+        init {
+            THApp.databaseComponent.inject(this)
+        }
 
         fun bind(item: InventoryItem?) {
             itemInfo = view.adapter_inventory_item_info

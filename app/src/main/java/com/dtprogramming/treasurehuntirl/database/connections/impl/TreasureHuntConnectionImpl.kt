@@ -15,15 +15,9 @@ import java.util.*
 /**
  * Created by ryantaylor on 7/5/16.
  */
-class TreasureHuntConnectionImpl : TreasureHuntConnection {
+class TreasureHuntConnectionImpl(override val database: BriteDatabase) : TreasureHuntConnection {
 
     override val subscriptions = ArrayList<Subscription>()
-
-    override val database: BriteDatabase
-
-    init {
-        database = THApp.briteDatabase
-    }
 
     override fun insert(treasureHunt: TreasureHunt) {
         database.insert(TreasureHunt.TABLE.NAME, treasureHunt.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
@@ -36,7 +30,7 @@ class TreasureHuntConnectionImpl : TreasureHuntConnection {
     override fun getTreasureHunt(treasureHuntId: String): TreasureHunt {
         val treasureHunt: TreasureHunt
 
-        val cursor = THApp.briteDatabase.query("SELECT * FROM ${TreasureHunt.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", treasureHuntId)
+        val cursor = database.query("SELECT * FROM ${TreasureHunt.TABLE.NAME} WHERE ${TableColumns.WHERE_UUID_EQUALS}", treasureHuntId)
 
         cursor.moveToFirst()
 
@@ -48,7 +42,7 @@ class TreasureHuntConnectionImpl : TreasureHuntConnection {
     }
 
     override fun getTreasureHuntsAsync(onComplete: (List<TreasureHunt>) -> Unit) {
-        val subscription = THApp.briteDatabase.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
+        val subscription = database.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
                 .mapToList { TreasureHunt(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .first()
@@ -60,7 +54,7 @@ class TreasureHuntConnectionImpl : TreasureHuntConnection {
     }
 
     override fun subscribeToTreasureHunts(onChange: (List<TreasureHunt>) -> Unit) {
-        val subscription = THApp.briteDatabase.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
+        val subscription = database.createQuery(TreasureHunt.TABLE.NAME, "SELECT * FROM ${TreasureHunt.TABLE.NAME}")
                 .mapToList { TreasureHunt(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
@@ -68,14 +62,5 @@ class TreasureHuntConnectionImpl : TreasureHuntConnection {
                 }
 
         subscriptions.add(subscription)
-    }
-
-    override fun unsubscribe() {
-        for (connection in subscriptions) {
-            if (!connection.isUnsubscribed)
-                connection.unsubscribe()
-        }
-
-        subscriptions.clear()
     }
 }

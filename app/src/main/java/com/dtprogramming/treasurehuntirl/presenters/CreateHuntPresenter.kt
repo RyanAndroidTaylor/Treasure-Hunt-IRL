@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
+import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
@@ -8,11 +9,19 @@ import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.views.CreateHuntView
 import com.dtprogramming.treasurehuntirl.util.CLOSED
 import com.dtprogramming.treasurehuntirl.util.randomUuid
+import javax.inject.Inject
 
 /**
  * Created by ryantaylor on 6/20/16.
  */
-class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, val treasureChestConnection: TreasureChestConnection, val clueConnection: ClueConnection) : Presenter {
+class CreateHuntPresenter() : Presenter {
+
+    @Inject
+    lateinit var treasureHuntConnection: TreasureHuntConnection
+    @Inject
+    lateinit var treasureChestConnection: TreasureChestConnection
+    @Inject
+    lateinit var clueConnection: ClueConnection
 
     var treasureHuntTitle = "New Treasure Hunt"
 
@@ -25,6 +34,10 @@ class CreateHuntPresenter(val treasureHuntConnection: TreasureHuntConnection, va
 
     companion object {
         val TAG: String = CreateHuntPresenter::class.java.simpleName
+    }
+
+    init {
+        THApp.databaseComponent.inject(this)
     }
 
     fun create(createHuntView: CreateHuntView) {

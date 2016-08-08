@@ -1,5 +1,6 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
+import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.connections.PassPhraseConnection
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
@@ -11,15 +12,25 @@ import com.dtprogramming.treasurehuntirl.util.BURIED
 import com.dtprogramming.treasurehuntirl.util.BURIED_LOCKED
 import com.dtprogramming.treasurehuntirl.util.LOCKED
 import com.dtprogramming.treasurehuntirl.util.randomUuid
+import javax.inject.Inject
 
 /**
  * Created by ryantaylor on 7/11/16.
  */
-class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestConnection, val clueConnection: ClueConnection, val waypointConnection: WaypointConnection, val passPhraseConnection: PassPhraseConnection) : Presenter {
+class CreateTreasureChestPresenter() : Presenter {
 
     companion object {
         val TAG: String = CreateTreasureChestPresenter::class.java.simpleName
     }
+
+    @Inject
+    lateinit var treasureChestConnection: TreasureChestConnection
+    @Inject
+    lateinit var clueConnection: ClueConnection
+    @Inject
+    lateinit var waypointConnection: WaypointConnection
+    @Inject
+    lateinit var passPhraseConnection: PassPhraseConnection
 
     private var createTreasureChestView: CreateTreasureChestView? = null
 
@@ -36,6 +47,10 @@ class CreateTreasureChestPresenter(val treasureChestConnection: TreasureChestCon
 
     private var treasureChestOrder = 0
     private var treasureChestState = BURIED
+
+    init {
+        THApp.databaseComponent.inject(this)
+    }
 
     fun create(treasureHuntUuid: String, createTreasureChestView: CreateTreasureChestView) {
         this.createTreasureChestView = createTreasureChestView

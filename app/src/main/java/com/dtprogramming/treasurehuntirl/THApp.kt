@@ -2,6 +2,9 @@ package com.dtprogramming.treasurehuntirl
 
 import android.app.Application
 import com.dtprogramming.treasurehuntirl.database.DatabaseOpenHelper
+import com.dtprogramming.treasurehuntirl.injection.DaggerDatabaseComponent
+import com.dtprogramming.treasurehuntirl.injection.DatabaseComponent
+import com.dtprogramming.treasurehuntirl.injection.DatabaseModule
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.sqlbrite.BriteDatabase
 import com.squareup.sqlbrite.SqlBrite
@@ -13,8 +16,7 @@ import rx.schedulers.Schedulers
 class THApp : Application() {
 
     companion object {
-        lateinit var briteDatabase: BriteDatabase
-            private set
+        lateinit var databaseComponent: DatabaseComponent
     }
 
     override fun onCreate() {
@@ -22,7 +24,6 @@ class THApp : Application() {
 
         LeakCanary.install(this)
 
-        val database = DatabaseOpenHelper(baseContext)
-        briteDatabase = SqlBrite.create().wrapDatabaseHelper(database, Schedulers.io())
+        databaseComponent= DaggerDatabaseComponent.builder().databaseModule(DatabaseModule(baseContext)).build()
     }
 }

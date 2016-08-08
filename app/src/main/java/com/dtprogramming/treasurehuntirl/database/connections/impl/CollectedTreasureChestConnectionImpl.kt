@@ -1,7 +1,6 @@
 package com.dtprogramming.treasurehuntirl.database.connections.impl
 
 import android.database.sqlite.SQLiteDatabase
-import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.TableColumns
 import com.dtprogramming.treasurehuntirl.database.connections.CollectedTreasureChestConnection
 import com.dtprogramming.treasurehuntirl.database.models.CollectedTextClue
@@ -9,6 +8,7 @@ import com.dtprogramming.treasurehuntirl.database.models.CollectedTreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.util.getString
+import com.squareup.sqlbrite.BriteDatabase
 import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -18,9 +18,8 @@ import java.util.*
 /**
  * Created by ryantaylor on 7/26/16.
  */
-class CollectedTreasureChestConnectionImpl : CollectedTreasureChestConnection {
+class CollectedTreasureChestConnectionImpl(override val database: BriteDatabase) : CollectedTreasureChestConnection {
 
-    override val database = THApp.briteDatabase
     override val subscriptions = ArrayList<Subscription>()
 
     override fun insert(collectedTreasureChest: CollectedTreasureChest) {
@@ -73,11 +72,6 @@ class CollectedTreasureChestConnectionImpl : CollectedTreasureChestConnection {
         cursor.close()
 
         return collectedTreasureChest
-    }
-
-    override fun unsubscribe() {
-        for (connection in subscriptions)
-            connection.unsubscribe()
     }
 
     private fun collectItemsForOpenedTreasureChest(treasureChestUuid: String): List<InventoryItem> {

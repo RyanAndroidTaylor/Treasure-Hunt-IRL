@@ -7,12 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
+import com.dtprogramming.treasurehuntirl.THApp
+import com.dtprogramming.treasurehuntirl.database.connections.TreasureChestConnection
+import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.PlayingTreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ListRecyclerViewSectionAdapter
 import kotlinx.android.synthetic.main.adapter_playing_treasure_hunt.view.*
 import kotlinx.android.synthetic.main.adapter_treasure_chest.view.*
+import javax.inject.Inject
 
 /**
  * Created by ryantaylor on 7/21/16.
@@ -38,10 +42,13 @@ class PlayingTreasureHuntAdapter(playingTreasureHunts: List<PlayingTreasureHunt>
         val title: TextView
         val foundChestCount: TextView
 
-        val treasureHuntConnection = TreasureHuntConnectionImpl()
-        val treasureChestConnection = TreasureChestConnectionImpl()
+        @Inject
+        lateinit var treasureHuntConnection: TreasureHuntConnection
+        @Inject
+        lateinit var treasureChestConnection: TreasureChestConnection
 
         init {
+            THApp.databaseComponent.inject(this)
             title = view.adapter_playing_treasure_hunt_title
             foundChestCount = view.adapter_playing_treasure_hunt_found_chest_count
         }

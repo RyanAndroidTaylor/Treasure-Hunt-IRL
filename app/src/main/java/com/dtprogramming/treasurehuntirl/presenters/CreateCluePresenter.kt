@@ -1,14 +1,19 @@
 package com.dtprogramming.treasurehuntirl.presenters
 
+import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.connections.ClueConnection
 import com.dtprogramming.treasurehuntirl.database.models.TextClue
 import com.dtprogramming.treasurehuntirl.ui.views.CreateClueView
 import com.dtprogramming.treasurehuntirl.util.randomUuid
+import javax.inject.Inject
 
 /**
  * Created by ryantaylor on 6/28/16.
  */
-class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
+class CreateCluePresenter() : Presenter {
+
+    @Inject
+    lateinit var clueConnection: ClueConnection
 
     companion object {
         val TAG: String = CreateCluePresenter::class.java.simpleName
@@ -20,6 +25,10 @@ class CreateCluePresenter(val clueConnection: ClueConnection) : Presenter {
     private lateinit var parentUuid: String
 
     private var clueText = ""
+
+    init {
+        THApp.databaseComponent.inject(this)
+    }
 
     fun create(createClueView: CreateClueView, parentUuid: String) {
         this.createClueView = createClueView

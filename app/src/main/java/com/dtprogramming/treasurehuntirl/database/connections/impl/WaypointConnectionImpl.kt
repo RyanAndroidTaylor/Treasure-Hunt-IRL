@@ -18,15 +18,9 @@ import java.util.*
 /**
  * Created by ryantaylor on 7/5/16.
  */
-class WaypointConnectionImpl : WaypointConnection {
+class WaypointConnectionImpl(override val database: BriteDatabase) : WaypointConnection {
 
     override val subscriptions = ArrayList<Subscription>()
-
-    override val database: BriteDatabase
-
-    init {
-        database = THApp.briteDatabase
-    }
 
     override fun insert(waypoint: Waypoint) {
         database.insert(Waypoint.TABLE.NAME, waypoint.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
@@ -111,14 +105,5 @@ class WaypointConnectionImpl : WaypointConnection {
                 }
 
         subscriptions.add(subscription)
-    }
-
-    override fun unsubscribe() {
-        for (connection in subscriptions) {
-            if (!connection.isUnsubscribed)
-                connection.unsubscribe()
-        }
-
-        subscriptions.clear()
     }
 }

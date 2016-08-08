@@ -18,15 +18,9 @@ import java.util.*
 /**
  * Created by ryantaylor on 7/5/16.
  */
-class ClueConnectionImpl : ClueConnection {
+class ClueConnectionImpl(override val database: BriteDatabase) : ClueConnection {
 
     override val subscriptions = ArrayList<Subscription>()
-
-    override val database: BriteDatabase
-
-    init {
-        database = THApp.briteDatabase
-    }
 
     override fun insert(textClue: TextClue) {
         database.insert(TextClue.TABLE.NAME, textClue.getContentValues(), SQLiteDatabase.CONFLICT_REPLACE)
@@ -78,15 +72,6 @@ class ClueConnectionImpl : ClueConnection {
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { onComplete(it) }
-    }
-
-    override fun unsubscribe() {
-        for (connection in subscriptions) {
-            if (!connection.isUnsubscribed)
-                connection.unsubscribe()
-        }
-
-        subscriptions.clear()
     }
 
     private fun getTextCluesForParent(parentUuid: String): List<TextClue>? {
