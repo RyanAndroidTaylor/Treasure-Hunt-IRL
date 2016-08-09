@@ -62,23 +62,13 @@ abstract class ContainerActivity : BaseActivity() {
         backStack.push(uri)
     }
 
-    fun startContaienrAsPopup(uri: String) {
-        startContainerAsPopup(uri, Bundle())
-    }
-
-    fun startContainerAsPopup(uri: String, extras: Bundle) {
-        container?.onPause()
-
-        loadContainer(uri, extras, false)
-
-        backStack.push(uri)
-    }
-
     private fun loadCurrentContainer() {
         loadContainer(currentUri, Bundle(), true)
     }
 
     private fun loadContainer(uri: String?, extras: Bundle, replaceContainer: Boolean) {
+        container?.onPause()
+
         if (containerMap.containsKey(uri)) {
             container = containerMap[uri]!!
 
@@ -110,6 +100,9 @@ abstract class ContainerActivity : BaseActivity() {
             PlayTreasureHuntContainer.URI -> container = PlayTreasureHuntContainer()
             DigModeContainer.URI -> container = DigModeContainer()
             ViewCollectedTreasureChestContainer.URI -> container = ViewCollectedTreasureChestContainer()
+            SearchTreasureHuntContainer.URI -> container = SearchTreasureHuntContainer()
+            PlayTreasureHuntListContainer.URI -> container = PlayTreasureHuntListContainer()
+            CreateTreasureHuntListContainer.URI -> container = CreateTreasureHuntListContainer()
             else -> throw IllegalStateException("There was no match found for the URI: $uri")
         }
 

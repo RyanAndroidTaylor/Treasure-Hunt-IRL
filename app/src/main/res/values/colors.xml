@@ -7,4 +7,5 @@
     <color name="divider_background">#dddddd</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="icon_grey">#757575</color>
 </resources>
