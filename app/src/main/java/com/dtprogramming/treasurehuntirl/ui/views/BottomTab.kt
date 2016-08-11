@@ -1,9 +1,7 @@
 package com.dtprogramming.treasurehuntirl.ui.views
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.text.Layout
@@ -19,20 +17,32 @@ import java.util.*
  * Created by ryantaylor on 8/8/16.
  */
 class BottomTab(context: Context, attributeSet: AttributeSet?) : View(context, attributeSet) {
-    private val LAYOUT_HEIGHT = 160
+    private val LAYOUT_HEIGHT = 210
+    private val DROP_SHADOW_SIZE = 30f
 
     private val tabs = ArrayList<Tab>()
     private var selectedTab: Tab? = null
 
+
+    private val gradientPaint: Paint
     private val paint: Paint
+
+    private val lineGrey: Int
+    private val background: Int
 
     var tabSelectedListener: ((containerUri: String) -> Unit)? = null
 
     constructor(context: Context): this(context, null)
 
     init {
+        lineGrey = context.resources.getColor(R.color.line_grey)
+        background = context.resources.getColor(R.color.white)
+
         paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        paint.color = context.resources.getColor(R.color.icon_grey)
+
+        gradientPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        gradientPaint.color = context.resources.getColor(R.color.shadow_grey)
+        gradientPaint.shader = LinearGradient(0f, DROP_SHADOW_SIZE, width.toFloat(), 0f, gradientPaint.color, context.resources.getColor(R.color.transparent), Shader.TileMode.CLAMP)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -42,7 +52,12 @@ class BottomTab(context: Context, attributeSet: AttributeSet?) : View(context, a
     }
 
     override fun onDraw(canvas: Canvas) {
-        canvas.drawLine(0.0f, 0.0f, width.toFloat(), 1.0f, paint)
+        canvas.drawRect(0f, 0f, width.toFloat(), DROP_SHADOW_SIZE, gradientPaint)
+
+        paint.color = lineGrey
+        canvas.drawLine(0f, DROP_SHADOW_SIZE, width.toFloat(), DROP_SHADOW_SIZE - 2, paint)
+        paint.color = background
+        canvas.drawRect(0f, DROP_SHADOW_SIZE - 3, width.toFloat(), height.toFloat(), paint)
 
         for (tab  in tabs) {
             tab.drawable.draw(canvas)

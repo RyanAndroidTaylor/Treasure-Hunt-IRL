@@ -18,6 +18,7 @@ class BottomTabActivity : ContainerActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_tab)
+        setSupportActionBar(toolbar)
 
         parent = tab_view
         bottomTab = bottom_tab
