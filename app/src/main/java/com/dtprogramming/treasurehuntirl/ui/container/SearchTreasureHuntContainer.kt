@@ -1,6 +1,5 @@
 package com.dtprogramming.treasurehuntirl.ui.container
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -10,7 +9,6 @@ import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
-import com.dtprogramming.treasurehuntirl.ui.activities.ViewTreasureHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureHuntAdapter
 import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
 import kotlinx.android.synthetic.main.container_search_treasure_hunt_list.view.*
@@ -58,10 +56,10 @@ class SearchTreasureHuntContainer : BasicContainer() {
     }
 
     private fun launchTreasureHuntActivity(treasureHunt: TreasureHunt) {
-        val intent = Intent(containerActivity, ViewTreasureHuntActivity::class.java)
+        val extras = Bundle()
+        
+        extras.putString(HUNT_UUID, treasureHunt.uuid)
 
-        intent.putExtra(HUNT_UUID, treasureHunt.uuid)
-
-        containerActivity.startActivity(intent)
+        containerActivity.startContainer(ViewTreasureHuntContainer.URI, extras)
     }
 }

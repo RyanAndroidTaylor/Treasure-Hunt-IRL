@@ -9,7 +9,6 @@ import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnection
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
-import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureHuntAdapter
 import kotlinx.android.synthetic.main.container_create_hunt_list.view.*
 import javax.inject.Inject
@@ -42,7 +41,7 @@ class CreateTreasureHuntListContainer() : BasicContainer() {
         adapter = TreasureHuntAdapter(listOf(), { itemSelected(it) })
         recyclerView.adapter = adapter
 
-        parent.create_hunt_fragment_fab?.setOnClickListener { containerActivity.startActivity(CreateHuntActivity.getCreateNewIntent(containerActivity)) }
+        parent.create_hunt_fragment_fab?.setOnClickListener { CreateHuntContainer.createNewHunt(containerActivity) }
 
         treasureHuntConnection.subscribeToTreasureHunts { adapter.updateList(it) }
 
@@ -56,6 +55,6 @@ class CreateTreasureHuntListContainer() : BasicContainer() {
     }
 
     fun itemSelected(treasureHunt: TreasureHunt) {
-        containerActivity.startActivity(CreateHuntActivity.getLoadIntent(containerActivity, treasureHunt.uuid))
+        CreateHuntContainer.loadExistingHunt(containerActivity, treasureHunt.uuid)
     }
 }

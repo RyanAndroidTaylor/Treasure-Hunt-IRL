@@ -59,10 +59,10 @@ class PlayTreasureHuntListContainer : BasicContainer() {
     }
 
     private fun launchTreasureHuntActivity(playingTreasureHunt: PlayingTreasureHunt) {
-        val intent = Intent(containerActivity, PlayTreasureHuntActivity::class.java)
+        val extras = Bundle()
 
-        intent.putExtra(PLAYING_HUNT_UUID, playingTreasureHunt.uuid)
+        extras.putString(PLAYING_HUNT_UUID, playingTreasureHunt.uuid)
 
-        containerActivity.startActivity(intent)
+        containerActivity.startContainer(PlayTreasureHuntContainer.URI, extras)
     }
 }

@@ -1,11 +1,13 @@
 package com.dtprogramming.treasurehuntirl.ui.activities
 
 import android.os.Bundle
+import android.util.ArrayMap
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.ui.container.*
 import com.dtprogramming.treasurehuntirl.ui.views.BottomTab
 import kotlinx.android.synthetic.main.activity_bottom_tab.*
+import java.util.*
 
 /**
  * Created by ryantaylor on 8/8/16.
@@ -19,6 +21,8 @@ class BottomTabActivity : ContainerActivity() {
 
     private var selectedTabContainerUri: String? = null
 
+    private val backStacks = ArrayMap<String, Stack<String>>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_tab)
@@ -30,12 +34,15 @@ class BottomTabActivity : ContainerActivity() {
         bottomTab.tabSelectedListener = {
             selectedTabContainerUri = it
 
-            startContainer(it, false)
+            if (currentUri != null)
+                loadCurrentContainer()
+            else
+                startContainer(it)
         }
 
-        bottomTab.addTab(BottomTab.Tab(resources.getDrawable(R.drawable.clue_icon_24dp), "Search", SearchTreasureHuntContainer.URI))
-        bottomTab.addTab(BottomTab.Tab(resources.getDrawable(R.drawable.play_icon_24dp), "Play", PlayTreasureHuntListContainer.URI))
-        bottomTab.addTab(BottomTab.Tab(resources.getDrawable(R.drawable.create_icon_24dp), "Create", CreateTreasureHuntListContainer.URI))
+        addTab(R.drawable.clue_icon_24dp, "Search", SearchTreasureHuntContainer.URI)
+        addTab(R.drawable.play_icon_24dp, "Play", PlayTreasureHuntListContainer.URI)
+        addTab(R.drawable.create_icon_24dp, "Create", CreateTreasureHuntListContainer.URI)
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_CONTAINER_URI))
             bottomTab.moveToTab(savedInstanceState.getString(SELECTED_CONTAINER_URI))
@@ -55,6 +62,54 @@ class BottomTabActivity : ContainerActivity() {
     }
 
     override fun setToolBarTitle(title: String) {
-        //TODO Set title
+        toolbar.title = title
+    }
+
+    override fun addToBackStack(uri: String) {
+        selectedTabContainerUri?.let {
+            backStacks[it]?.push(uri)
+        }
+    }
+
+    override fun peekBackStack(): String? {
+        selectedTabContainerUri?.let {
+            return backStacks[selectedTabContainerUri]?.peek()
+        }
+
+        return null
+    }
+
+    override fun popBackStack() {
+        selectedTabContainerUri?.let {
+            backStacks[it]?.pop()
+        }
+    }
+
+    override fun isEmptyBackStack(): Boolean {
+        selectedTabContainerUri?.let {
+            val backStack = backStacks[it]
+
+            return backStack != null && backStack.isEmpty()
+        }
+
+        return true
+    }
+
+    override fun backStackSize(): Int {
+        var size = 0
+
+        selectedTabContainerUri?.let { size = backStacks[it]!!.size }
+
+        return size
+    }
+
+    private fun addTab(iconId: Int, title: String, containerUri: String) {
+        bottomTab.addTab(BottomTab.Tab(resources.getDrawable(iconId), title, containerUri))
+
+        val backStack = Stack<String>()
+
+        backStack.push(containerUri)
+
+        backStacks.put(containerUri, backStack)
     }
 }

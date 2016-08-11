@@ -14,12 +14,9 @@ abstract class ContainerActivity : BaseActivity() {
 
     protected var container: Container? = null
 
-    private val currentUri: String?
+    protected val currentUri: String?
         get() {
-            if (backStack.isEmpty())
-                return null
-            else
-                return backStack.peek()
+            return peekBackStack()
         }
 
     //TODO Back stack not being saved if activity is destroyed
@@ -71,10 +68,10 @@ abstract class ContainerActivity : BaseActivity() {
         loadContainer(uri, extras, true)
 
         if (addToBackStack)
-            backStack.push(uri)
+            addToBackStack(uri)
     }
 
-    private fun loadCurrentContainer() {
+    protected fun loadCurrentContainer() {
         loadContainer(currentUri, Bundle(), true)
     }
 
@@ -121,13 +118,36 @@ abstract class ContainerActivity : BaseActivity() {
         return container
     }
 
+    open protected fun addToBackStack(uri: String) {
+        backStack.push(uri)
+    }
+
+    open protected fun popBackStack() {
+        backStack.pop()
+    }
+
+    open protected fun peekBackStack(): String? {
+        if (!backStack.isEmpty())
+            return backStack.peek()
+        else
+            return null
+    }
+
+    open protected fun isEmptyBackStack(): Boolean {
+        return backStack.isEmpty()
+    }
+
+    open protected fun backStackSize(): Int {
+        return backStack.size
+    }
+
     fun finishCurrentContainer() {
-        if (backStack.size > 1) {
+        if (backStackSize() > 1) {
             container?.onFinish()
 
             containerMap.remove(currentUri)
 
-            backStack.pop()
+            popBackStack()
 
             loadCurrentContainer()
         } else {
@@ -136,12 +156,12 @@ abstract class ContainerActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (backStack.size > 1) {
+        if (backStackSize() > 1) {
             container?.onFinish()
 
             containerMap.remove(currentUri)
 
-            backStack.pop()
+            popBackStack()
 
             loadCurrentContainer()
         } else {

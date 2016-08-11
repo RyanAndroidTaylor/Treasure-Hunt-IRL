@@ -4,8 +4,6 @@ import com.dtprogramming.treasurehuntirl.presenters.*
 import com.dtprogramming.treasurehuntirl.ui.container.CreateTreasureHuntListContainer
 import com.dtprogramming.treasurehuntirl.ui.container.PlayTreasureHuntListContainer
 import com.dtprogramming.treasurehuntirl.ui.container.SearchTreasureHuntContainer
-import com.dtprogramming.treasurehuntirl.ui.fragments.CreateHuntTabFragment
-import com.dtprogramming.treasurehuntirl.ui.fragments.CurrentHuntsFragment
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.InventoryAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.PlayingTreasureHuntAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureHuntAdapter
@@ -32,7 +30,7 @@ interface DatabaseComponent {
     fun inject(inventoryViewHolder: InventoryAdapter.InventoryViewHolder)
     fun inject(playingTreasureHuntViewHolder: PlayingTreasureHuntAdapter.PlayingTreasureHuntViewHolder)
     fun inject(treasureHuntViewHolder: TreasureHuntAdapter.TreasureHuntViewHolder)
-    fun inject(searchTreasureHuntContainer: SearchTreasureHuntContainer)
     fun inject(createTreasureHuntListContainer: CreateTreasureHuntListContainer)
+    fun inject(searchTreasureHuntContainer: SearchTreasureHuntContainer)
     fun inject(playTreasureHuntListContainer: PlayTreasureHuntListContainer)
 }
