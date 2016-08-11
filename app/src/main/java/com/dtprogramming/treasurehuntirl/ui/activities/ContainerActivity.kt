@@ -16,7 +16,10 @@ abstract class ContainerActivity : BaseActivity() {
 
     private val currentUri: String?
         get() {
-            return backStack.peek()
+            if (backStack.isEmpty())
+                return null
+            else
+                return backStack.peek()
         }
 
     //TODO Back stack not being saved if activity is destroyed
@@ -51,15 +54,24 @@ abstract class ContainerActivity : BaseActivity() {
     abstract fun setToolBarTitle(title: String)
 
     fun startContainer(uri: String) {
-        startContainer(uri, Bundle())
+        startContainer(uri, true)
+    }
+
+    fun startContainer(uri: String, addToBackStack: Boolean) {
+        startContainer(uri, Bundle(), addToBackStack)
     }
 
     fun startContainer(uri: String, extras: Bundle) {
+        startContainer(uri, extras, true)
+    }
+
+    fun startContainer(uri: String, extras: Bundle, addToBackStack: Boolean) {
         container?.onPause()
 
         loadContainer(uri, extras, true)
 
-        backStack.push(uri)
+        if (addToBackStack)
+            backStack.push(uri)
     }
 
     private fun loadCurrentContainer() {

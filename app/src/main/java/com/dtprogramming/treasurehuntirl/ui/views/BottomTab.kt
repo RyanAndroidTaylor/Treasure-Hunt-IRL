@@ -8,6 +8,7 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.dtprogramming.treasurehuntirl.R
@@ -83,7 +84,18 @@ class BottomTab(context: Context, attributeSet: AttributeSet?) : View(context, a
         layoutTabs()
     }
 
-    fun layoutTabs() {
+    fun moveToTab(containerUri: String) {
+        for (tab in tabs) {
+            if (tab.containerUri.equals(containerUri)) {
+                tabSelected(tab)
+                return
+            }
+        }
+
+        Log.e("BottomTab", "No tab found with containerUri: $containerUri")
+    }
+
+    private fun layoutTabs() {
         val sectionWidth = (width / tabs.size).toInt()
 
         val textBounds = Rect()
@@ -141,6 +153,10 @@ class BottomTab(context: Context, attributeSet: AttributeSet?) : View(context, a
     }
 
     private fun tabSelected(tab: Tab) {
+        // No reason to load tab if the user is selecting the tab that is already selected
+        if (selectedTab != null && selectedTab == tab)
+            return
+
         selectedTab?.let {
             it.textPaint.color = context.resources.getColor(R.color.icon_grey)
             DrawableCompat.setTint(it.drawable, context.resources.getColor(R.color.icon_grey))
