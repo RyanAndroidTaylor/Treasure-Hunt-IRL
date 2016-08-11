@@ -14,7 +14,7 @@ import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.activities.PlayTreasureHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.PlayingTreasureHuntAdapter
 import com.dtprogramming.treasurehuntirl.util.PLAYING_HUNT_UUID
-import kotlinx.android.synthetic.main.fragment_current_hunts.view.*
+import kotlinx.android.synthetic.main.container_play_treasure_hunt_list.view.*
 import javax.inject.Inject
 
 /**
@@ -26,7 +26,7 @@ class PlayTreasureHuntListContainer : BasicContainer() {
         val URI: String = PlayTreasureHuntListContainer::class.java.simpleName
     }
 
-    override var rootViewId = R.layout.fragment_current_hunts
+    override var rootViewId = R.layout.container_play_treasure_hunt_list
 
     private lateinit var recyclerView: RecyclerView
 

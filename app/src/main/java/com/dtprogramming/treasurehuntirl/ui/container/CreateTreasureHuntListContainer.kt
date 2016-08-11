@@ -11,7 +11,7 @@ import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureHuntAdapter
-import kotlinx.android.synthetic.main.fragment_create_hunt.view.*
+import kotlinx.android.synthetic.main.container_create_hunt_list.view.*
 import javax.inject.Inject
 
 /**
@@ -23,7 +23,7 @@ class CreateTreasureHuntListContainer() : BasicContainer() {
         val URI: String = CreateTreasureHuntListContainer::class.java.simpleName
     }
 
-    override var rootViewId = R.layout.fragment_create_hunt
+    override var rootViewId = R.layout.container_create_hunt_list
 
     lateinit var recyclerView: RecyclerView
 
