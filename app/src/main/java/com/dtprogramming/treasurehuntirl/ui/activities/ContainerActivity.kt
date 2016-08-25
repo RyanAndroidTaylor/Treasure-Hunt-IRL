@@ -14,9 +14,9 @@ abstract class ContainerActivity : BaseActivity() {
 
     protected var container: Container? = null
 
-    private val currentUri: String?
+    protected val currentUri: String?
         get() {
-            return backStack.peek()
+            return peekBackStack()
         }
 
     //TODO Back stack not being saved if activity is destroyed
@@ -51,34 +51,33 @@ abstract class ContainerActivity : BaseActivity() {
     abstract fun setToolBarTitle(title: String)
 
     fun startContainer(uri: String) {
-        startContainer(uri, Bundle())
+        startContainer(uri, true)
+    }
+
+    fun startContainer(uri: String, addToBackStack: Boolean) {
+        startContainer(uri, Bundle(), addToBackStack)
     }
 
     fun startContainer(uri: String, extras: Bundle) {
+        startContainer(uri, extras, true)
+    }
+
+    fun startContainer(uri: String, extras: Bundle, addToBackStack: Boolean) {
         container?.onPause()
 
         loadContainer(uri, extras, true)
 
-        backStack.push(uri)
+        if (addToBackStack)
+            addToBackStack(uri)
     }
 
-    fun startContaienrAsPopup(uri: String) {
-        startContainerAsPopup(uri, Bundle())
-    }
-
-    fun startContainerAsPopup(uri: String, extras: Bundle) {
-        container?.onPause()
-
-        loadContainer(uri, extras, false)
-
-        backStack.push(uri)
-    }
-
-    private fun loadCurrentContainer() {
+    protected fun loadCurrentContainer() {
         loadContainer(currentUri, Bundle(), true)
     }
 
     private fun loadContainer(uri: String?, extras: Bundle, replaceContainer: Boolean) {
+        container?.onPause()
+
         if (containerMap.containsKey(uri)) {
             container = containerMap[uri]!!
 
@@ -110,19 +109,45 @@ abstract class ContainerActivity : BaseActivity() {
             PlayTreasureHuntContainer.URI -> container = PlayTreasureHuntContainer()
             DigModeContainer.URI -> container = DigModeContainer()
             ViewCollectedTreasureChestContainer.URI -> container = ViewCollectedTreasureChestContainer()
+            SearchTreasureHuntContainer.URI -> container = SearchTreasureHuntContainer()
+            PlayTreasureHuntListContainer.URI -> container = PlayTreasureHuntListContainer()
+            CreateTreasureHuntListContainer.URI -> container = CreateTreasureHuntListContainer()
             else -> throw IllegalStateException("There was no match found for the URI: $uri")
         }
 
         return container
     }
 
+    open protected fun addToBackStack(uri: String) {
+        backStack.push(uri)
+    }
+
+    open protected fun popBackStack() {
+        backStack.pop()
+    }
+
+    open protected fun peekBackStack(): String? {
+        if (!backStack.isEmpty())
+            return backStack.peek()
+        else
+            return null
+    }
+
+    open protected fun isEmptyBackStack(): Boolean {
+        return backStack.isEmpty()
+    }
+
+    open protected fun backStackSize(): Int {
+        return backStack.size
+    }
+
     fun finishCurrentContainer() {
-        if (backStack.size > 1) {
+        if (backStackSize() > 1) {
             container?.onFinish()
 
             containerMap.remove(currentUri)
 
-            backStack.pop()
+            popBackStack()
 
             loadCurrentContainer()
         } else {
@@ -131,12 +156,12 @@ abstract class ContainerActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (backStack.size > 1) {
+        if (backStackSize() > 1) {
             container?.onFinish()
 
             containerMap.remove(currentUri)
 
-            backStack.pop()
+            popBackStack()
 
             loadCurrentContainer()
         } else {

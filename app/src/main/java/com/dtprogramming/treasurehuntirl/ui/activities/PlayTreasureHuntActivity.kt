@@ -1,5 +1,7 @@
 package com.dtprogramming.treasurehuntirl.ui.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
@@ -13,6 +15,16 @@ import kotlinx.android.synthetic.main.activity_play_treasure_hunt.*
  */
 class PlayTreasureHuntActivity : ContainerActivity() {
     override lateinit var parent: ViewGroup
+
+    companion object {
+        fun loadActivity(context: Context, treasureHuntUuid: String) {
+            val intent = Intent(context, PlayTreasureHuntActivity::class.java)
+
+            intent.putExtra(PLAYING_HUNT_UUID, treasureHuntUuid)
+
+            context.startActivity(intent)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,5 +48,11 @@ class PlayTreasureHuntActivity : ContainerActivity() {
 
     override fun setToolBarTitle(title: String) {
         toolbar.title = title
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 }

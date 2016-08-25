@@ -5,7 +5,7 @@ package com.dtprogramming.treasurehuntirl.util
  */
 val INITIAL_TREASURE_CHEST = "-1"
 
-val HUNT_UUID = "HuntUuid"
+val TREASURE_HUNT_UUID = "HuntUuid"
 val PLAYING_HUNT_UUID = "PlayingHuntUuid"
 val PARENT_UUID = "ParentUuid"
 val TREASURE_CHEST_UUID = "TreasureChestUuid"

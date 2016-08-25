@@ -20,7 +20,7 @@
             android:value="AIzaSyBaaaGQAMTEmJN7KqbNR_X4_3OqFTRs2To" />
 
         <activity
-            android:name=".ui.activities.TreasureTabActivity"
+            android:name=".ui.activities.BottomTabActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activities.CreateHuntActivity"
+            android:name=".ui.activities.CreateTreasureHuntActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity

@@ -46,7 +46,7 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         fun loadExistingHunt(containerActivity: ContainerActivity, treasureHuntUuid: String) {
             val extras = Bundle()
 
-            extras.putString(HUNT_UUID, treasureHuntUuid)
+            extras.putString(TREASURE_HUNT_UUID, treasureHuntUuid)
 
             containerActivity.startContainer(URI, extras)
         }
@@ -90,8 +90,8 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
         initialClueAdapter = ClueAdapter(listOf(), { loadClueContainer(it) })
         initialClueList.adapter = initialClueAdapter
 
-        if (extras.containsKey(HUNT_UUID))
-            createHuntPresenter.load(this, extras.getString(HUNT_UUID))
+        if (extras.containsKey(TREASURE_HUNT_UUID))
+            createHuntPresenter.load(this, extras.getString(TREASURE_HUNT_UUID))
         else if (extras.containsKey(NEW))
             createHuntPresenter.create(this)
         else

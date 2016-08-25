@@ -7,7 +7,7 @@ import android.support.test.runner.AndroidJUnit4
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.ui.Actions
 import com.dtprogramming.treasurehuntirl.ui.Matchers
-import com.dtprogramming.treasurehuntirl.ui.activities.CreateHuntActivityTest
+import com.dtprogramming.treasurehuntirl.ui.activities.CreateTreasureHuntActivityTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -15,7 +15,7 @@ import org.junit.runner.RunWith
  * Created by ryantaylor on 6/26/16.
  */
 @RunWith(AndroidJUnit4::class)
-class CreateWaypointContainerTest : CreateHuntActivityTest() {
+class CreateWaypointContainerTest : CreateTreasureHuntActivityTest() {
 
     @Test
     fun testInitialLayout() {

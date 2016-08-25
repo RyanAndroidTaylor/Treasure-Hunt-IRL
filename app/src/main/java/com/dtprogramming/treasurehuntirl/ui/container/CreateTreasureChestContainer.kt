@@ -42,7 +42,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView {
             val extras = Bundle()
 
             extras.putBoolean(NEW, true)
-            extras.putString(HUNT_UUID, treasureHuntUuid)
+            extras.putString(TREASURE_HUNT_UUID, treasureHuntUuid)
 
             containerActivity.startContainer(URI, extras);
         }
@@ -210,7 +210,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView {
         if (extras.containsKey(TREASURE_CHEST_UUID))
             createTreasureChestPresenter.load(extras.getString(TREASURE_CHEST_UUID), this)
         else if (extras.containsKey(NEW)) {
-            createTreasureChestPresenter.create(extras.getString(HUNT_UUID), this)
+            createTreasureChestPresenter.create(extras.getString(TREASURE_HUNT_UUID), this)
         } else
             createTreasureChestPresenter.reload(this)
     }

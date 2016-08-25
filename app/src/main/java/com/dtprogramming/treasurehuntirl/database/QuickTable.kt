@@ -1,10 +1,6 @@
 package com.dtprogramming.treasurehuntirl.database
 
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 import java.util.ArrayList
-
-import android.support.annotation.StringDef
 
 /**
  * Created by ryantaylor on 6/21/16.

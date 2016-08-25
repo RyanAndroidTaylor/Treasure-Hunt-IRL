@@ -1,9 +1,9 @@
 package com.dtprogramming.treasurehuntirl.injection
 
 import com.dtprogramming.treasurehuntirl.presenters.*
-import com.dtprogramming.treasurehuntirl.ui.fragments.CreateHuntTabFragment
-import com.dtprogramming.treasurehuntirl.ui.fragments.CurrentHuntsFragment
-import com.dtprogramming.treasurehuntirl.ui.fragments.TreasureHuntListFragment
+import com.dtprogramming.treasurehuntirl.ui.container.CreateTreasureHuntListContainer
+import com.dtprogramming.treasurehuntirl.ui.container.PlayTreasureHuntListContainer
+import com.dtprogramming.treasurehuntirl.ui.container.SearchTreasureHuntContainer
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.InventoryAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.PlayingTreasureHuntAdapter
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureHuntAdapter
@@ -27,10 +27,10 @@ interface DatabaseComponent {
     fun inject(viewTreasureHuntPresenter: ViewTreasureHuntPresenter)
 
     //TODO Should find a better way to handle these cases
-    fun inject(createHuntTabFragment: CreateHuntTabFragment)
-    fun inject(currentHuntsFragment: CurrentHuntsFragment)
-    fun inject(treasureHuntListFragment: TreasureHuntListFragment)
     fun inject(inventoryViewHolder: InventoryAdapter.InventoryViewHolder)
     fun inject(playingTreasureHuntViewHolder: PlayingTreasureHuntAdapter.PlayingTreasureHuntViewHolder)
     fun inject(treasureHuntViewHolder: TreasureHuntAdapter.TreasureHuntViewHolder)
+    fun inject(createTreasureHuntListContainer: CreateTreasureHuntListContainer)
+    fun inject(searchTreasureHuntContainer: SearchTreasureHuntContainer)
+    fun inject(playTreasureHuntListContainer: PlayTreasureHuntListContainer)
 }
