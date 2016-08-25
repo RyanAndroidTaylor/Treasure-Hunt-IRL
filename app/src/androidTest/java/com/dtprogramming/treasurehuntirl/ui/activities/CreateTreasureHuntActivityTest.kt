@@ -14,7 +14,7 @@ import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.ui.Matchers
-import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
+import com.dtprogramming.treasurehuntirl.util.TREASURE_HUNT_UUID
 import com.dtprogramming.treasurehuntirl.util.NEW
 import org.junit.After
 import org.junit.Before
@@ -26,7 +26,7 @@ import org.junit.runner.RunWith
  * Created by ryantaylor on 7/15/16.
  */
 @RunWith(AndroidJUnit4::class)
-open class CreateHuntActivityTest {
+open class CreateTreasureHuntActivityTest {
 
     val treasureHuntUuid = "TestUuid"
     val createdTitle = "CreatedTitle"
@@ -48,7 +48,7 @@ open class CreateHuntActivityTest {
     val lng = 23.42
 
     @get:Rule
-    val activityTestRule: ActivityTestRule<CreateHuntActivity> = ActivityTestRule(CreateHuntActivity::class.java, true, false)
+    val activityTestRule: ActivityTestRule<CreateTreasureHuntActivity> = ActivityTestRule(CreateTreasureHuntActivity::class.java, true, false)
 
     @Before
     open fun setUp() {
@@ -104,7 +104,7 @@ open class CreateHuntActivityTest {
 
         val intent = Intent()
 
-        intent.putExtra(HUNT_UUID, treasureHuntUuid)
+        intent.putExtra(TREASURE_HUNT_UUID, treasureHuntUuid)
 
         activityTestRule.launchActivity(intent)
     }

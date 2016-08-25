@@ -1,6 +1,5 @@
 package com.dtprogramming.treasurehuntirl.ui.container
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -9,11 +8,9 @@ import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.THApp
 import com.dtprogramming.treasurehuntirl.database.connections.PlayingTreasureHuntConnection
 import com.dtprogramming.treasurehuntirl.database.models.PlayingTreasureHunt
-import com.dtprogramming.treasurehuntirl.ui.activities.BottomTabActivity
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.activities.PlayTreasureHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.PlayingTreasureHuntAdapter
-import com.dtprogramming.treasurehuntirl.util.PLAYING_HUNT_UUID
 import kotlinx.android.synthetic.main.container_play_treasure_hunt_list.view.*
 import javax.inject.Inject
 
@@ -59,10 +56,8 @@ class PlayTreasureHuntListContainer : BasicContainer() {
     }
 
     private fun launchTreasureHuntActivity(playingTreasureHunt: PlayingTreasureHunt) {
-        val extras = Bundle()
+        PlayTreasureHuntActivity.loadActivity(containerActivity, playingTreasureHunt.uuid)
 
-        extras.putString(PLAYING_HUNT_UUID, playingTreasureHunt.uuid)
-
-        containerActivity.startContainer(PlayTreasureHuntContainer.URI, extras)
+        containerActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 }

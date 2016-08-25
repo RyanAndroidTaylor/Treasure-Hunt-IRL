@@ -14,7 +14,7 @@ import com.dtprogramming.treasurehuntirl.presenters.ViewTreasureHuntPresenter
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.activities.PlayTreasureHuntActivity
 import com.dtprogramming.treasurehuntirl.ui.views.ViewTreasureHuntView
-import com.dtprogramming.treasurehuntirl.util.HUNT_UUID
+import com.dtprogramming.treasurehuntirl.util.TREASURE_HUNT_UUID
 import com.dtprogramming.treasurehuntirl.util.NEW
 import com.dtprogramming.treasurehuntirl.util.PLAYING_HUNT_UUID
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -57,8 +57,8 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
         treasureHuntTitle = parent.view_treasure_hunt_container_title
         treasureChestCount = parent.view_treasure_hunt_container_treasure_chest_count
 
-        if (extras.containsKey(HUNT_UUID)) {
-            viewTreasureHuntPresenter.load(this, extras.getString(HUNT_UUID))
+        if (extras.containsKey(TREASURE_HUNT_UUID)) {
+            viewTreasureHuntPresenter.load(this, extras.getString(TREASURE_HUNT_UUID))
         } else {
             viewTreasureHuntPresenter.reload(this)
         }
