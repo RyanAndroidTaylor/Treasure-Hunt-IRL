@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.container_view_treasure_chest.view.*
 /**
  * Created by ryantaylor on 7/25/16.
  */
-class ViewCollectedTreasureChestContainer : BasicContainer(), ViewCollectedTreasureChestView {
+class ViewCollectedTreasureChestContainer : BaseContainer(), ViewCollectedTreasureChestView {
 
     companion object {
         val URI: String = ViewCollectedTreasureChestContainer::class.java.simpleName

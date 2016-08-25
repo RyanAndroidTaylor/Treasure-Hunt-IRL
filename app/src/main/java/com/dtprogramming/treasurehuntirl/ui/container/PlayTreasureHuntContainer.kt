@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.play_treasure_hunt_container.view.*
 /**
  * Created by ryantaylor on 7/19/16.
  */
-class PlayTreasureHuntContainer : BasicContainer(), PlayTreasureHuntView {
+class PlayTreasureHuntContainer : BaseContainer(), PlayTreasureHuntView {
 
     companion object {
         val URI: String = PlayTreasureHuntContainer::class.java.simpleName

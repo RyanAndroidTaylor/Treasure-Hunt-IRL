@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.container_create_waypoint.view.*
 /**
  * Created by ryantaylor on 6/22/16.
  */
-class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapReadyCallback {
+class CreateWayPointContainer() : BaseContainer(), CreateWaypointView, OnMapReadyCallback {
 
     companion object {
         val URI: String = CreateWayPointContainer::class.java.simpleName

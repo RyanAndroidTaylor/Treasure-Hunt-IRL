@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.container_create_clue.view.*
 /**
  * Created by ryantaylor on 6/20/16.
  */
-class CreateTextClueContainer() : BasicContainer(), CreateClueView {
+class CreateTextClueContainer() : BaseContainer(), CreateClueView {
 
     companion object {
         val URI: String = CreateTextClueContainer::class.java.simpleName

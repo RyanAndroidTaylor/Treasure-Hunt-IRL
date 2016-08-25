@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.container_dig_mode.view.*
 /**
  * Created by ryantaylor on 7/22/16.
  */
-class DigModeContainer : BasicContainer(), DigModeView, LocationListener, OnMapReadyCallback {
+class DigModeContainer : BaseContainer(), DigModeView, LocationListener, OnMapReadyCallback {
 
     companion object {
         val URI: String = DigModeContainer::class.java.simpleName

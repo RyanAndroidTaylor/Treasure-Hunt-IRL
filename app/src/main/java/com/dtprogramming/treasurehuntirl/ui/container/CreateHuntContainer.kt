@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.container_create_hunt.view.*
 /**
  * Created by ryantaylor on 6/20/16.
  */
-class CreateHuntContainer() : BasicContainer(), CreateHuntView {
+class CreateHuntContainer() : BaseContainer(), CreateHuntView {
 
     companion object {
         val URI: String = CreateHuntContainer::class.java.simpleName

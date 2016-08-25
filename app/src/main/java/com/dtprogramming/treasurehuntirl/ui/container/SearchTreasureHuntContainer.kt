@@ -18,7 +18,7 @@ import javax.inject.Inject
 /**
  * Created by ryantaylor on 8/9/16.
  */
-class SearchTreasureHuntContainer : BasicContainer() {
+class SearchTreasureHuntContainer : BaseContainer() {
 
     companion object {
         val URI: String = SearchTreasureHuntContainer::class.java.simpleName

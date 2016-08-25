@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.container_view_treasure_hunt.view.*
 /**
  * Created by ryantaylor on 7/16/16.
  */
-class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapReadyCallback {
+class ViewTreasureHuntContainer : BaseContainer(), ViewTreasureHuntView, OnMapReadyCallback {
 
     companion object {
         val URI: String = ViewTreasureHuntContainer::class.java.simpleName

@@ -17,7 +17,7 @@ import javax.inject.Inject
 /**
  * Created by ryantaylor on 8/9/16.
  */
-class PlayTreasureHuntListContainer : BasicContainer() {
+class PlayTreasureHuntListContainer : BaseContainer() {
 
     companion object {
         val URI: String = PlayTreasureHuntListContainer::class.java.simpleName

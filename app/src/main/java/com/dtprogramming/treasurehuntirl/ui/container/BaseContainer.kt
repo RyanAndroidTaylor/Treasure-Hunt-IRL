@@ -9,7 +9,7 @@ import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 /**
  * Created by ryantaylor on 6/20/16.
  */
-abstract class BasicContainer : Container {
+abstract class BaseContainer : Container {
 
     abstract protected var rootViewId: Int
     private var rootView: View? = null
