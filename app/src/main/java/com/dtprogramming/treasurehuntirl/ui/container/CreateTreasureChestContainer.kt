@@ -23,6 +23,8 @@ import com.dtprogramming.treasurehuntirl.database.models.Waypoint
 import com.dtprogramming.treasurehuntirl.presenters.CreateTreasureChestPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
+import com.dtprogramming.treasurehuntirl.ui.container.animation.inLeft
+import com.dtprogramming.treasurehuntirl.ui.container.animation.outRight
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.ClueAdapter
@@ -33,26 +35,26 @@ import kotlinx.android.synthetic.main.container_create_treasure_chest.view.*
 /**
  * Created by ryantaylor on 7/11/16.
  */
-class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView {
+class CreateTreasureChestContainer : BaseContainer(), CreateTreasureChestView {
 
     companion object {
         val URI: String = CreateTreasureChestContainer::class.java.simpleName
 
-        fun createTreasureChest(containerActivity: ContainerActivity, treasureHuntUuid: String) {
+        fun createTreasureChestBundle(treasureHuntUuid: String): Bundle {
             val extras = Bundle()
 
             extras.putBoolean(NEW, true)
             extras.putString(TREASURE_HUNT_UUID, treasureHuntUuid)
 
-            containerActivity.startContainer(URI, extras);
+            return extras
         }
 
-        fun loadTreasureChest(containerActivity: ContainerActivity, treasureChestUuid: String) {
+        fun loadTreasureChest(treasureChestUuid: String): Bundle {
             val extras = Bundle()
 
             extras.putString(TREASURE_CHEST_UUID, treasureChestUuid)
 
-            containerActivity.startContainer(URI, extras)
+            return extras
         }
     }
 
@@ -84,27 +86,27 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView {
             PresenterManager.addPresenter(CreateTreasureChestPresenter.TAG, CreateTreasureChestPresenter()) as CreateTreasureChestPresenter
     }
 
-    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
-        super.inflate(containerActivity, parent, extras)
+    override fun  inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): View {
+        val view = super.inflate(containerActivity, parent, extras)
         containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.treasure_chest_action_bar_title))
 
         checkForLocationPermission()
 
-        editTitle = parent.create_chest_container_title
+        editTitle = view.create_chest_container_title
 
-        stateGroup = parent.create_chest_container_state_group
+        stateGroup = view.create_chest_container_state_group
 
-        waypointContainer = parent.create_chest_container_waypoint_container
-        editWaypoint = parent.create_chest_container_edit_waypoint
-        waypointLat = parent.create_chest_container_lat
-        waypointLng = parent.create_chest_container_lng
+        waypointContainer = view.create_chest_container_waypoint_container
+        editWaypoint = view.create_chest_container_edit_waypoint
+        waypointLat = view.create_chest_container_lat
+        waypointLng = view.create_chest_container_lng
 
-        passPhraseContainer = parent.create_chest_container_pass_phrase_container
-        editPassPhrase = parent.create_chest_container_pass_phrase
+        passPhraseContainer = view.create_chest_container_pass_phrase_container
+        editPassPhrase = view.create_chest_container_pass_phrase
 
-        addClue = parent.create_chest_container_add_clue
+        addClue = view.create_chest_container_add_clue
 
-        clueList = parent.create_treasure_chest_clue_list
+        clueList = view.create_treasure_chest_clue_list
 
         adapter = ClueAdapter(listOf(), { itemSelected(it) })
 
@@ -112,7 +114,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView {
         clueList.addOnScrollListener(ClueScrollListener())
         clueList.adapter = adapter
 
-        parent.create_chest_container_title.addTextChangedListener(object : TextWatcher {
+        view.create_chest_container_title.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 createTreasureChestPresenter.titleChanged(s.toString())
             }
@@ -142,7 +144,7 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView {
 
         loadPresenter(extras)
 
-        return this
+        return view
     }
 
     override fun onReload(parent: ViewGroup) {
@@ -159,6 +161,8 @@ class CreateTreasureChestContainer : BasicContainer(), CreateTreasureChestView {
 
     override fun onFinish() {
         super.onFinish()
+
+        containerActivity.setAnimations(inLeft(containerActivity), outRight(containerActivity))
 
         createTreasureChestPresenter.dispose()
     }

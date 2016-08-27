@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.database.connections.impl.WaypointConnectionImpl
@@ -26,7 +27,7 @@ import kotlinx.android.synthetic.main.container_create_waypoint.view.*
 /**
  * Created by ryantaylor on 6/22/16.
  */
-class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapReadyCallback {
+class CreateWayPointContainer() : BaseContainer(), CreateWaypointView, OnMapReadyCallback {
 
     companion object {
         val URI: String = CreateWayPointContainer::class.java.simpleName
@@ -49,8 +50,8 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
             PresenterManager.addPresenter(CreateWaypointPresenter.TAG, CreateWaypointPresenter()) as CreateWaypointPresenter
     }
 
-    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
-        super.inflate(containerActivity, parent, extras)
+    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): View {
+        val view = super.inflate(containerActivity, parent, extras)
         containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.waypoint_action_bar_title))
 
         if (extras.containsKey(PARENT_UUID))
@@ -64,18 +65,18 @@ class CreateWayPointContainer() : BasicContainer(), CreateWaypointView, OnMapRea
 
         mapFragment.getMapAsync(this)
 
-        adjustableLat = parent.create_waypoint_container_adjust_lat
-        adjustableLng = parent.create_waypoint_container_adjust_lng
+        adjustableLat = view.create_waypoint_container_adjust_lat
+        adjustableLng = view.create_waypoint_container_adjust_lng
 
         adjustableLat.setOnLeftDrawableClickListener { createWaypointPresenter.decreaseLat() }
         adjustableLat.setOnRightDrawableClickListener { createWaypointPresenter.increaseLat() }
         adjustableLng.setOnLeftDrawableClickListener { createWaypointPresenter.decreaseLng() }
         adjustableLng.setOnRightDrawableClickListener { createWaypointPresenter.increaseLng() }
 
-        parent.create_waypoint_container_save.setOnClickListener { createWaypointPresenter.save() }
-        parent.create_waypoint_container_cancel.setOnClickListener { createWaypointPresenter.cancel() }
+        view.create_waypoint_container_save.setOnClickListener { createWaypointPresenter.save() }
+        view.create_waypoint_container_cancel.setOnClickListener { createWaypointPresenter.cancel() }
 
-        return this
+        return view
     }
 
     override fun onPause() {

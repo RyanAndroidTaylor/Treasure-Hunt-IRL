@@ -5,13 +5,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.database.connections.impl.ClueConnectionImpl
-import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureChestConnectionImpl
-import com.dtprogramming.treasurehuntirl.database.connections.impl.TreasureHuntConnectionImpl
 import com.dtprogramming.treasurehuntirl.database.models.Clue
 import com.dtprogramming.treasurehuntirl.database.models.InventoryItem
 import com.dtprogramming.treasurehuntirl.database.models.TextClue
@@ -19,6 +17,8 @@ import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
+import com.dtprogramming.treasurehuntirl.ui.container.animation.inRight
+import com.dtprogramming.treasurehuntirl.ui.container.animation.outLeft
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.ClueAdapter
@@ -30,10 +30,10 @@ import kotlinx.android.synthetic.main.container_create_hunt.view.*
 /**
  * Created by ryantaylor on 6/20/16.
  */
-class CreateHuntContainer() : BasicContainer(), CreateHuntView {
+class CreateTreasureHuntContainer() : BaseContainer(), CreateHuntView {
 
     companion object {
-        val URI: String = CreateHuntContainer::class.java.simpleName
+        val URI: String = CreateTreasureHuntContainer::class.java.simpleName
 
         fun createNewHunt(containerActivity: ContainerActivity) {
             val extras = Bundle()
@@ -73,18 +73,18 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
             PresenterManager.addPresenter(CreateHuntPresenter.TAG, CreateHuntPresenter()) as CreateHuntPresenter
     }
 
-    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
-        super.inflate(containerActivity, parent, extras)
+    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): View {
+        val view = super.inflate(containerActivity, parent, extras)
 
-        treasureHuntTitle = parent.create_hunt_container_title
-        addClue = parent.create_hunt_container_add_clue
+        treasureHuntTitle = view.create_hunt_container_title
+        addClue = view.create_hunt_container_add_clue
 
-        treasureChestList = parent.create_hunt_container_chest_list
+        treasureChestList = view.create_hunt_container_chest_list
         treasureChestList.layoutManager = LinearLayoutManager(containerActivity)
         treasureChestAdapter = TreasureChestAdapter({ treasureChestSelected(it) }, listOf())
         treasureChestList.adapter = treasureChestAdapter
 
-        initialClueList = parent.create_hunt_container_initial_clues
+        initialClueList = view.create_hunt_container_initial_clues
         initialClueList.layoutManager = CustomLinearLayoutManager(containerActivity)
         initialClueList.addOnScrollListener(ClueScrollListener())
         initialClueAdapter = ClueAdapter(listOf(), { loadClueContainer(it) })
@@ -107,9 +107,9 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
 
         addClue.setOnClickListener { startCreateClueContainer() }
 
-        parent.create_hunt_container_add_chest.setOnClickListener { loadCreateTreasureChestContainer() }
+        view.create_hunt_container_add_chest.setOnClickListener { loadCreateTreasureChestContainer() }
 
-        return this
+        return view
     }
 
     override fun onPause() {
@@ -143,11 +143,17 @@ class CreateHuntContainer() : BasicContainer(), CreateHuntView {
     }
 
     fun treasureChestSelected(treasureChest: TreasureChest) {
-        CreateTreasureChestContainer.loadTreasureChest(containerActivity, treasureChest.uuid)
+        val extras = CreateTreasureChestContainer.loadTreasureChest(treasureChest.uuid)
+
+        containerActivity.setAnimations(inRight(containerActivity), outLeft(containerActivity))
+        .startContainer(CreateTreasureChestContainer.URI, extras)
     }
 
     fun loadCreateTreasureChestContainer() {
-        CreateTreasureChestContainer.createTreasureChest(containerActivity, createHuntPresenter.treasureHuntUuid)
+        val extras = CreateTreasureChestContainer.createTreasureChestBundle(createHuntPresenter.treasureHuntUuid)
+
+        containerActivity.setAnimations(inRight(containerActivity), outLeft(containerActivity))
+                .startContainer(CreateTreasureChestContainer.URI, extras)
     }
 
     private fun startCreateClueContainer() {

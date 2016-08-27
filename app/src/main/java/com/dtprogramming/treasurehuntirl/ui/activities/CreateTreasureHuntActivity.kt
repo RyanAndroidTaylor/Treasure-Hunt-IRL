@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
-import com.dtprogramming.treasurehuntirl.ui.container.CreateHuntContainer
+import com.dtprogramming.treasurehuntirl.ui.container.CreateTreasureHuntContainer
 import com.dtprogramming.treasurehuntirl.util.TREASURE_HUNT_UUID
 import com.dtprogramming.treasurehuntirl.util.NEW
 import kotlinx.android.synthetic.main.activity_create_hunt.*
@@ -45,9 +45,9 @@ class CreateTreasureHuntActivity : ContainerActivity() {
             startContainer(savedInstanceState.getString(CURRENT_URI))
         } else {
             if (intent.hasExtra(TREASURE_HUNT_UUID))
-                CreateHuntContainer.loadExistingHunt(this, intent.getStringExtra(TREASURE_HUNT_UUID))
+                CreateTreasureHuntContainer.loadExistingHunt(this, intent.getStringExtra(TREASURE_HUNT_UUID))
             if (intent.hasExtra(NEW))
-                CreateHuntContainer.createNewHunt(this)
+                CreateTreasureHuntContainer.createNewHunt(this)
         }
 
         toolbar?.title = stringFrom(R.string.treasure_hunt_action_bar_title)

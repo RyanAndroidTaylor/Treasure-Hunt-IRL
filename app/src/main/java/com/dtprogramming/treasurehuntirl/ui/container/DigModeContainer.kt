@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.container_dig_mode.view.*
 /**
  * Created by ryantaylor on 7/22/16.
  */
-class DigModeContainer : BasicContainer(), DigModeView, LocationListener, OnMapReadyCallback {
+class DigModeContainer : BaseContainer(), DigModeView, LocationListener, OnMapReadyCallback {
 
     companion object {
         val URI: String = DigModeContainer::class.java.simpleName
@@ -62,13 +62,13 @@ class DigModeContainer : BasicContainer(), DigModeView, LocationListener, OnMapR
             PresenterManager.addPresenter(DigModePresenter.TAG, DigModePresenter()) as DigModePresenter
     }
 
-    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
-        super.inflate(containerActivity, parent, extras)
+    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): View {
+        val view = super.inflate(containerActivity, parent, extras)
 
-        diggingProgressBar = parent.dig_mode_container_dig_progress
-        diggingProgressBarContainer = parent.dig_mode_container_dig_progress_holder
+        diggingProgressBar = view.dig_mode_container_dig_progress
+        diggingProgressBarContainer = view.dig_mode_container_dig_progress_holder
 
-        parent.dig_mode_container_dig.setOnClickListener { dig() }
+        view.dig_mode_container_dig.setOnClickListener { dig() }
 
         locationManager = containerActivity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -86,7 +86,7 @@ class DigModeContainer : BasicContainer(), DigModeView, LocationListener, OnMapR
             digModePresenter.reload(this)
         }
 
-        return this
+        return view
     }
 
     override fun onPause() {

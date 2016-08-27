@@ -3,6 +3,7 @@ package com.dtprogramming.treasurehuntirl.ui.container
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.dtprogramming.treasurehuntirl.R
@@ -28,7 +29,7 @@ import kotlinx.android.synthetic.main.container_view_treasure_hunt.view.*
 /**
  * Created by ryantaylor on 7/16/16.
  */
-class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapReadyCallback {
+class ViewTreasureHuntContainer : BaseContainer(), ViewTreasureHuntView, OnMapReadyCallback {
 
     companion object {
         val URI: String = ViewTreasureHuntContainer::class.java.simpleName
@@ -50,12 +51,12 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
             PresenterManager.addPresenter(ViewTreasureHuntPresenter.TAG, ViewTreasureHuntPresenter()) as ViewTreasureHuntPresenter
     }
 
-    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
-        super.inflate(containerActivity, parent, extras)
+    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): View {
+        val view = super.inflate(containerActivity, parent, extras)
         containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.treasure_hunt_action_bar_title))
 
-        treasureHuntTitle = parent.view_treasure_hunt_container_title
-        treasureChestCount = parent.view_treasure_hunt_container_treasure_chest_count
+        treasureHuntTitle = view.view_treasure_hunt_container_title
+        treasureChestCount = view.view_treasure_hunt_container_treasure_chest_count
 
         if (extras.containsKey(TREASURE_HUNT_UUID)) {
             viewTreasureHuntPresenter.load(this, extras.getString(TREASURE_HUNT_UUID))
@@ -68,9 +69,9 @@ class ViewTreasureHuntContainer : BasicContainer(), ViewTreasureHuntView, OnMapR
 
         mapFragment.getMapAsync(this)
 
-        parent.view_treasure_hunt_start.setOnClickListener { startTreasureHunt()}
+        view.view_treasure_hunt_start.setOnClickListener { startTreasureHunt()}
 
-        return this
+        return view
     }
 
     override fun onPause() {

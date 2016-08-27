@@ -9,7 +9,7 @@ import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 /**
  * Created by ryantaylor on 6/20/16.
  */
-abstract class BasicContainer : Container {
+abstract class BaseContainer : Container {
 
     abstract protected var rootViewId: Int
     private var rootView: View? = null
@@ -18,7 +18,7 @@ abstract class BasicContainer : Container {
     protected lateinit var parent: ViewGroup
     private lateinit var extras: Bundle
 
-    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
+    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): View {
         this.containerActivity = containerActivity
         this.parent = parent
         this.extras = extras
@@ -30,9 +30,8 @@ abstract class BasicContainer : Container {
             true
         }
 
-        parent.addView(rootView)
-
-        return this
+        // We should never return a null view.
+        return rootView!!
     }
 
     override fun onPause() {
@@ -40,11 +39,6 @@ abstract class BasicContainer : Container {
     }
 
     override fun onReload(parent: ViewGroup) {
-        if (rootView == null) {
-            rootView = LayoutInflater.from(parent.context).inflate(rootViewId, parent, false)
-        } else {
-            parent.addView(rootView)
-        }
     }
 
     override fun onFinish() {

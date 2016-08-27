@@ -3,6 +3,7 @@ package com.dtprogramming.treasurehuntirl.ui.container
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.THApp
@@ -18,7 +19,7 @@ import javax.inject.Inject
 /**
  * Created by ryantaylor on 8/9/16.
  */
-class SearchTreasureHuntContainer : BasicContainer() {
+class SearchTreasureHuntContainer : BaseContainer() {
 
     companion object {
         val URI: String = SearchTreasureHuntContainer::class.java.simpleName
@@ -33,11 +34,11 @@ class SearchTreasureHuntContainer : BasicContainer() {
     @Inject
     lateinit var treasureHuntConnection: TreasureHuntConnection
 
-    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle) : Container {
-        super.inflate(containerActivity, parent, extras)
+    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle) : View {
+        val view = super.inflate(containerActivity, parent, extras)
         THApp.databaseComponent.inject(this)
 
-        recyclerView = parent.fragment_hunt_list
+        recyclerView = view.fragment_hunt_list
 
         recyclerView.layoutManager = LinearLayoutManager(containerActivity)
 
@@ -47,7 +48,7 @@ class SearchTreasureHuntContainer : BasicContainer() {
 
         treasureHuntConnection.getTreasureHuntsAsync { adapter.updateList(it) }
 
-        return this
+        return view
     }
 
     override fun onPause() {

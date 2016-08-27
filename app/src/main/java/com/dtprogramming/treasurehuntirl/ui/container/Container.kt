@@ -11,7 +11,7 @@ import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
  */
 interface Container {
 
-    fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container
+    fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): View
 
     fun onPause()
     fun onReload(parent: ViewGroup)
