@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
@@ -63,13 +64,13 @@ class ViewCollectedTreasureChestContainer : BaseContainer(), ViewCollectedTreasu
             PresenterManager.addPresenter(ViewCollectedTreasureChestPresenter.TAG, ViewCollectedTreasureChestPresenter()) as ViewCollectedTreasureChestPresenter
     }
 
-    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
-        super.inflate(containerActivity, parent, extras)
+    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): View {
+        val view = super.inflate(containerActivity, parent, extras)
 
-        treasureChestImage = parent.view_treasure_chest_container_image
-        treasureChestAction = parent.view_treasure_chest_container_treasure_chest_action
-        editPassPhrase = parent.view_treasure_chest_container_edit_pass_phrase
-        treasureChestItems = parent.view_treasure_chest_treasure_items
+        treasureChestImage = view.view_treasure_chest_container_image
+        treasureChestAction = view.view_treasure_chest_container_treasure_chest_action
+        editPassPhrase = view.view_treasure_chest_container_edit_pass_phrase
+        treasureChestItems = view.view_treasure_chest_treasure_items
 
         treasureChestItems.layoutManager = LinearLayoutManager(containerActivity)
         adapter = InventoryAdapter(listOf(), { /*For display only. Cannot click on items*/ })
@@ -90,7 +91,7 @@ class ViewCollectedTreasureChestContainer : BaseContainer(), ViewCollectedTreasu
         else
             viewCollectedTreasureChestPresenter.reload(this)
 
-        return this
+        return view
     }
 
     override fun onPause() {

@@ -3,6 +3,7 @@ package com.dtprogramming.treasurehuntirl.ui.container
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.R
 import com.dtprogramming.treasurehuntirl.THApp
@@ -32,11 +33,11 @@ class PlayTreasureHuntListContainer : BaseContainer() {
     @Inject
     lateinit var treasureHuntConnection: PlayingTreasureHuntConnection
 
-    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
-        super.inflate(containerActivity, parent, extras)
+    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): View {
+        val view = super.inflate(containerActivity, parent, extras)
         THApp.databaseComponent.inject(this)
 
-        recyclerView = parent.current_hunt_list
+        recyclerView = view.current_hunt_list
 
         recyclerView.layoutManager = LinearLayoutManager(containerActivity)
 
@@ -46,7 +47,7 @@ class PlayTreasureHuntListContainer : BaseContainer() {
 
         treasureHuntConnection.getPlayingTreasureHuntsAsync { adapter.updateList(it) }
 
-        return this
+        return view
     }
 
     override fun onPause() {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import com.dtprogramming.treasurehuntirl.R
@@ -55,11 +56,11 @@ class CreateTextClueContainer() : BaseContainer(), CreateClueView {
             PresenterManager.addPresenter(CreateCluePresenter.TAG, CreateCluePresenter()) as CreateCluePresenter
     }
 
-    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
-        super.inflate(containerActivity, parent, extras)
+    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): View {
+        val view = super.inflate(containerActivity, parent, extras)
         containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.clue_action_bar_title))
 
-        clueText = parent.create_clue__container_clue_text
+        clueText = view.create_clue__container_clue_text
 
         if (extras.containsKey(CLUE_UUID))
             createCluePresenter.load(this, extras.getString(PARENT_UUID), extras.getString(CLUE_UUID))
@@ -68,7 +69,7 @@ class CreateTextClueContainer() : BaseContainer(), CreateClueView {
         else
             createCluePresenter.reload(this)
 
-        parent.create_clue_container_save.setOnClickListener {
+        view.create_clue_container_save.setOnClickListener {
             createCluePresenter.save()
         }
 
@@ -81,7 +82,7 @@ class CreateTextClueContainer() : BaseContainer(), CreateClueView {
 
         })
 
-        return this
+        return view
     }
 
     override fun onPause() {

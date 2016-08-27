@@ -43,11 +43,11 @@ class PlayTreasureHuntContainer : BaseContainer(), PlayTreasureHuntView {
             PresenterManager.addPresenter(PlayTreasureHuntPresenter.TAG, PlayTreasureHuntPresenter()) as PlayTreasureHuntPresenter
     }
 
-    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
-        super.inflate(containerActivity, parent, extras)
+    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): View {
+        val view = super.inflate(containerActivity, parent, extras)
         containerActivity.setToolBarTitle(containerActivity.stringFrom(R.string.play_treasure_hunt_action_bar_title))
 
-        inventoryList = parent.play_treasure_hunt_inventory_list
+        inventoryList = view.play_treasure_hunt_inventory_list
 
         inventoryList.layoutManager = LinearLayoutManager(containerActivity)
 
@@ -55,7 +55,7 @@ class PlayTreasureHuntContainer : BaseContainer(), PlayTreasureHuntView {
 
         inventoryList.adapter = adapter
 
-        currentTreasureChestAction = parent.play_treasure_hunt_chest_action
+        currentTreasureChestAction = view.play_treasure_hunt_chest_action
 
         if (extras.containsKey(PLAYING_HUNT_UUID)) {
             if (extras.containsKey(NEW))
@@ -68,7 +68,7 @@ class PlayTreasureHuntContainer : BaseContainer(), PlayTreasureHuntView {
 
         currentTreasureChestAction.setOnClickListener { playTreasureHuntPresenter.performTreasureChestAction() }
 
-        return this
+        return view
     }
 
     override fun onPause() {

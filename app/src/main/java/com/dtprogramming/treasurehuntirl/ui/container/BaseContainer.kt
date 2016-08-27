@@ -18,7 +18,7 @@ abstract class BaseContainer : Container {
     protected lateinit var parent: ViewGroup
     private lateinit var extras: Bundle
 
-    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): Container {
+    override fun inflate(containerActivity: ContainerActivity, parent: ViewGroup, extras: Bundle): View {
         this.containerActivity = containerActivity
         this.parent = parent
         this.extras = extras
@@ -30,9 +30,8 @@ abstract class BaseContainer : Container {
             true
         }
 
-        parent.addView(rootView)
-
-        return this
+        // We should never return a null view.
+        return rootView!!
     }
 
     override fun onPause() {
@@ -40,11 +39,6 @@ abstract class BaseContainer : Container {
     }
 
     override fun onReload(parent: ViewGroup) {
-        if (rootView == null) {
-            rootView = LayoutInflater.from(parent.context).inflate(rootViewId, parent, false)
-        } else {
-            parent.addView(rootView)
-        }
     }
 
     override fun onFinish() {

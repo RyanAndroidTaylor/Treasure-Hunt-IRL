@@ -1,9 +1,15 @@
 package com.dtprogramming.treasurehuntirl.ui.activities
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
 import android.os.Bundle
 import android.support.v4.util.ArrayMap
+import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.ui.container.*
+import com.dtprogramming.treasurehuntirl.util.ContainerAnimation
 import java.util.*
 
 /**
@@ -12,7 +18,8 @@ import java.util.*
 abstract class ContainerActivity : BaseActivity() {
     val CURRENT_URI = "Current Uri"
 
-    protected var container: Container? = null
+    protected var currentRootView: View? = null
+    protected var currentContainer: Container? = null
 
     protected val currentUri: String?
         get() {
@@ -21,7 +28,11 @@ abstract class ContainerActivity : BaseActivity() {
 
     //TODO Back stack not being saved if activity is destroyed
     private val backStack = Stack<String>()
-    private val containerMap = ArrayMap<String, Container>()
+    private val containerMap = ArrayMap<String, ContainerData>()
+
+    private var duration = 300L
+    private var currentInAnimation: ContainerAnimation<Any>? = null
+    private var currentOutAnimation: ContainerAnimation<Any>? = null
 
     abstract var parent: ViewGroup
 
@@ -35,20 +46,34 @@ abstract class ContainerActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
 
-        container?.onPause()
+        currentContainer?.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
         if (isFinishing) {
-            for (i in 0..containerMap.size -1) {
-                containerMap.valueAt(i).onFinish()
+            for (i in 0..containerMap.size - 1) {
+                containerMap.valueAt(i).container.onFinish()
             }
         }
     }
 
     abstract fun setToolBarTitle(title: String)
+
+    fun setAnimations(inAnimation: ContainerAnimation<Any>?, outAnimation: ContainerAnimation<Any>?, duration: Long = 300): ContainerActivity {
+        if (inAnimation != null && currentInAnimation != null)
+            Log.e("ContainerActivity", "Setting currentInAnimation before the previous one was run")
+        if (outAnimation != null && currentOutAnimation != null)
+            Log.e("ContainerActivity", "Setting currentOutAnimation before the previous one was run")
+
+        currentInAnimation = inAnimation
+        currentOutAnimation = outAnimation
+
+        this.duration = duration
+
+        return this
+    }
 
     fun startContainer(uri: String) {
         startContainer(uri, true)
@@ -63,37 +88,61 @@ abstract class ContainerActivity : BaseActivity() {
     }
 
     fun startContainer(uri: String, extras: Bundle, addToBackStack: Boolean) {
-        container?.onPause()
+        currentContainer?.onPause()
 
-        loadContainer(uri, extras, true)
+        loadContainer(uri, extras)
 
         if (addToBackStack)
             addToBackStack(uri)
     }
 
     protected fun loadCurrentContainer() {
-        loadContainer(currentUri, Bundle(), true)
+        loadContainer(currentUri, Bundle())
     }
 
-    private fun loadContainer(uri: String?, extras: Bundle, replaceContainer: Boolean) {
-        container?.onPause()
+    private fun loadPreviousContainer() {
+        currentContainer?.onFinish()
 
-        if (containerMap.containsKey(uri)) {
-            container = containerMap[uri]!!
+        popBackStack()
 
-            if (replaceContainer && parent.childCount > 0)
-                parent.removeAllViews()
+        val oldRootView = currentRootView
 
-            container?.onReload(parent)
+        val containerData = containerMap[currentUri]
+
+        currentContainer = containerData?.container
+        currentRootView = containerData?.rootView
+
+        if (hasPendingAnimation() && parent.childCount > 0) {
+            if (oldRootView != null && currentRootView != null) {
+                runAnimation(oldRootView, currentRootView!!)
+            }
         } else {
-            container = createContainer(uri)
+            parent.removeAllViews()
 
-            containerMap.put(uri!!, container!!)
+            parent.addView(currentRootView)
+        }
 
-            if (replaceContainer && parent.childCount > 0)
+        currentContainer?.onReload(parent)
+    }
+
+    private fun loadContainer(uri: String?, extras: Bundle) {
+        currentContainer?.onPause()
+
+        currentContainer = createContainer(uri)
+
+        val oldContainerView = currentRootView
+        currentRootView = currentContainer!!.inflate(this, parent, extras)
+
+        containerMap.put(uri!!, ContainerData(currentContainer!!, currentRootView!!))
+
+        if (hasPendingAnimation() && parent.childCount > 0) {
+
+            runAnimation(oldContainerView!!, currentRootView!!)
+        } else {
+            if (parent.childCount > 0)
                 parent.removeAllViews()
 
-            container?.inflate(this, parent, extras)
+            parent.addView(currentRootView!!)
         }
     }
 
@@ -116,6 +165,47 @@ abstract class ContainerActivity : BaseActivity() {
         }
 
         return container
+    }
+
+    private fun hasPendingAnimation(): Boolean {
+        return currentOutAnimation != null || currentInAnimation != null
+    }
+
+    private fun runAnimation(currentContainerView: View, newContainerView: View) {
+        newContainerView.visibility = View.INVISIBLE
+
+        parent.addView(newContainerView)
+
+        val inAnimator = currentInAnimation?.getAnimator(newContainerView)
+        val outAnimator = currentOutAnimation?.getAnimator(currentContainerView)
+
+        val animatorSet = AnimatorSet()
+
+        animatorSet.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                super.onAnimationEnd(animation)
+
+                if (parent.childCount > 1)
+                    parent.removeViewAt(0)
+
+                currentInAnimation = null
+                currentOutAnimation = null
+            }
+        })
+
+        if (inAnimator != null) {
+            if (outAnimator != null)
+                animatorSet.play(inAnimator).with(outAnimator)
+            else
+                animatorSet.play(inAnimator)
+        } else if (outAnimator != null) {
+            animatorSet.play(outAnimator)
+        }
+
+        newContainerView.visibility = View.VISIBLE
+
+        animatorSet.duration = duration
+        animatorSet.start()
     }
 
     open protected fun addToBackStack(uri: String) {
@@ -143,13 +233,7 @@ abstract class ContainerActivity : BaseActivity() {
 
     fun finishCurrentContainer() {
         if (backStackSize() > 1) {
-            container?.onFinish()
-
-            containerMap.remove(currentUri)
-
-            popBackStack()
-
-            loadCurrentContainer()
+            loadPreviousContainer()
         } else {
             finish()
         }
@@ -157,13 +241,7 @@ abstract class ContainerActivity : BaseActivity() {
 
     override fun onBackPressed() {
         if (backStackSize() > 1) {
-            container?.onFinish()
-
-            containerMap.remove(currentUri)
-
-            popBackStack()
-
-            loadCurrentContainer()
+            loadPreviousContainer()
         } else {
             super.onBackPressed()
         }
