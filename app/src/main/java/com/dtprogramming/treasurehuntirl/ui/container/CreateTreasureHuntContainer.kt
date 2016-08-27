@@ -17,6 +17,8 @@ import com.dtprogramming.treasurehuntirl.database.models.TreasureChest
 import com.dtprogramming.treasurehuntirl.presenters.CreateHuntPresenter
 import com.dtprogramming.treasurehuntirl.presenters.PresenterManager
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
+import com.dtprogramming.treasurehuntirl.ui.container.animation.inRight
+import com.dtprogramming.treasurehuntirl.ui.container.animation.outLeft
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.ClueScrollListener
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.CustomLinearLayoutManager
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.ClueAdapter
@@ -28,10 +30,10 @@ import kotlinx.android.synthetic.main.container_create_hunt.view.*
 /**
  * Created by ryantaylor on 6/20/16.
  */
-class CreateHuntContainer() : BaseContainer(), CreateHuntView {
+class CreateTreasureHuntContainer() : BaseContainer(), CreateHuntView {
 
     companion object {
-        val URI: String = CreateHuntContainer::class.java.simpleName
+        val URI: String = CreateTreasureHuntContainer::class.java.simpleName
 
         fun createNewHunt(containerActivity: ContainerActivity) {
             val extras = Bundle()

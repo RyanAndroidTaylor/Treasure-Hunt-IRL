@@ -12,7 +12,9 @@ import com.dtprogramming.treasurehuntirl.database.connections.TreasureHuntConnec
 import com.dtprogramming.treasurehuntirl.database.models.TreasureHunt
 import com.dtprogramming.treasurehuntirl.ui.activities.ContainerActivity
 import com.dtprogramming.treasurehuntirl.ui.activities.CreateTreasureHuntActivity
+import com.dtprogramming.treasurehuntirl.ui.container.animation.CircularAnimator
 import com.dtprogramming.treasurehuntirl.ui.recycler_view.adapter.TreasureHuntAdapter
+import com.dtprogramming.treasurehuntirl.util.visible
 import kotlinx.android.synthetic.main.container_create_hunt_list.view.*
 import javax.inject.Inject
 

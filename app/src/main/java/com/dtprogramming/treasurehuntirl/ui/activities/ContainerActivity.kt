@@ -9,7 +9,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.dtprogramming.treasurehuntirl.ui.container.*
-import com.dtprogramming.treasurehuntirl.util.ContainerAnimation
+import com.dtprogramming.treasurehuntirl.ui.container.animation.ContainerAnimator
 import java.util.*
 
 /**
@@ -31,8 +31,8 @@ abstract class ContainerActivity : BaseActivity() {
     private val containerMap = ArrayMap<String, ContainerData>()
 
     private var duration = 300L
-    private var currentInAnimation: ContainerAnimation<Any>? = null
-    private var currentOutAnimation: ContainerAnimation<Any>? = null
+    private var currentInAnimator: ContainerAnimator<Any>? = null
+    private var currentOutAnimator: ContainerAnimator<Any>? = null
 
     abstract var parent: ViewGroup
 
@@ -61,14 +61,14 @@ abstract class ContainerActivity : BaseActivity() {
 
     abstract fun setToolBarTitle(title: String)
 
-    fun setAnimations(inAnimation: ContainerAnimation<Any>?, outAnimation: ContainerAnimation<Any>?, duration: Long = 300): ContainerActivity {
-        if (inAnimation != null && currentInAnimation != null)
-            Log.e("ContainerActivity", "Setting currentInAnimation before the previous one was run")
-        if (outAnimation != null && currentOutAnimation != null)
-            Log.e("ContainerActivity", "Setting currentOutAnimation before the previous one was run")
+    fun setAnimations(inAnimation: ContainerAnimator<Any>? = null, outAnimation: ContainerAnimator<Any>? = null, duration: Long = 300): ContainerActivity {
+        if (inAnimation != null && currentInAnimator != null)
+            Log.e("ContainerActivity", "Setting currentInAnimator before the previous one was run")
+        if (outAnimation != null && currentOutAnimator != null)
+            Log.e("ContainerActivity", "Setting currentOutAnimator before the previous one was run")
 
-        currentInAnimation = inAnimation
-        currentOutAnimation = outAnimation
+        currentInAnimator = inAnimation
+        currentOutAnimator = outAnimation
 
         this.duration = duration
 
@@ -97,7 +97,7 @@ abstract class ContainerActivity : BaseActivity() {
     }
 
     protected fun loadCurrentContainer() {
-        loadContainer(currentUri, Bundle())
+        currentUri?.let { loadContainer(it, Bundle()) }
     }
 
     private fun loadPreviousContainer() {
@@ -112,7 +112,7 @@ abstract class ContainerActivity : BaseActivity() {
         currentContainer = containerData?.container
         currentRootView = containerData?.rootView
 
-        if (hasPendingAnimation() && parent.childCount > 0) {
+        if (hasPendingAnimation()) {
             if (oldRootView != null && currentRootView != null) {
                 runAnimation(oldRootView, currentRootView!!)
             }
@@ -125,19 +125,19 @@ abstract class ContainerActivity : BaseActivity() {
         currentContainer?.onReload(parent)
     }
 
-    private fun loadContainer(uri: String?, extras: Bundle) {
+    private fun loadContainer(uri: String, extras: Bundle) {
         currentContainer?.onPause()
 
         currentContainer = createContainer(uri)
 
         val oldContainerView = currentRootView
+
         currentRootView = currentContainer!!.inflate(this, parent, extras)
 
-        containerMap.put(uri!!, ContainerData(currentContainer!!, currentRootView!!))
+        containerMap.put(uri, ContainerData(currentContainer!!, currentRootView!!))
 
-        if (hasPendingAnimation() && parent.childCount > 0) {
-
-            runAnimation(oldContainerView!!, currentRootView!!)
+        if (hasPendingAnimation()) {
+            runAnimation(oldContainerView, currentRootView)
         } else {
             if (parent.childCount > 0)
                 parent.removeAllViews()
@@ -150,7 +150,7 @@ abstract class ContainerActivity : BaseActivity() {
         val container: Container
 
         when (uri) {
-            CreateHuntContainer.URI -> container = CreateHuntContainer()
+            CreateTreasureHuntContainer.URI -> container = CreateTreasureHuntContainer()
             CreateTextClueContainer.URI -> container = CreateTextClueContainer()
             CreateWayPointContainer.URI -> container = CreateWayPointContainer()
             CreateTreasureChestContainer.URI -> container = CreateTreasureChestContainer()
@@ -168,16 +168,22 @@ abstract class ContainerActivity : BaseActivity() {
     }
 
     private fun hasPendingAnimation(): Boolean {
-        return currentOutAnimation != null || currentInAnimation != null
+        return currentOutAnimator != null || currentInAnimator != null
     }
 
-    private fun runAnimation(currentContainerView: View, newContainerView: View) {
-        newContainerView.visibility = View.INVISIBLE
+    private fun runAnimation(currentContainerView: View?, newContainerView: View?) {
+        newContainerView?.visibility = View.INVISIBLE
 
-        parent.addView(newContainerView)
+        var inAnimator: Animator? = null
+        var outAnimator: Animator? = null
 
-        val inAnimator = currentInAnimation?.getAnimator(newContainerView)
-        val outAnimator = currentOutAnimation?.getAnimator(currentContainerView)
+        newContainerView?.let {
+            parent.addView(it)
+
+            inAnimator =  currentInAnimator?.getAnimator(it)
+        }
+
+        currentContainerView?.let { outAnimator = currentOutAnimator?.getAnimator(currentContainerView) }
 
         val animatorSet = AnimatorSet()
 
@@ -188,8 +194,8 @@ abstract class ContainerActivity : BaseActivity() {
                 if (parent.childCount > 1)
                     parent.removeViewAt(0)
 
-                currentInAnimation = null
-                currentOutAnimation = null
+                currentInAnimator = null
+                currentOutAnimator = null
             }
         })
 
@@ -202,7 +208,7 @@ abstract class ContainerActivity : BaseActivity() {
             animatorSet.play(outAnimator)
         }
 
-        newContainerView.visibility = View.VISIBLE
+        newContainerView?.visibility = View.VISIBLE
 
         animatorSet.duration = duration
         animatorSet.start()
